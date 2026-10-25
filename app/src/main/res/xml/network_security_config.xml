@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    The Jellyfin server runs on http:// in the LAN at an address entered in the app.
+    Android cannot allow cleartext per IP range (domain-config only knows host names),
+    so cleartext is allowed for everything. The app only connects to the entered server.
+-->
+<network-security-config xmlns:tools="http://schemas.android.com/tools">
+    <base-config cleartextTrafficPermitted="true" tools:ignore="InsecureBaseConfiguration">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

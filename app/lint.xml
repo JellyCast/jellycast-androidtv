@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!-- SDK 1.9.x vereist Jellyfin 12; de server draait 10.11 (zie gradle/libs.versions.toml). -->
+    <issue id="NewerVersionAvailable">
+        <ignore regexp="org.jellyfin.sdk" />
+    </issue>
+    <!-- TV banner and icon only exist in drawable-xhdpi (TV renders at xhdpi). -->
+    <issue id="IconMissingDensityFolder" severity="ignore" />
+    <!-- TV-only app (ARM Chromecast); ChromeOS/x86 is not a target. -->
+    <issue id="ChromeOsAbiSupport" severity="ignore" />
+    <!-- Every language must be complete: no half-translated screens. -->
+    <issue id="MissingTranslation" severity="error" />
+    <!-- A key that only exists in a translation is a typo or a forgotten removal. -->
+    <issue id="ExtraTranslation" severity="error" />
+    <!-- "%1$d channels" (never 1) and "%1$d of %2$d watched" are not plurals. -->
+    <issue id="PluralsCandidate" severity="ignore" />
+    <!-- Gaat over taalpakketten in de Play Store; wij installeren de volledige APK. -->
+    <issue id="AppBundleLocaleChanges" severity="ignore" />
+</lint>

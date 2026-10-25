@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Default language (English; see res/resources.properties). To add a language, copy this
+         file to values-xx/strings.xml and translate every text. See docs/translating.md. -->
+
+    <string name="server_title">Connect to your server</string>
+    <string name="server_subtitle">Enter the address of your Jellyfin server, for example 192.168.1.4 or http://192.168.1.4:8096.</string>
+    <string name="server_address_label">Server address</string>
+    <!-- Buttons on the sign-in, server and settings screens are 250 dp wide: max. ~26 characters. -->
+    <string name="server_connect">Connect</string>
+    <string name="server_checking">Connecting…</string>
+    <string name="server_error_invalid">This is not a valid address. Try for example 192.168.1.4.</string>
+    <string name="server_error_unreachable">Can\'t connect to this address. Is the server on, and are the IP address and port correct?</string>
+    <string name="server_error_not_jellyfin">There is no Jellyfin server at this address.</string>
+    <string name="server_error_version">This server version (%1$s) is too old. Update Jellyfin to 10.11 or newer.</string>
+    <string name="server_discovery_searching">Looking for servers on your network…</string>
+    <string name="server_discovery_found">Found on your network. Choose your server.</string>
+    <string name="server_discovery_none">No Jellyfin server found on your network. Enter its address yourself, or search again.</string>
+    <string name="server_discovery_searching_button">Searching…</string>
+    <string name="server_discovery_retry">Search again</string>
+    <string name="server_card_current">Current</string>
+    <string name="server_card_unreachable">not responding</string>
+    <string name="server_card_too_old">Jellyfin %1$s, too old</string>
+    <string name="server_card_version">Jellyfin %1$s</string>
+    <string name="server_back_to_discovery">Servers on your network</string>
+    <string name="server_manual_example">For example 192.168.1.4:8096</string>
+    <string name="server_manual">Enter address</string>
+
+    <string name="auth_tagline">Your cinema, on this TV.</string>
+    <string name="auth_or">or</string>
+
+    <string name="login_qc_heading">Sign in with your phone</string>
+    <string name="login_qc_instructions">Open Jellyfin on your phone, go to Quick Connect and enter this code. You\'re in right away.</string>
+    <string name="login_qc_starting">Getting code…</string>
+    <string name="login_qc_waiting">Waiting for approval</string>
+    <string name="login_qc_authenticated">Approved, signing you in…</string>
+    <string name="login_qc_failed">Quick Connect failed. Try again or sign in with a password.</string>
+    <string name="login_qc_retry">New code</string>
+    <string name="login_password_heading">Sign in with password</string>
+    <string name="login_qc_disabled">Quick Connect is turned off on this server. Sign in with your username and password.</string>
+    <string name="login_use_password">Sign in with password</string>
+    <string name="login_use_code">Sign in with code</string>
+    <string name="login_change_server">Other server</string>
+    <string name="login_connected">Connected to %1$s · %2$s</string>
+    <string name="login_username">Username</string>
+    <string name="login_password">Password</string>
+    <string name="login_submit">Sign in</string>
+    <string name="login_busy">Signing in…</string>
+    <string name="login_error_credentials">Incorrect username or password.</string>
+    <string name="login_error_unreachable">The server is not responding. Please try again.</string>
+
+    <string name="home_section_home">Home</string>
+    <string name="home_section_series">Series</string>
+    <string name="home_section_movies">Movies</string>
+    <string name="home_section_library">Library</string>
+    <string name="library_search">Search for a title</string>
+    <string name="library_sort">Sort: %1$s</string>
+    <string name="library_sort_title">A–Z</string>
+    <string name="library_sort_added">Recently added</string>
+    <string name="library_sort_year">Year</string>
+    <string name="library_sort_rating">Rating</string>
+    <string name="library_found">%1$d for “%2$s”</string>
+    <string name="library_nothing_found">Nothing found for “%1$s”.</string>
+    <plurals name="library_count_movies">
+        <item quantity="one">%d movie</item>
+        <item quantity="other">%d movies</item>
+    </plurals>
+    <plurals name="library_count_series">
+        <item quantity="one">%d series</item>
+        <item quantity="other">%d series</item>
+    </plurals>
+    <string name="home_settings">Settings</string>
+    <string name="home_exit_hint">Press Back again to exit</string>
+
+    <string name="action_retry">Try again</string>
+    <string name="library_error">Your library could not be loaded. Is the server on?</string>
+
+    <string name="shelf_continue">Continue watching</string>
+    <string name="series_shelf_new">New episodes</string>
+    <string name="series_shelf_not_started">Not started yet</string>
+    <string name="series_card_new">%1$s  ·  new</string>
+    <string name="movies_shelf_new">New</string>
+    <string name="movies_next_shelf">Next shelf</string>
+    <!-- Buttons in the movie panel (260 dp), sometimes followed by the time left: keep short. -->
+    <string name="movies_play">Watch</string>
+    <string name="movies_resume">Continue watching</string>
+    <string name="movies_details">Details</string>
+    <!-- Follows an "OK" key label: "[OK] hold for more". -->
+    <string name="movies_hold_ok">hold for more</string>
+    <string name="movies_mark_unwatched">Mark as unwatched</string>
+    <string name="movies_full_overview">Full description</string>
+    <string name="series_open_page">Go to series</string>
+
+    <!-- S = season, E = episode. Use the abbreviations common in your language. -->
+    <string name="episode_code">S%1$d · E%2$d</string>
+    <string name="runtime_hours_minutes">%1$d h %2$d min</string>
+    <string name="runtime_minutes">%1$d min</string>
+    <string name="runtime_remaining">%1$s left</string>
+    <string name="runtime_remaining_capital">%1$s left</string>
+    <plurals name="season_count">
+        <item quantity="one">%1$d season</item>
+        <item quantity="other">%1$d seasons</item>
+    </plurals>
+
+    <string name="detail_play">Play</string>
+    <string name="detail_resume">Resume</string>
+    <string name="detail_from_start">From the start</string>
+    <string name="detail_watched">Watched</string>
+    <string name="detail_mark_watched">Mark as watched</string>
+    <string name="tech_direct_play">Direct play</string>
+    <string name="tech_video_converted">Video converted</string>
+    <string name="tech_audio_converted">Audio converted</string>
+    <string name="tech_transcoded">Transcoded</string>
+    <!-- Tech line, shown in capitals, e.g. "DTS → AC3 TRACK". %1$s and %2$s are codecs. -->
+    <string name="tech_audio_replaced">%1$s → %2$s track</string>
+
+    <!-- 300 dp button followed by the episode and time left ("Continue · S3 · E4  18 min left"): keep short. -->
+    <string name="series_continue">Continue</string>
+    <string name="series_play">Play</string>
+    <string name="series_season">Season %1$d</string>
+    <string name="series_specials">Specials</string>
+    <string name="series_season_watched">%1$d of %2$d watched</string>
+    <string name="series_mark_episode">Mark %1$s as watched</string>
+    <string name="series_mark_series">Mark series as watched</string>
+    <string name="series_watched">Series watched</string>
+    <string name="series_mark_season">Mark season as watched</string>
+    <string name="series_season_all_watched">Season watched</string>
+    <plurals name="series_episode_count">
+        <item quantity="one">%1$d episode</item>
+        <item quantity="other">%1$d episodes</item>
+    </plurals>
+
+    <string name="player_error_title">Can\'t play this</string>
+    <string name="player_error_unreachable">The server is not responding. Please try again.</string>
+    <string name="player_audio">Audio</string>
+    <string name="player_subtitles">Subtitles</string>
+    <string name="player_off">Off</string>
+    <string name="player_on">On</string>
+    <string name="player_style">Style</string>
+    <string name="player_size">Size</string>
+    <string name="player_background">Background</string>
+    <string name="player_size_small">Small</string>
+    <string name="player_size_normal">Normal</string>
+    <string name="player_size_large">Large</string>
+    <string name="player_track">Track %1$d</string>
+    <string name="player_forced">Forced</string>
+    <string name="player_subtitle_image">Image</string>
+    <string name="player_back_10">Back 10 seconds</string>
+    <string name="player_forward_10">Forward 10 seconds</string>
+    <string name="player_play_pause">Play or pause</string>
+    <string name="player_next_episode">Next episode</string>
+    <string name="player_info">Playback info</string>
+    <string name="player_info_video">video: %1$s</string>
+    <string name="player_info_audio">audio to amplifier: %1$s (%2$s)</string>
+    <string name="player_info_no_decoder">no decoder</string>
+    <string name="player_info_track">track in file: %1$s</string>
+    <string name="player_info_atmos_lost">Atmos is lost: this device decodes the track itself (lossless surround, no height).</string>
+    <string name="player_info_video_outcome">video: in file %1$s → plays %2$s</string>
+    <string name="player_info_audio_outcome">audio: in file %1$s → plays %2$s</string>
+    <string name="player_outcome_as_is">as in the file</string>
+    <string name="player_outcome_dv_base">HDR10 base layer (no Dolby Vision here)</string>
+    <string name="player_outcome_server">converted by the server</string>
+    <string name="player_outcome_passthrough">unchanged to the amplifier</string>
+    <string name="player_outcome_decoded">decoded here to PCM %1$s</string>
+    <string name="player_outcome_other_track">other track: %1$s, %2$s</string>
+    <string name="player_info_dropped">dropped frames: %1$d</string>
+    <string name="player_info_bitrate_setting">bitrate: max. %1$d Mbps (Quality setting)</string>
+    <string name="player_info_bitrate_slow_network">bitrate: max. %1$d Mbps (lowered automatically: the stream kept running dry)</string>
+    <string name="player_channels_other">%1$d channels</string>
+
+    <string name="library_kind_movies">Movie</string>
+    <string name="library_kind_series">Series</string>
+    <string name="home_play">Play</string>
+    <string name="home_resume">Resume</string>
+    <string name="home_empty">Nothing to suggest: you\'ve seen every movie and no series is in progress.</string>
+    <string name="home_reason_continue">Continue watching</string>
+    <string name="home_reason_new_episode">New episode</string>
+    <string name="home_reason_next_episode">Next episode</string>
+    <string name="home_reason_recently_added">Recently added</string>
+    <string name="home_reason_for_tonight">Something for tonight</string>
+
+    <string name="settings_account">%1$s on %2$s</string>
+    <string name="settings_group_account">Account</string>
+    <string name="settings_group_playback">Playback</string>
+    <string name="settings_group_display">Display</string>
+    <string name="settings_logout">Sign out</string>
+    <string name="settings_logging_out">Signing out…</string>
+    <string name="settings_burn_in_ass_off">Burn in ASS: off</string>
+    <string name="settings_burn_in_ass_on">Burn in ASS: on</string>
+    <string name="settings_burn_in_ass_explain">Off: the TV draws ASS subtitles (common with anime) in a simplified way. On: full styling, but the server converts the video.</string>
+    <string name="settings_change_server">Other server</string>
+    <!-- %1$s is the language name in that language itself ("English"); do not translate it. -->
+    <string name="settings_language">Language: %1$s</string>
+    <string name="settings_language_explain">The language of menus and buttons. Titles and descriptions come from your server, in the language set there.</string>
+    <string name="settings_movie_view_detail">Movie view: detail</string>
+    <string name="settings_movie_view_bookcase">Movie view: shelf</string>
+    <string name="settings_movie_view_explain">Detail: one movie per screen, with backdrop. Shelf: DVD spines side by side, the chosen movie opened up.</string>
+    <string name="settings_max_bitrate_none">Quality: no limit</string>
+    <string name="settings_max_bitrate">Quality: max. %1$d Mbps</string>
+    <string name="settings_max_bitrate_explain">Does a heavy 4K movie stutter over Wi-Fi? Above the limit, the server converts the file to a lighter version.</string>
+    <!-- Debug line at the bottom left of Advanced playback. -->
+    <string name="settings_device">Video %1$s (max. %2$s) · HDR %3$s · passthrough %4$s · PCM %5$d channels · output %6$s</string>
+    <string name="settings_output_speaker">TV speakers</string>
+    <string name="settings_playback">Advanced playback</string>
+    <string name="settings_playback_explain">Display mode, HDR and passthrough: correct what the TV and amplifier report when something doesn’t play right.</string>
+    <string name="playback_title">Playback</string>
+    <string name="playback_frame_rate_always">Frame rate: always</string>
+    <string name="playback_frame_rate_system">Frame rate: as system</string>
+    <string name="playback_frame_rate_off">Frame rate: off</string>
+    <string name="playback_frame_rate_explain">Always: the screen switches to the frame rate of the video (24p without judder); the picture goes black for a moment. As system: follows “Match content frame rate” in the Google TV settings.</string>
+    <string name="playback_format_auto">%1$s: auto (%2$s)</string>
+    <string name="playback_format_on">%1$s: on</string>
+    <string name="playback_format_off">%1$s: off</string>
+    <string name="playback_detected_yes">yes</string>
+    <string name="playback_detected_no">no</string>
+    <string name="playback_passthrough_name">Passthrough %1$s</string>
+    <string name="playback_hdr_explain">Auto: what the TV reports. Off: play without it (Dolby Vision as HDR10) or let the server convert it, for example when the colours are wrong. On: play it even though the TV doesn’t report it.</string>
+    <string name="playback_passthrough_explain">Passthrough sends the sound unchanged to the amplifier or soundbar. Auto: what the output reports. Off: this device decodes it itself (no Atmos). On: for an amplifier that can do more than it reports.</string>
+    <string name="playback_downmix_on">Stereo only: on</string>
+    <string name="playback_downmix_off">Stereo only: off</string>
+    <string name="playback_downmix_explain">For a TV or headphones without surround: the server delivers everything in stereo.</string>
+    <string name="playback_lossless_on">TrueHD/DTS on this device: on</string>
+    <string name="playback_lossless_off">TrueHD/DTS on this device: off</string>
+    <string name="playback_lossless_explain">On: this device decodes TrueHD and DTS to lossless surround. Only hear stereo, for example with a soundbar on plain ARC? Turn off: then a Dolby track or a conversion.</string>
+    <string name="playback_tunneling_auto">Tunneling: auto (Dolby Vision)</string>
+    <string name="playback_tunneling_on">Tunneling: on</string>
+    <string name="playback_tunneling_off">Tunneling: off</string>
+    <string name="playback_tunneling_explain">The TV box itself decides when each frame is shown. Auto: only for Dolby Vision on an Amlogic chip, such as the Chromecast.</string>
+    <string name="playback_video_level_check">Video level: check</string>
+    <string name="playback_video_level_ignore">Video level: ignore</string>
+    <string name="playback_video_level_explain">Some boxes report a lower video level than they can play, so the server converts files for nothing. Ignore: play them directly anyway.</string>
+    <string name="playback_start_delay_none">Start delay: none</string>
+    <string name="playback_start_delay">Start delay: %1$s s</string>
+    <string name="playback_start_delay_explain">Do you hear a click at the start, or does the sound drop out briefly (often with an amplifier in between)? Then add a delay: the sound starts later, when the TV and amplifier are ready.</string>
+    <string name="settings_device_none">none</string>
+
+    <!-- Server genres (English, TMDb); mapped in core/common/GenreResources.kt. -->
+    <string name="genre_action">Action</string>
+    <string name="genre_action_adventure">Action &amp; Adventure</string>
+    <string name="genre_adventure">Adventure</string>
+    <string name="genre_animation">Animation</string>
+    <string name="genre_comedy">Comedy</string>
+    <string name="genre_crime">Crime</string>
+    <string name="genre_documentary">Documentary</string>
+    <string name="genre_drama">Drama</string>
+    <string name="genre_family">Family</string>
+    <string name="genre_fantasy">Fantasy</string>
+    <string name="genre_history">History</string>
+    <string name="genre_horror">Horror</string>
+    <string name="genre_kids">Kids</string>
+    <string name="genre_music">Music</string>
+    <string name="genre_mystery">Mystery</string>
+    <string name="genre_news">News</string>
+    <string name="genre_reality">Reality</string>
+    <string name="genre_romance">Romance</string>
+    <string name="genre_scifi_fantasy">Sci-Fi &amp; Fantasy</string>
+    <string name="genre_science_fiction">Science Fiction</string>
+    <string name="genre_soap">Soap</string>
+    <string name="genre_talk">Talk show</string>
+    <string name="genre_thriller">Thriller</string>
+    <string name="genre_tv_movie">TV movie</string>
+    <string name="genre_war">War</string>
+    <string name="genre_war_politics">War &amp; Politics</string>
+    <string name="genre_western">Western</string>
+    <string name="player_skip_intro">Skip intro</string>
+    <string name="player_skip_recap">Skip recap</string>
+    <string name="player_skip_commercial">Skip ad</string>
+    <string name="player_skip_preview">Skip preview</string>
+    <string name="player_skip_outro">Skip credits</string>
+</resources>

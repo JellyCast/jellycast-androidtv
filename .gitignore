@@ -1,0 +1,27 @@
+# Local secrets and settings
+local.properties
+keystore.properties
+*.jks
+*.keystore
+.env
+
+# Gradle / build
+.gradle/
+build/
+**/build/
+.kotlin/
+captures/
+*.apk
+*.aab
+
+# Android Studio / IntelliJ
+.idea/
+*.iml
+.externalNativeBuild/
+.cxx/
+
+# macOS
+.DS_Store
+
+# Temporary
+screen.png

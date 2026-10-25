@@ -1,0 +1,42 @@
+{"id": 1, "command": "register", "name": "jellycast-test-remote", "vid": 6353, "pid": 4660, "bus": "usb", "configuration": [{"type": 100, "data": [1]}, {"type": 101, "data": [103, 105, 106, 108]}]}
+{"id": 1, "command": "delay", "duration": 1500}
+{"id": 1, "command": "inject", "events": [1, 106, 1, 0, 0, 0]}
+{"id": 1, "command": "delay", "duration": 2700}
+{"id": 1, "command": "inject", "events": [1, 106, 0, 0, 0, 0]}
+{"id": 1, "command": "delay", "duration": 300}
+{"id": 1, "command": "inject", "events": [1, 105, 1, 0, 0, 0]}
+{"id": 1, "command": "delay", "duration": 2700}
+{"id": 1, "command": "inject", "events": [1, 105, 0, 0, 0, 0]}
+{"id": 1, "command": "delay", "duration": 300}
+{"id": 1, "command": "inject", "events": [1, 106, 1, 0, 0, 0]}
+{"id": 1, "command": "delay", "duration": 2700}
+{"id": 1, "command": "inject", "events": [1, 106, 0, 0, 0, 0]}
+{"id": 1, "command": "delay", "duration": 300}
+{"id": 1, "command": "inject", "events": [1, 105, 1, 0, 0, 0]}
+{"id": 1, "command": "delay", "duration": 2700}
+{"id": 1, "command": "inject", "events": [1, 105, 0, 0, 0, 0]}
+{"id": 1, "command": "delay", "duration": 300}
+{"id": 1, "command": "inject", "events": [1, 106, 1, 0, 0, 0]}
+{"id": 1, "command": "delay", "duration": 2700}
+{"id": 1, "command": "inject", "events": [1, 106, 0, 0, 0, 0]}
+{"id": 1, "command": "delay", "duration": 300}
+{"id": 1, "command": "inject", "events": [1, 105, 1, 0, 0, 0]}
+{"id": 1, "command": "delay", "duration": 2700}
+{"id": 1, "command": "inject", "events": [1, 105, 0, 0, 0, 0]}
+{"id": 1, "command": "delay", "duration": 300}
+{"id": 1, "command": "inject", "events": [1, 106, 1, 0, 0, 0]}
+{"id": 1, "command": "delay", "duration": 2700}
+{"id": 1, "command": "inject", "events": [1, 106, 0, 0, 0, 0]}
+{"id": 1, "command": "delay", "duration": 300}
+{"id": 1, "command": "inject", "events": [1, 105, 1, 0, 0, 0]}
+{"id": 1, "command": "delay", "duration": 2700}
+{"id": 1, "command": "inject", "events": [1, 105, 0, 0, 0, 0]}
+{"id": 1, "command": "delay", "duration": 300}
+{"id": 1, "command": "inject", "events": [1, 106, 1, 0, 0, 0]}
+{"id": 1, "command": "delay", "duration": 2700}
+{"id": 1, "command": "inject", "events": [1, 106, 0, 0, 0, 0]}
+{"id": 1, "command": "delay", "duration": 300}
+{"id": 1, "command": "inject", "events": [1, 105, 1, 0, 0, 0]}
+{"id": 1, "command": "delay", "duration": 2700}
+{"id": 1, "command": "inject", "events": [1, 105, 0, 0, 0, 0]}
+{"id": 1, "command": "delay", "duration": 300}

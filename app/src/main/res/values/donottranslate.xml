@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Text that is the same in every language (brand, technical terms, keys). Android lint treats
+     a file with this name as untranslatable, so translators skip it. -->
+<resources>
+    <string name="app_name">JellyCast</string>
+    <!-- Wordmark: "Jelly" bold, "Cast" light (BrandWordmark). -->
+    <string name="brand_name_first">Jelly</string>
+    <string name="brand_name_second">Cast</string>
+    <string name="settings_version">JellyCast %1$s (%2$d)</string>
+    <string name="movies_ok_key">OK</string>
+    <string name="stack_position">%1$d / %2$d</string>
+    <string name="tech_4k">4K</string>
+    <string name="tech_hd">HD</string>
+    <string name="tech_sd">SD</string>
+    <string name="tech_dv_short">DV</string>
+    <string name="tech_hdr_short">HDR</string>
+    <string name="tech_atmos">Atmos</string>
+    <string name="tech_dolby_vision">Dolby Vision</string>
+    <string name="tech_hdr10_plus">HDR10+</string>
+    <string name="tech_hdr10">HDR10</string>
+    <string name="tech_hlg">HLG</string>
+    <string name="tech_remux">Remux</string>
+    <string name="tech_arrow">%1$s → %2$s</string>
+    <string name="tech_pcm">PCM %1$s</string>
+    <string name="tech_dv_profile">DV P%1$d</string>
+    <string name="player_sdh">SDH</string>
+    <string name="player_remaining">−%1$s</string>
+    <string name="player_channels_stereo">2.0</string>
+    <string name="player_channels_51">5.1</string>
+    <string name="player_channels_71">7.1</string>
+    <string name="settings_output_hdmi">HDMI</string>
+    <string name="settings_output_hdmi_arc">HDMI ARC</string>
+    <string name="settings_output_hdmi_earc">HDMI eARC</string>
+    <string name="settings_output_bluetooth">Bluetooth</string>
+    <string name="settings_output_usb">USB</string>
+    <string name="playback_detected_unknown">…</string>
+    <string name="format_hdr10">HDR10</string>
+    <string name="format_hdr10_plus">HDR10+</string>
+    <string name="format_dolby_vision">Dolby Vision</string>
+    <string name="format_ac3">AC3</string>
+    <string name="format_eac3">EAC3</string>
+    <string name="format_dts">DTS</string>
+    <string name="format_truehd">TrueHD</string>
+</resources>
