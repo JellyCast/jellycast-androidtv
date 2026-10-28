@@ -8,6 +8,7 @@ import nl.jellycast.core.testing.testEpisode
 import nl.jellycast.core.testing.testMovie
 import nl.jellycast.core.testing.testSeries
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -39,10 +40,10 @@ class HomeViewModelTest {
                     ),
             )
 
-        val content = (HomeViewModel(library).uiState.value.load as HomeLoad.Success).content
+        val state = HomeViewModel(library).uiState.value
 
-        assertEquals(listOf("e2"), content.nextUp.map { it.id })
-        assertEquals(listOf("e1"), content.continueWatching.map { it.id })
+        assertEquals(listOf("e2"), state.nextEpisodes.map { it.id })
+        assertEquals(listOf("e1"), state.continueWatching.map { it.id })
     }
 
     @Test
@@ -56,7 +57,7 @@ class HomeViewModelTest {
         viewModel.onTabSelect(HomeTab.Movies)
         viewModel.onQueryChange("AMELIE")
 
-        assertEquals(listOf("m1"), viewModel.uiState.value.movies.map { it.id })
+        assertEquals(listOf("m1"), viewModel.uiState.value.movies.valueOrNull?.map { it.id })
     }
 
     @Test
@@ -67,21 +68,31 @@ class HomeViewModelTest {
         viewModel.onTabSelect(HomeTab.Series)
 
         assertEquals("", viewModel.uiState.value.query)
-        assertEquals(1, viewModel.uiState.value.series.size)
+        assertEquals(1, viewModel.uiState.value.series.valueOrNull?.size)
     }
 
     @Test
-    fun `a failed first load shows the error and retry loads again`() = runTest {
+    fun `the rows show while the full library loads on its own`() = runTest {
+        val viewModel = HomeViewModel(FakeLibraryRepository(movies = listOf(testMovie("m1"))))
+
+        val state = viewModel.uiState.value
+        assertFalse(state.rowsLoading)
+        assertTrue(state.movies is Loadable.Ready)
+    }
+
+    @Test
+    fun `only the parts that failed show an error, and retry loads them again`() = runTest {
+        // Calls run in order: resume, new movies, next up, movies, series; the first three fail.
         val library = FakeLibraryRepository(movies = listOf(testMovie("m1"))).apply {
-            failNext =
-                true
+            failCount = 3
         }
         val viewModel = HomeViewModel(library)
-        assertEquals(HomeLoad.Error, viewModel.uiState.value.load)
+        assertTrue(viewModel.uiState.value.rowsFailed)
+        assertTrue(viewModel.uiState.value.movies is Loadable.Ready)
 
         viewModel.onRetry()
 
-        assertTrue(viewModel.uiState.value.load is HomeLoad.Success)
+        assertFalse(viewModel.uiState.value.rowsFailed)
     }
 
     @Test
@@ -89,9 +100,10 @@ class HomeViewModelTest {
         val library = FakeLibraryRepository(movies = listOf(testMovie("m1")))
         val viewModel = HomeViewModel(library)
 
-        library.failNext = true
+        library.failCount = 5
         viewModel.onShown()
 
-        assertTrue(viewModel.uiState.value.load is HomeLoad.Success)
+        assertEquals(listOf("m1"), viewModel.uiState.value.movies.valueOrNull?.map { it.id })
+        assertFalse(viewModel.uiState.value.rowsFailed)
     }
 }

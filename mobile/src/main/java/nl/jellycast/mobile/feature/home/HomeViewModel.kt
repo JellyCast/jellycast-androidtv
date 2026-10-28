@@ -2,8 +2,6 @@ package nl.jellycast.mobile.feature.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,44 +16,61 @@ import nl.jellycast.core.model.Series
 
 enum class HomeTab { Home, Movies, Series }
 
-data class HomeContent(
-    val continueWatching: List<PlayableItem>,
-    val nextUp: List<Episode>,
-    val newMovies: List<Movie>,
-    val movies: List<Movie>,
-    val series: List<Series>,
-)
+sealed interface Loadable<out T> {
+    data object Loading : Loadable<Nothing>
 
-sealed interface HomeLoad {
-    data object Loading : HomeLoad
+    data object Failed : Loadable<Nothing>
 
-    data object Error : HomeLoad
-
-    data class Success(val content: HomeContent) : HomeLoad
+    data class Ready<T>(val value: T) : Loadable<T>
 }
 
+val <T> Loadable<T>.valueOrNull: T?
+    get() = (this as? Loadable.Ready)?.value
+
+/**
+ * Every part loads on its own, so the small rows show before the whole library has arrived (on a
+ * phone network the full lists can take seconds).
+ */
 data class HomeUiState(
     val tab: HomeTab = HomeTab.Home,
     val query: String = "",
-    val load: HomeLoad = HomeLoad.Loading,
+    val resumeMovies: Loadable<List<Movie>> = Loadable.Loading,
+    val nextUp: Loadable<List<Episode>> = Loadable.Loading,
+    val newMovies: Loadable<List<Movie>> = Loadable.Loading,
+    val allMovies: Loadable<List<Movie>> = Loadable.Loading,
+    val allSeries: Loadable<List<Series>> = Loadable.Loading,
 ) {
-    val movies: List<Movie>
-        get() = (load as? HomeLoad.Success)?.content?.movies.orEmpty()
-            .filter { matchesIgnoringCaseAndAccents(it.title, query) }
+    private val rowParts: List<Loadable<*>>
+        get() = listOf(resumeMovies, nextUp, newMovies)
 
-    val series: List<Series>
-        get() = (load as? HomeLoad.Success)?.content?.series.orEmpty()
-            .filter { matchesIgnoringCaseAndAccents(it.title, query) }
+    val rowsLoading: Boolean
+        get() = rowParts.all { it == Loadable.Loading }
+
+    val rowsFailed: Boolean
+        get() = rowParts.all { it == Loadable.Failed }
+
+    val continueWatching: List<PlayableItem>
+        get() = continueWatching(resumeMovies.valueOrNull.orEmpty(), nextUp.valueOrNull.orEmpty())
+
+    val nextEpisodes: List<Episode>
+        get() = nextUp.valueOrNull.orEmpty().filter { it.resumePositionMs == 0L }
+
+    val movies: Loadable<List<Movie>>
+        get() = allMovies.filtered { matchesIgnoringCaseAndAccents(it.title, query) }
+
+    val series: Loadable<List<Series>>
+        get() = allSeries.filtered { matchesIgnoringCaseAndAccents(it.title, query) }
 }
+
+private fun <T> Loadable<List<T>>.filtered(keep: (T) -> Boolean): Loadable<List<T>> =
+    if (this is Loadable.Ready) Loadable.Ready(value.filter(keep)) else this
 
 class HomeViewModel(private val library: LibraryRepository) : ViewModel() {
     private val _uiState = MutableStateFlow(HomeUiState())
     val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
 
-    private var loadJob: Job? = null
-
     init {
-        load()
+        loadAll()
     }
 
     fun onTabSelect(tab: HomeTab) {
@@ -68,59 +83,63 @@ class HomeViewModel(private val library: LibraryRepository) : ViewModel() {
 
     /** Something may have been watched in the player or on another device. */
     fun onShown() {
-        if (_uiState.value.load is HomeLoad.Success) load()
+        loadAll()
     }
 
     fun onRetry() {
-        _uiState.update { it.copy(load = HomeLoad.Loading) }
-        load()
+        _uiState.update {
+            it.copy(
+                resumeMovies = it.resumeMovies.retrying(),
+                nextUp = it.nextUp.retrying(),
+                newMovies = it.newMovies.retrying(),
+                allMovies = it.allMovies.retrying(),
+                allSeries = it.allSeries.retrying(),
+            )
+        }
+        loadAll()
     }
 
-    private fun load() {
-        loadJob?.cancel()
-        loadJob =
-            viewModelScope.launch {
-                val resume = async { library.getResumeMovies(ROW_LIMIT) }
-                val nextUp = async { library.getNextUp() }
-                val latest = async { library.getLatestUnwatchedMovies(ROW_LIMIT) }
-                val movies = async { library.getMovies() }
-                val series = async { library.getSeries() }
-                val content =
-                    combine(
-                        resume.await(),
-                        nextUp.await(),
-                        latest.await(),
-                        movies.await(),
-                        series.await(),
+    private fun loadAll() {
+        load({
+            library.getResumeMovies(ROW_LIMIT)
+        }) { state, part -> state.copy(resumeMovies = part(state.resumeMovies)) }
+        load({
+            library.getLatestUnwatchedMovies(ROW_LIMIT)
+        }) { state, part -> state.copy(newMovies = part(state.newMovies)) }
+        load({ library.getNextUp() }) { state, part -> state.copy(nextUp = part(state.nextUp)) }
+        load({
+            library.getMovies()
+        }) { state, part -> state.copy(allMovies = part(state.allMovies)) }
+        load({
+            library.getSeries()
+        }) { state, part -> state.copy(allSeries = part(state.allSeries)) }
+    }
+
+    /** A failed refresh keeps what is already shown. */
+    private fun <T> load(
+        fetch: suspend () -> Result<T>,
+        apply: (HomeUiState, (Loadable<T>) -> Loadable<T>) -> HomeUiState,
+    ) {
+        viewModelScope.launch {
+            val result = fetch()
+            _uiState.update { state ->
+                apply(state) { current ->
+                    result.fold(
+                        onSuccess = { Loadable.Ready(it) },
+                        onFailure = { if (current is Loadable.Ready) current else Loadable.Failed },
                     )
-                // A failed refresh keeps what is already shown.
-                _uiState.update {
-                    when {
-                        content != null -> it.copy(load = HomeLoad.Success(content))
-                        it.load is HomeLoad.Success -> it
-                        else -> it.copy(load = HomeLoad.Error)
-                    }
                 }
             }
+        }
     }
+}
 
-    private fun combine(
-        resume: Result<List<Movie>>,
-        nextUp: Result<List<Episode>>,
-        latest: Result<List<Movie>>,
-        movies: Result<List<Movie>>,
-        series: Result<List<Series>>,
-    ): HomeContent? {
-        val episodes = nextUp.getOrNull() ?: return null
-        val resumeMovies = resume.getOrNull() ?: return null
-        return HomeContent(
-            continueWatching = continueWatching(resumeMovies, episodes),
-            nextUp = episodes.filter { it.resumePositionMs == 0L },
-            newMovies = latest.getOrNull().orEmpty(),
-            movies = movies.getOrNull() ?: return null,
-            series = series.getOrNull() ?: return null,
-        )
-    }
+private fun <T> Loadable<T>.retrying(): Loadable<T> = if (this ==
+    Loadable.Failed
+) {
+    Loadable.Loading
+} else {
+    this
 }
 
 /** Half-watched movies and episodes, most recently touched first. */

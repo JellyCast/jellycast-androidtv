@@ -41,9 +41,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.PlayerView
+import nl.jellycast.core.model.PlayableItem
 import nl.jellycast.core.playback.PlaybackReporter
 import nl.jellycast.core.playback.PlayerFactory
 import nl.jellycast.mobile.R
+import nl.jellycast.mobile.core.ui.episodeCode
 import org.koin.androidx.compose.koinViewModel
 import org.koin.compose.koinInject
 import org.koin.core.parameter.parametersOf
@@ -123,7 +125,7 @@ private fun PlayerSurface(
         )
         if (controllerVisible) {
             TopBar(
-                title = state.plan.title,
+                title = state.item?.let { playerTitle(it) } ?: state.plan.title,
                 nextAvailable = state.nextEpisode != null,
                 onBack = callbacks.onExit,
                 onNext = callbacks.onPlayNext,
@@ -189,6 +191,17 @@ private fun PlayerError(detail: String?, onRetry: () -> Unit, onExit: () -> Unit
         Button(onClick = onRetry) { Text(stringResource(R.string.retry)) }
         OutlinedButton(onClick = onExit) { Text(stringResource(R.string.back)) }
     }
+}
+
+/** The plan's title is the file name; the item gives "Friends · S9 · E1 · Title". */
+@Composable
+private fun playerTitle(item: PlayableItem): String = when (item) {
+    is PlayableItem.MovieItem -> item.movie.title
+
+    is PlayableItem.EpisodeItem ->
+        listOf(item.episode.seriesTitle, episodeCode(item.episode), item.episode.title)
+            .filter { it.isNotEmpty() }
+            .joinToString(" · ")
 }
 
 /** Landscape without system bars while the player is open; restored on leaving. */

@@ -107,40 +107,56 @@ fun HomeContent(uiState: HomeUiState, actions: HomeActions, modifier: Modifier =
 
 @Composable
 private fun TabBody(uiState: HomeUiState, actions: HomeActions, padding: PaddingValues) {
-    when (val load = uiState.load) {
-        HomeLoad.Loading ->
-            Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator()
+    when (uiState.tab) {
+        HomeTab.Home ->
+            when {
+                uiState.rowsFailed -> ErrorMessage(actions.onRetry, Modifier.padding(padding))
+                uiState.rowsLoading -> LoadingIndicator(padding)
+                else -> HomeRows(uiState, actions, padding)
             }
 
-        HomeLoad.Error -> ErrorMessage(actions.onRetry, Modifier.padding(padding))
-
-        is HomeLoad.Success ->
-            when (uiState.tab) {
-                HomeTab.Home -> HomeRows(load.content, actions, padding)
-
-                HomeTab.Movies ->
-                    PosterGrid(
-                        tiles = uiState.movies.map {
-                            PosterTile(it.id, it.title, it.artwork.poster)
-                        },
-                        query = uiState.query,
-                        onQueryChange = actions.onQueryChange,
-                        onClick = actions.onOpenMovie,
-                        contentPadding = padding,
-                    )
-
-                HomeTab.Series ->
-                    PosterGrid(
-                        tiles = uiState.series.map {
-                            PosterTile(it.id, it.title, it.artwork.poster)
-                        },
-                        query = uiState.query,
-                        onQueryChange = actions.onQueryChange,
-                        onClick = actions.onOpenSeries,
-                        contentPadding = padding,
-                    )
+        HomeTab.Movies ->
+            LoadableGrid(uiState.movies, actions.onRetry, padding) { movies ->
+                PosterGrid(
+                    tiles = movies.map { PosterTile(it.id, it.title, it.artwork.poster) },
+                    query = uiState.query,
+                    onQueryChange = actions.onQueryChange,
+                    onClick = actions.onOpenMovie,
+                    contentPadding = padding,
+                )
             }
+
+        HomeTab.Series ->
+            LoadableGrid(uiState.series, actions.onRetry, padding) { series ->
+                PosterGrid(
+                    tiles = series.map { PosterTile(it.id, it.title, it.artwork.poster) },
+                    query = uiState.query,
+                    onQueryChange = actions.onQueryChange,
+                    onClick = actions.onOpenSeries,
+                    contentPadding = padding,
+                )
+            }
+    }
+}
+
+@Composable
+private fun <T> LoadableGrid(
+    loadable: Loadable<T>,
+    onRetry: () -> Unit,
+    padding: PaddingValues,
+    content: @Composable (T) -> Unit,
+) {
+    when (loadable) {
+        Loadable.Loading -> LoadingIndicator(padding)
+        Loadable.Failed -> ErrorMessage(onRetry, Modifier.padding(padding))
+        is Loadable.Ready -> content(loadable.value)
+    }
+}
+
+@Composable
+private fun LoadingIndicator(padding: PaddingValues) {
+    Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
+        CircularProgressIndicator()
     }
 }
 

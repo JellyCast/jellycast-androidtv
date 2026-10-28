@@ -27,6 +27,7 @@ sealed interface PlayerUiState {
 
     data class Ready(
         val plan: PlaybackPlan,
+        val item: PlayableItem? = null,
         val nextEpisode: Episode? = null,
         val segments: List<MediaSegment> = emptyList(),
     ) : PlayerUiState
@@ -50,6 +51,7 @@ class PlayerViewModel(
     private var lastPositionMs = startPositionMs
     private var fallback = PlaybackFallback()
     private var retryUsed = false
+    private var item: PlayableItem? = null
     private var nextEpisode: Episode? = null
     private var segments: List<MediaSegment> = emptyList()
 
@@ -99,6 +101,7 @@ class PlayerViewModel(
         lastPositionMs = if (next.isPlayed) 0 else next.resumePositionMs
         fallback = PlaybackFallback()
         retryUsed = false
+        item = PlayableItem.EpisodeItem(next)
         nextEpisode = null
         segments = emptyList()
         prepare()
@@ -119,6 +122,7 @@ class PlayerViewModel(
                             fallback,
                             StreamChoice(null, null),
                         ),
+                        item,
                         nextEpisode,
                         segments,
                     )
@@ -133,16 +137,18 @@ class PlayerViewModel(
         val itemId = currentItemId
         viewModelScope.launch {
             segments = library.getSegments(itemId)
-            val item = library.getPlayable(itemId).getOrNull()
+            val playable = library.getPlayable(itemId).getOrNull()
+            item = playable ?: item
             nextEpisode =
-                (item as? PlayableItem.EpisodeItem)?.episode?.let { episode ->
+                (playable as? PlayableItem.EpisodeItem)?.episode?.let { episode ->
                     library.getEpisodes(episode.seriesId).getOrNull()?.let {
                         nextEpisodeAfter(episode, it)
                     }
                 }
             val ready = _uiState.value as? PlayerUiState.Ready ?: return@launch
             if (ready.plan.itemId == itemId) {
-                _uiState.value = ready.copy(nextEpisode = nextEpisode, segments = segments)
+                _uiState.value =
+                    ready.copy(item = item, nextEpisode = nextEpisode, segments = segments)
             }
         }
     }

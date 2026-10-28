@@ -27,11 +27,14 @@ import nl.jellycast.mobile.core.designsystem.component.PosterImage
 import nl.jellycast.mobile.core.ui.episodeCode
 
 @Composable
-internal fun HomeRows(content: HomeContent, actions: HomeActions, padding: PaddingValues) {
-    val empty =
-        content.continueWatching.isEmpty() && content.nextUp.isEmpty() &&
-            content.newMovies.isEmpty()
-    if (empty) {
+internal fun HomeRows(uiState: HomeUiState, actions: HomeActions, padding: PaddingValues) {
+    val continueWatching = uiState.continueWatching
+    val nextEpisodes = uiState.nextEpisodes
+    val newMovies = uiState.newMovies.valueOrNull.orEmpty()
+    val stillLoading =
+        Loadable.Loading in listOf(uiState.resumeMovies, uiState.nextUp, uiState.newMovies)
+    val empty = continueWatching.isEmpty() && nextEpisodes.isEmpty() && newMovies.isEmpty()
+    if (empty && !stillLoading) {
         Text(
             stringResource(R.string.home_empty),
             style = MaterialTheme.typography.bodyLarge,
@@ -49,28 +52,28 @@ internal fun HomeRows(content: HomeContent, actions: HomeActions, padding: Paddi
         ),
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
-        if (content.continueWatching.isNotEmpty()) {
+        if (continueWatching.isNotEmpty()) {
             item(key = "continue") {
                 Row(R.string.row_continue_watching) {
-                    items(content.continueWatching, key = { it.id }) { item ->
+                    items(continueWatching, key = { it.id }) { item ->
                         ContinueCard(item, onClick = { actions.onPlay(item.id, item.resumeMs) })
                     }
                 }
             }
         }
-        if (content.nextUp.isNotEmpty()) {
+        if (nextEpisodes.isNotEmpty()) {
             item(key = "nextUp") {
                 Row(R.string.row_next_up) {
-                    items(content.nextUp, key = { it.id }) { episode ->
+                    items(nextEpisodes, key = { it.id }) { episode ->
                         EpisodeCard(episode, onClick = { actions.onOpenSeries(episode.seriesId) })
                     }
                 }
             }
         }
-        if (content.newMovies.isNotEmpty()) {
+        if (newMovies.isNotEmpty()) {
             item(key = "new") {
                 Row(R.string.row_new_movies) {
-                    items(content.newMovies, key = { it.id }) { movie ->
+                    items(newMovies, key = { it.id }) { movie ->
                         PosterImage(
                             url = movie.artwork.poster,
                             title = movie.title,

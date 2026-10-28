@@ -11,7 +11,12 @@ The project now has three modules: `:core` (everything without UI, shared), `:tv
 - Phone: navigation bar at the bottom; from 600 dp wide (tablet, landscape) a navigation rail.
 - Language follows the phone (the TV app defaults to English).
 
-Tested 2026-10-28 only in the emulator (Pixel API 37 and landscape 1080p), without a server: the Mac was on another network, so sign in, browsing and playback are **not tested yet**. No Android phone or tablet in the house; test on an emulator at home or a borrowed device.
+Tested 2026-10-28 in the emulator (Pixel API 37), over the VPN (server at `10.8.0.1:8096`, test user "claude", Quick Connect approved with the API key):
+
+- Works: server address, Quick Connect sign in, sign out, Home (Continue watching with progress, New movies), Movies grid, search ("oppen" → Oppenheimer), movie detail (backdrop, logo, metadata, buttons, description), starting playback: full screen landscape, plan requested (direct play for H.264, transcode for 4K HDR10 because the emulator has no 10-bit HEVC), fallback chain (retry → transcode → error screen), stop reports at the right position.
+- Not tested: actual video frames. The emulator's decoders (`c2.goldfish.h264/hevc`) fail on every stream (`ERROR_CODE_DECODING_FAILED`, also H.264 720p direct play), so playback needs a real device. Also untested: series page, settings screen, tablet layout with content.
+- The emulator's network over the Mac's VPN drops connections (raw `nc`: 1 of 3 identical requests answered), so Home sometimes kept loading for minutes. Seen in the app, not on the Mac (0.03 s). Because of it, Home now loads each part on its own: the rows show as soon as their small requests are back, Movies and Series have their own loading state.
+- Fixed: the player's top bar showed the file name; it now shows the title ("Friends · S9 · E1 · …").
 
 Open for the mobile app: images come in the TV sizes (posters 240 px wide, a bit soft on a phone grid); no skeletons yet (spinner); no picture-in-picture, background audio, downloads or casting; no remote control of the TV from the phone.
 
