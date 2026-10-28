@@ -103,7 +103,8 @@ fun FullPlayerChrome(
                         Modifier
                             .fillMaxSize()
                             .then(swipeLayer)
-                            .background(JellyCastColors.Background)
+                            // Black like the video's own bars, so the picture doesn't sit in a box.
+                            .background(Color.Black)
                             .statusBarsPadding(),
                     playingItemId = item.id,
                     header = {
