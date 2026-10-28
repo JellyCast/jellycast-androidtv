@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!-- SDK 1.9.x requires Jellyfin 12; the server runs 10.11 (see gradle/libs.versions.toml). -->
+    <issue id="NewerVersionAvailable">
+        <ignore regexp="org.jellyfin.sdk" />
+    </issue>
+    <!-- Every language must be complete: no half-translated screens. -->
+    <issue id="MissingTranslation" severity="error" />
+    <!-- A key that only exists in a translation is a typo or a forgotten removal. -->
+    <issue id="ExtraTranslation" severity="error" />
+    <!-- We install the full APK, no per-language splits. -->
+    <issue id="AppBundleLocaleChanges" severity="ignore" />
+</lint>

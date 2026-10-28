@@ -17,6 +17,8 @@ A build without `media3-ffmpeg-decoder` leaves only the MIT, Apache-2.0 and LGPL
 | AndroidX Media3 (ExoPlayer, HLS, session, UI) | 1.11.1 | Apache-2.0 | https://github.com/androidx/media |
 | Jetpack Compose (BOM) | 2026.09.00 | Apache-2.0 | https://developer.android.com/jetpack/androidx |
 | Compose for TV (tv-material) | 1.1.0 | Apache-2.0 | https://developer.android.com/jetpack/androidx |
+| Compose Material 3 (mobile app, via the BOM) | 2026.09.00 | Apache-2.0 | https://developer.android.com/jetpack/androidx |
+| Material Icons (a few vector paths in `mobile/src/main/res/drawable`) | | Apache-2.0 | https://github.com/google/material-design-icons |
 | AndroidX Activity, Lifecycle, Navigation 3, DataStore | see `libs.versions.toml` | Apache-2.0 | https://developer.android.com/jetpack/androidx |
 | Kotlin standard library, kotlinx.coroutines, kotlinx.serialization | see `libs.versions.toml` | Apache-2.0 | https://github.com/JetBrains/kotlin |
 | Koin | 4.2.2 | Apache-2.0 | https://github.com/InsertKoinIO/koin |
@@ -25,7 +27,7 @@ A build without `media3-ffmpeg-decoder` leaves only the MIT, Apache-2.0 and LGPL
 | slf4j-timber | 0.0.8 | Apache-2.0 | https://github.com/unveloper/slf4j-timber |
 | SLF4J API (via the Jellyfin SDK) | | MIT | https://github.com/qos-ch/slf4j |
 
-These libraries bring their own dependencies, each under its own license; `./gradlew :tv:dependencies --configuration releaseRuntimeClasspath` lists them all.
+These libraries bring their own dependencies, each under its own license; `./gradlew :tv:dependencies --configuration releaseRuntimeClasspath` (or `:mobile:`) lists them all.
 
 ## Trademarks
 

@@ -60,7 +60,9 @@ tv/src/main/res/
   drawable-xhdpi/banner.png              # 320×180, with the app name in the image
   xml/network_security_config.xml        # cleartext for the LAN only
 
-mobile/                                  # :mobile, phone and tablet app; see mobile/README section in README.md
+mobile/src/main/java/nl/jellycast/mobile/   # :mobile, phone and tablet app (Material 3), same tree as :tv
+  di/ navigation/ core/designsystem/ core/ui/
+  feature/ server/ login/ home/ (Home, Movies, Series tabs) detail/ series/ player/ settings/
 ```
 ## File rules
 

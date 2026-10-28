@@ -146,7 +146,7 @@ Without `keystore.properties`, `assembleRelease` builds an unsigned APK. How to 
 
 ## How it's built
 
-Kotlin, Jetpack Compose with [Compose for TV](https://developer.android.com/training/tv/playback/compose), Media3/ExoPlayer, the [Jellyfin Kotlin SDK](https://github.com/jellyfin/jellyfin-sdk-kotlin), Coil and Koin. A single Gradle module, organised by feature. Every library is listed with an explanation in [docs/dependencies.md](docs/dependencies.md).
+Kotlin, Jetpack Compose with [Compose for TV](https://developer.android.com/training/tv/playback/compose), Media3/ExoPlayer, the [Jellyfin Kotlin SDK](https://github.com/jellyfin/jellyfin-sdk-kotlin), Coil and Koin. Three Gradle modules: `:core` (models, Jellyfin access, repositories and the playback engine), `:tv` (this app) and `:mobile`, a simpler phone and tablet app (Material 3) on the same core. Each app is organised by feature. Every library is listed with an explanation in [docs/dependencies.md](docs/dependencies.md).
 
 The project documentation:
 

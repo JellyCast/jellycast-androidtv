@@ -39,5 +39,5 @@ What gets tested, how, and with which test doubles. Manual checks on the device 
 
 - `./gradlew testDebugUnitTest` must be green for every commit that touches logic.
 - UI tests run on the connected Chromecast; only before a release or when focus code changed. If the Chromecast is connected twice (IP and mDNS, `adb devices`), `./gradlew connectedDebugAndroidTest` runs twice and fails on uninstalling the app. Then run via adb on one connection:
-  `ANDROID_SERIAL=<ip>:5555 ./gradlew :tv::tv:installDebug :tv:installDebugAndroidTest && adb shell am instrument -w nl.jellycast.tv.test/androidx.test.runner.AndroidJUnitRunner`
+  `ANDROID_SERIAL=<ip>:5555 ./gradlew :tv:installDebug :tv:installDebugAndroidTest && adb shell am instrument -w nl.jellycast.tv.test/androidx.test.runner.AndroidJUnitRunner`
 - Never put a test you can't get green on `@Ignore` silently. Report it and record it in `NOTES.md`.

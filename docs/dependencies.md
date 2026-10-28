@@ -153,7 +153,7 @@ All versions were looked up on Google Maven, Maven Central or the Gradle Plugin 
 - **Why:** the only engine on Android that sends HDR and Dolby Vision to the TV properly, with passthrough, PGS/VobSub subtitles and MediaSession. Every serious Jellyfin client uses it. Research: `docs/research/playback-engine.md`.
 - **Alternatives:** mpv (can't output HDR/DV on Android, tone-maps to SDR; ±23 MB); libVLC (±40 MB, dropped by the official Jellyfin app in 2024 over memory problems and a CVE); the old `MediaPlayer` (too limited).
 - **Coordinate:** `androidx.media3:media3-exoplayer`, `media3-session`, `media3-ui` (phase 2), `media3-ui-compose` (phase 5) · version `1.11.1` · added 2026-10-08 (phase 2), plus `media3-exoplayer-hls` for transcodes via HLS
-- **Parts:** `media3-ui-compose` provides the Compose building blocks for our own player overlay (phase 5): `ContentFrame` (the video picture) and small state holders for play/pause and progress, without ready-made buttons. `media3-session` creates a `MediaSession`, so the system and the Assistant ("pause") can control the player. `media3-ui` now only provides `SubtitleView` (draws subtitles, including PGS).
+- **Parts:** `media3-ui-compose` provides the Compose building blocks for our own player overlay (phase 5): `ContentFrame` (the video picture) and small state holders for play/pause and progress, without ready-made buttons. `media3-session` creates a `MediaSession`, so the system and the Assistant ("pause") can control the player. `media3-ui` now only provides `SubtitleView` (draws subtitles, including PGS) in the TV app; the mobile app uses its `PlayerView` with the built-in touch controls (2026-10-28).
 - **Docs:** https://developer.android.com/media/media3
 
 ### FFmpeg audio decoder for Media3 (Jellyfin build)
@@ -191,6 +191,13 @@ All versions were looked up on Google Maven, Maven Central or the Gradle Plugin 
 - **Alternatives:** none; part of AGP.
 - **Coordinate:** `com.android.library` · same version as AGP · added 2026-10-28
 - **Docs:** https://developer.android.com/build/configure-library-module
+
+### Compose Material 3 (mobile app only)
+- **What:** Google's standard component set for phones and tablets: buttons, text fields, navigation bar and rail, chips, top bars.
+- **Why:** the mobile app needs touch components; tv-material is built for focus and D-pad. Only `:mobile` uses it, so the TV app never mixes the two.
+- **Alternatives:** our own components on Compose foundation (much more work for the same result).
+- **Coordinate:** `androidx.compose.material3:material3` · version from the Compose BOM `2026.09.00` · added 2026-10-28
+- **Docs:** https://developer.android.com/develop/ui/compose/designsystems/material3
 
 ## Planned
 

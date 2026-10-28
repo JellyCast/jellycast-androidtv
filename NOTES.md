@@ -2,6 +2,19 @@
 
 Decisions, known issues and codec findings. Newest first in each section.
 
+## Mobile app (2026-10-28)
+
+The project now has three modules: `:core` (everything without UI, shared), `:tv` and `:mobile` (package `nl.jellycast.mobile`, its own app id, so it installs next to the TV app). The mobile app is a first version in Material 3, with the TV app's colors:
+
+- Server (discovery + address), sign in with password or Quick Connect code, Home (Continue watching, Next episodes, New movies), Movies and Series (grid with search), movie detail (play, resume, from the start, mark as watched), series page (seasons as chips, episodes as a list), settings (account, other server, sign out).
+- Player: Media3 `PlayerView` with its own touch controls, landscape and full screen, the same plans, fallback chain and reporting as the TV (`PlaybackPreparer`, `recoverFrom`, `PlaybackReporter`), but without display mode switching, tunneling, stall detection or skip/next pills. Next episode is a button in the top bar and starts by itself at the end.
+- Phone: navigation bar at the bottom; from 600 dp wide (tablet, landscape) a navigation rail.
+- Language follows the phone (the TV app defaults to English).
+
+Tested 2026-10-28 only in the emulator (Pixel API 37 and landscape 1080p), without a server: the Mac was on another network, so sign in, browsing and playback are **not tested yet**. No Android phone or tablet in the house; test on an emulator at home or a borrowed device.
+
+Open for the mobile app: images come in the TV sizes (posters 240 px wide, a bit soft on a phone grid); no skeletons yet (spinner); no picture-in-picture, background audio, downloads or casting; no remote control of the TV from the phone.
+
 ## Status (2026-10-25)
 
 Finished: all phases (skeleton up to the recalibration against jellyfin-androidtv) are built and tested on the Chromecast, plus remote control from the iOS app (commands, play from any screen, wake via the Android TV Remote protocol; how it works in `../jellycast-ios/docs/remote-play.md`). Setup and installing: `docs/setup.md`. What is still open is under "Open items" at the end of this file.

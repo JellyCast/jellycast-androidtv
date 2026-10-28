@@ -16,5 +16,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "JellyCast"
 include(":tv")
+include(":mobile")
 include(":core")
 include(":core-testing")

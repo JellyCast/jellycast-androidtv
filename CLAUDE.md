@@ -1,6 +1,6 @@
 # JellyCast
 
-Own Jellyfin client for Android TV, package `nl.jellycast.tv`, Application class `JellyCastApp`.
+Own Jellyfin client for Android TV, package `nl.jellycast.tv`, Application class `JellyCastApp`. Modules: `:core` (shared, no UI), `:tv` (this app), `:mobile` (phone/tablet app `nl.jellycast.mobile`, Material 3; see `NOTES.md` → Mobile app).
 Target device: Chromecast with Google TV 4K (Android TV OS 14, API 34, about 2 GB RAM), installed by sideloading.
 Goal: simple, reliable and smooth browsing and playback, with maximum direct play. Smooth comes before pretty (see `product-principles.md`). Personal use only.
 
@@ -25,7 +25,7 @@ Goal: simple, reliable and smooth browsing and playback, with maximum direct pla
 - `design-style.md`: color, typography, tokens, brand, banner, splash and sign-in screens.
 - `design-screens.md`: layout per screen (Home, Series, Movies/bookcase, Library, movie detail, series page).
 - `design-navigation.md`: navigation with the remote, transitions and the player overlay.
-- `architecture.md`: layers, UDF, ViewModel/StateFlow, repositories, DTO mapping, Koin, Navigation 3, single module.
+- `architecture.md`: modules, layers, UDF, ViewModel/StateFlow, repositories, DTO mapping, Koin, Navigation 3.
 - `project-structure.md`: the package tree and where new code goes.
 - `kotlin-compose-style.md`: naming, Compose conventions, stability, previews, coroutines.
 - `tv-ux.md`: manifest, D-pad/focus, safe area and typography, memory and images on 2 GB RAM.
@@ -71,6 +71,14 @@ Emulator (Google TV, API 34, 1080p) for quick UI and focus work; video and perfo
 ```bash
 emulator -avd Google_TV_1080p_API_34 &
 ANDROID_SERIAL=emulator-5554 ./gradlew :tv:installDebug   # picks the emulator when the Chromecast is also connected
+```
+
+Mobile app (no Android phone in the house; emulator `Medium_Phone_API_37.0`):
+
+```bash
+emulator -avd Medium_Phone_API_37.0 &
+ANDROID_SERIAL=emulator-5554 ./gradlew :mobile:installDebug
+adb shell am start -n nl.jellycast.mobile/.MainActivity
 ```
 
 Android CLI (`android`, in `cmdline-tools/latest/bin`; replaces `sdkmanager`):

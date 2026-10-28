@@ -23,7 +23,7 @@ Code style, naming, Compose conventions and coroutine/Flow rules specific to thi
 - Parameter order: required, `modifier`, optional, trailing `content` lambda.
 - Components are stateless: pass a value plus a callback. Never `MutableState<T>` or `State<T>` as a parameter; use `T` or `() -> T` to defer reads.
 - Screen pattern: `XxxScreen(viewModel = koinViewModel())` collects state and passes it to `XxxContent(uiState, onAction…)`. Only `XxxContent` has previews.
-- Use `androidx.tv.material3` for components and theme. Never import anything from `androidx.compose.material3`. Check: `grep -r "androidx.compose.material3" app/src` returns nothing. [C3]
+- In `:tv` use `androidx.tv.material3` for components and theme. Never import anything from `androidx.compose.material3` there. Check: `grep -r "androidx.compose.material3" tv/src` returns nothing. [C3] `:mobile` uses Material 3 and never tv-material.
 - No `CompositionLocal` for component configuration, only for theme tokens (spacing, colors).
 
 ## Stability and recomposition [B5] [B6]
