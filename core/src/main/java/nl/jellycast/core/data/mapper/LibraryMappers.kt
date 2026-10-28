@@ -107,6 +107,12 @@ fun BaseItemDto.toEpisode(images: ImageUrlBuilder): Episode {
                 images.build(parent.toJellyfinId(), ImageKind.Logo, tag, ImageWidths.LOGO)
             }
         }
+    val seriesPoster =
+        seriesId?.let { series ->
+            seriesPrimaryImageTag?.let { tag ->
+                images.build(series.toJellyfinId(), ImageKind.Primary, tag, ImageWidths.POSTER)
+            }
+        }
     return Episode(
         id = id.toJellyfinId(),
         seriesId = seriesId?.toJellyfinId().orEmpty(),
@@ -120,6 +126,7 @@ fun BaseItemDto.toEpisode(images: ImageUrlBuilder): Episode {
         resumePositionMs = userData?.playbackPositionTicks?.ticksToMs() ?: 0,
         artwork =
             Artwork(
+                poster = seriesPoster,
                 landscape =
                     seriesThumb ?: image(images, ImageType.PRIMARY, ImageWidths.LANDSCAPE),
                 backdrop = backdrops.firstOrNull(),
