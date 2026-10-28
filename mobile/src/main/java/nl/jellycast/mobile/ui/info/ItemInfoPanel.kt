@@ -211,7 +211,13 @@ private fun SplitPanel(
     leadingWidth: Dp,
 ) {
     val layout = LocalLayout.current
-    val clearance = tabBarClearance(header != null && !panel.inPlayer)
+    // The Back button floats over the header only, so the tabs beside it need just the status bar.
+    val clearance =
+        if (header != null && !panel.inPlayer) {
+            WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+        } else {
+            0.dp
+        }
     Row(Modifier.fillMaxSize()) {
         Column(Modifier.width(leadingWidth).fillMaxHeight().verticalScroll(rememberScrollState())) {
             header?.invoke()
