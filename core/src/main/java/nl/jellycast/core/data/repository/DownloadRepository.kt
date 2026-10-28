@@ -4,7 +4,6 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.time.Instant
-import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.util.UUID
 import java.util.concurrent.TimeUnit
@@ -13,11 +12,15 @@ import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.ensureActive
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 import nl.jellycast.core.common.AppDispatchers
 import nl.jellycast.core.datastore.SessionStore
 import okhttp3.Call
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import okhttp3.ResponseBody
 import org.jellyfin.sdk.api.client.ApiClient
@@ -36,7 +39,6 @@ import org.jellyfin.sdk.model.api.MediaStreamProtocol
 import org.jellyfin.sdk.model.api.MediaStreamType
 import org.jellyfin.sdk.model.api.PlaybackInfoDto
 import org.jellyfin.sdk.model.api.SubtitleDeliveryMethod
-import org.jellyfin.sdk.model.api.UpdateUserItemDataDto
 import org.jellyfin.sdk.model.deviceprofile.buildDeviceProfile
 import org.jellyfin.sdk.model.serializer.toUUID
 
@@ -210,27 +212,27 @@ class DefaultDownloadRepository(
         )
     }
 
+    // Written by hand: the SDK sends LastPlayedDate without a zone, and the server then reads the
+    // UTC time as its own local time (an hour off in the Netherlands in winter).
     override suspend fun setUserData(
         itemId: String,
         positionTicks: Long,
         played: Boolean,
         lastPlayedAtMs: Long,
     ) {
-        call {
-            api.itemsApi.updateItemUserData(
-                itemId = itemId.toUUID(),
-                userId = userId(),
-                data =
-                    UpdateUserItemDataDto(
-                        playbackPositionTicks = positionTicks,
-                        played = played,
-                        lastPlayedDate =
-                            LocalDateTime.ofInstant(
-                                Instant.ofEpochMilli(lastPlayedAtMs),
-                                ZoneOffset.UTC,
-                            ),
-                    ),
-            )
+        val baseUrl = api.baseUrl?.trimEnd('/') ?: throw IOException("No server")
+        val body =
+            buildJsonObject {
+                put("PlaybackPositionTicks", positionTicks)
+                put("Played", played)
+                put("LastPlayedDate", Instant.ofEpochMilli(lastPlayedAtMs).toString())
+            }.toString().toRequestBody(JsonMediaType)
+        val request =
+            authorized("$baseUrl/UserItems/$itemId/UserData?userId=${userId()}").post(body).build()
+        withContext(dispatchers.io) {
+            execute(http.newCall(request)) { response ->
+                if (!response.isSuccessful) throw DownloadServerException(response.code)
+            }
         }
     }
 
@@ -394,3 +396,5 @@ private const val UHD_MIN_HEIGHT = 1100
 private const val FULL_HD_MIN_HEIGHT = 730
 private const val MAX_EXTENSION_LENGTH = 5
 private const val DEFAULT_EXTENSION = "mkv"
+
+private val JsonMediaType = "application/json".toMediaType()

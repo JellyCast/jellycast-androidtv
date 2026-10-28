@@ -15,7 +15,9 @@ Checked 2026-10-28 in the emulator over the VPN (`adb reverse` to a local proxy,
 
 Checked 2026-10-28 on a real tablet (Tab 16, Unisoc, Android 12, wireless adb): discovery, Quick Connect, Home, Library, movie and series pages in portrait and landscape (rail, split layouts), direct play H.264 on the hardware decoder (first frame in 1.2 s, resume position right), a 4K HEVC file transcoded by the server and played on the HEVC decoder (2.5 s), the controls, double-tap seek, the landscape split player, the mini player, system PiP, progress reported to the server, the download sheet. Fixed there: Android 12 support (minSdk 31 for :core and :mobile), the slow-connection hint firing on a healthy stream, heroes and the Library search bar measured wrong in landscape on Android 12.
 
-Not checked yet: a download end to end, pairing and waking the Chromecast from the phone, the AI chat with a real key.
+Downloads checked on the tablet the same day: an episode downloaded (Original, 258 MB, the right default because Compact would be bigger), shown on the Downloads tab, played from the file with no server calls, its position sent to the server. Fixed: the played time was sent without a zone and stored an hour early.
+
+Not checked yet: a Compact download (server transcode), pairing and waking the Chromecast from the phone, the AI chat with a real key.
 
 ## Status (2026-10-25)
 
