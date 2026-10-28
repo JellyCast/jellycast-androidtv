@@ -4,8 +4,9 @@ Build configuration, SDK levels, the version and dependency policy, signing, R8 
 
 ## SDK levels
 
-- `minSdk = 34`, `targetSdk` = newest stable API, `compileSdk` at least equal to `targetSdk`. Why `34`: the only target device runs Android TV OS 14.
-- Write no compat paths for API < 34. No `Build.VERSION.SDK_INT` checks below 34, no `@RequiresApi(≤34)`, no `ContextCompat` detours only for old APIs, no core library desugaring.
+- `:tv`: `minSdk = 34`. Why: the only target device runs Android TV OS 14. No compat paths for API < 34 in `:tv` (no `Build.VERSION.SDK_INT` checks below 34, no `@RequiresApi(≤34)`, no core library desugaring).
+- `:core` and `:mobile`: `minSdk = 31` (Android 12), so cheaper phones and tablets run the app (the test tablet, a Tab 16, runs Android 12). A newer API there gets an `SDK_INT` check with the closest older behaviour; lint (`NewApi`) finds them.
+- `targetSdk` = newest stable API, `compileSdk` at least equal to `targetSdk`.
 
 ## Setup [E1] [E2]
 

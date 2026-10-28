@@ -48,4 +48,4 @@ internal fun ratingText(value: Float): String =
 
 private fun rottenTomatoesSearch(name: String): String =
     "https://www.rottentomatoes.com/search?search=" +
-        URLEncoder.encode(name, Charsets.UTF_8).replace("+", "%20")
+        URLEncoder.encode(name, "UTF-8").replace("+", "%20")

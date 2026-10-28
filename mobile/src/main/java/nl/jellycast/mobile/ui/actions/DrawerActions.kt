@@ -224,5 +224,5 @@ private fun titleUrl(
 
     RatingSource.RottenTomatoes ->
         "https://www.rottentomatoes.com/search?search=" +
-            URLEncoder.encode(searchName, Charsets.UTF_8).replace("+", "%20")
+            URLEncoder.encode(searchName, "UTF-8").replace("+", "%20")
 }

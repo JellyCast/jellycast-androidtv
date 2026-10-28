@@ -5,7 +5,9 @@ import android.app.LocaleManager
 import android.content.ComponentCallbacks
 import android.content.Context
 import android.content.res.Configuration
+import android.os.Build
 import android.os.LocaleList
+import androidx.annotation.RequiresApi
 import java.util.Locale
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,19 +32,17 @@ interface LanguageRepository {
     fun applyDefaultIfUnset()
 }
 
+/**
+ * Per-app languages need Android 13. Before that (phones and tablets on Android 12) the app
+ * follows the system language and [setLanguage] has no effect.
+ */
 class DefaultLanguageRepository(context: Context) : LanguageRepository {
-    private val localeManager = context.getSystemService(LocaleManager::class.java)
+    private val locales = AppLocales.of(context)
 
     override val languages: List<AppLanguage> =
-        LocaleConfig(context)
-            .takeIf { it.status == LocaleConfig.STATUS_SUCCESS }
-            ?.supportedLocales
-            ?.toLanguageTags()
-            ?.split(",")
-            .orEmpty()
-            .let { sortedLanguages(it, DEFAULT_LANGUAGE_TAG) }
+        locales.supportedTags().let { sortedLanguages(it, DEFAULT_LANGUAGE_TAG) }
 
-    private val _current = MutableStateFlow(languageFor(localeManager.applicationLocales))
+    private val _current = MutableStateFlow(languageFor(locales.current()))
     override val current: StateFlow<AppLanguage> = _current.asStateFlow()
 
     init {
@@ -51,7 +51,7 @@ class DefaultLanguageRepository(context: Context) : LanguageRepository {
         context.registerComponentCallbacks(
             object : ComponentCallbacks {
                 override fun onConfigurationChanged(newConfig: Configuration) {
-                    _current.value = languageFor(localeManager.applicationLocales)
+                    _current.value = languageFor(locales.current())
                 }
 
                 @Deprecated("Replaced by onTrimMemory; not needed here.")
@@ -62,13 +62,13 @@ class DefaultLanguageRepository(context: Context) : LanguageRepository {
 
     override fun setLanguage(language: AppLanguage) {
         _current.value = language
-        localeManager.applicationLocales = LocaleList.forLanguageTags(language.tag)
+        locales.set(LocaleList.forLanguageTags(language.tag))
     }
 
     override fun applyDefaultIfUnset() {
-        if (localeManager.applicationLocales.isEmpty) {
-            localeManager.applicationLocales = LocaleList.forLanguageTags(DEFAULT_LANGUAGE_TAG)
-            _current.value = languageFor(localeManager.applicationLocales)
+        if (locales.isUnset()) {
+            locales.set(LocaleList.forLanguageTags(DEFAULT_LANGUAGE_TAG))
+            _current.value = languageFor(locales.current())
         }
     }
 
@@ -96,4 +96,54 @@ internal fun appLanguage(tag: String): AppLanguage {
     val locale = Locale.forLanguageTag(tag)
     val name = locale.getDisplayName(locale).replaceFirstChar { it.titlecase(locale) }
     return AppLanguage(tag = tag, name = name)
+}
+
+private interface AppLocales {
+    fun supportedTags(): List<String>
+
+    fun current(): LocaleList
+
+    fun isUnset(): Boolean
+
+    fun set(locales: LocaleList)
+
+    companion object {
+        fun of(context: Context): AppLocales = if (Build.VERSION.SDK_INT >=
+            Build.VERSION_CODES.TIRAMISU
+        ) {
+            PerAppLocales(context)
+        } else {
+            SystemLocales
+        }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
+private class PerAppLocales(private val context: Context) : AppLocales {
+    private val manager = context.getSystemService(LocaleManager::class.java)
+
+    override fun supportedTags(): List<String> = LocaleConfig(context)
+        .takeIf { it.status == LocaleConfig.STATUS_SUCCESS }
+        ?.supportedLocales
+        ?.toLanguageTags()
+        ?.split(",")
+        .orEmpty()
+
+    override fun current(): LocaleList = manager.applicationLocales
+
+    override fun isUnset(): Boolean = manager.applicationLocales.isEmpty
+
+    override fun set(locales: LocaleList) {
+        manager.applicationLocales = locales
+    }
+}
+
+private object SystemLocales : AppLocales {
+    override fun supportedTags(): List<String> = emptyList()
+
+    override fun current(): LocaleList = LocaleList.getDefault()
+
+    override fun isUnset(): Boolean = false
+
+    override fun set(locales: LocaleList) = Unit
 }

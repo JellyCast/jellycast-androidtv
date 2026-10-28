@@ -2,6 +2,7 @@ package nl.jellycast.core.playback
 
 import android.content.Context
 import android.hardware.display.DisplayManager
+import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
@@ -122,9 +123,14 @@ internal class JellyCastRenderersFactory(
                     .setEventHandler(eventHandler)
                     .setEventListener(eventListener)
                     .setMaxDroppedFramesToNotify(MAX_DROPPED_VIDEO_FRAME_COUNT_TO_NOTIFY)
-                    // Pinned off: untested whether Amlogic and MediaTek decoders skip decode-only
-                    // buffers correctly, so a Media3 update can't silently change seeking.
-                    .experimentalSetEnableMediaCodecBufferDecodeOnlyFlag(false),
+                    .apply {
+                        // Pinned off: untested whether Amlogic and MediaTek decoders skip
+                        // decode-only buffers correctly, so a Media3 update can't silently change
+                        // seeking. The flag only exists from Android 14.
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                            experimentalSetEnableMediaCodecBufferDecodeOnlyFlag(false)
+                        }
+                    },
             )
     }
 

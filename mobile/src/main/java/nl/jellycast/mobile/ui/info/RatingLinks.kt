@@ -120,7 +120,7 @@ fun RatingSource.personUrl(imdbId: String?, tmdbId: String?, name: String): Stri
 }
 
 private fun search(base: String, key: String, text: String): String =
-    "$base?$key=" + URLEncoder.encode(text, Charsets.UTF_8).replace("+", "%20")
+    "$base?$key=" + URLEncoder.encode(text, "UTF-8").replace("+", "%20")
 
 private const val TMDB = "https://www.themoviedb.org"
 private const val ROTTEN_TOMATOES_SEARCH = "https://www.rottentomatoes.com/search"

@@ -91,8 +91,13 @@ class ProtoMessage private constructor(
 fun InputStream.readFramedMessage(): ProtoMessage {
     val length = readVarint()
     if (length !in 0..MAX_MESSAGE_BYTES) throw IOException("Message of $length bytes")
-    val body = readNBytes(length.toInt())
-    if (body.size.toLong() != length) throw EOFException()
+    val body = ByteArray(length.toInt())
+    var read = 0
+    while (read < body.size) {
+        val n = read(body, read, body.size - read)
+        if (n < 0) throw EOFException()
+        read += n
+    }
     return ProtoMessage.parse(body) ?: throw IOException("Unreadable message")
 }
 

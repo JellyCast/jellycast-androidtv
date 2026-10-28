@@ -140,7 +140,12 @@ class AndroidCapabilitiesReader(private val context: Context) : CapabilitiesRead
     private fun routedAudioDevice(): AudioDeviceInfo? {
         val manager = context.getSystemService(AudioManager::class.java) ?: return null
         val attributes = MovieAudioAttributes.platformAudioAttributes
-        return manager.getAudioDevicesForAttributes(attributes).firstOrNull()
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            manager.getAudioDevicesForAttributes(attributes).firstOrNull()
+        } else {
+            // Before Android 13 only the list of outputs is known; the first is the active route.
+            manager.getDevices(AudioManager.GET_DEVICES_OUTPUTS).firstOrNull()
+        }
     }
 
     private fun readDecoders(): DecoderCapabilities {
@@ -228,7 +233,12 @@ class AndroidCapabilitiesReader(private val context: Context) : CapabilitiesRead
         }
         @Suppress("DEPRECATION") // The per-mode replacement misses what other modes support.
         val displayWide = display.hdrCapabilities?.supportedHdrTypes ?: IntArray(0)
-        val currentMode = display.mode?.supportedHdrTypes ?: IntArray(0)
+        val currentMode =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                display.mode?.supportedHdrTypes ?: IntArray(0)
+            } else {
+                IntArray(0)
+            }
         return (displayWide.toSet() + currentMode.toSet())
             .mapNotNull {
                 when (it) {
