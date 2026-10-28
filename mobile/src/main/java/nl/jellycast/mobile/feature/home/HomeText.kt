@@ -127,15 +127,14 @@ internal val HomeTile.progress: Float?
         }
     }
 
-/** The 16:9 art: a movie's backdrop, an episode's still, a series' backdrop. */
+/** The 16:9 art: a movie's backdrop, or the series' backdrop (never an episode still). */
 internal val HomeTile.imageUrl: String?
     get() = when (this) {
         is HomeTile.Continue -> when (item) {
             is PlayableItem.MovieItem ->
                 item.movie.artwork.backdrop ?: item.movie.artwork.poster
 
-            is PlayableItem.EpisodeItem ->
-                item.episode.stillUrl ?: item.episode.artwork.backdrop
+            is PlayableItem.EpisodeItem -> item.episode.artwork.run { backdrop ?: poster }
         }
 
         is HomeTile.New -> when (item) {
