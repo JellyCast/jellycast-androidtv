@@ -40,6 +40,7 @@ data class SubtitleTrack(
     val title: String?,
     val isDefault: Boolean,
     val isForced: Boolean,
+    val isHearingImpaired: Boolean = false,
 )
 
 data class VideoInfo(

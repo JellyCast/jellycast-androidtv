@@ -22,15 +22,13 @@ import java.util.Locale
 import nl.jellycast.core.model.PlayMethod
 import nl.jellycast.core.model.PlaybackPlan
 import nl.jellycast.core.model.StreamChoice
-import nl.jellycast.core.model.SubtitleTrack
-import nl.jellycast.core.playback.SubtitleEntry
-import nl.jellycast.core.playback.TrackOption
 import nl.jellycast.core.playback.disableSubtitles
 import nl.jellycast.core.playback.languageName
 import nl.jellycast.core.playback.normalizeLanguage
 import nl.jellycast.core.playback.options
 import nl.jellycast.core.playback.selectTrack
 import nl.jellycast.core.playback.subtitleEntries
+import nl.jellycast.core.playback.toTrackOption
 import nl.jellycast.mobile.R
 import nl.jellycast.mobile.core.designsystem.component.CheckedSheetRow
 import nl.jellycast.mobile.core.designsystem.component.ListSectionLabel
@@ -38,6 +36,8 @@ import nl.jellycast.mobile.core.designsystem.component.SheetTitle
 import nl.jellycast.mobile.core.designsystem.theme.JellyCastColors
 import nl.jellycast.mobile.core.settings.QualityLevel
 import nl.jellycast.mobile.core.settings.QualityPreference
+import nl.jellycast.mobile.core.ui.subtitleDetail
+import nl.jellycast.mobile.core.ui.subtitleTitle
 
 @kotlin.OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -122,7 +122,7 @@ private fun SubtitleRows(
         if (direct) {
             engine.tracks.options(C.TRACK_TYPE_TEXT)
         } else {
-            plan.subtitleTracks.map { it.toOption(it.index == plan.subtitleStreamIndex) }
+            plan.subtitleTracks.map { it.toTrackOption(it.index == plan.subtitleStreamIndex) }
         }
     val entries = subtitleEntries(options, plan.preferredLanguages, locale)
     CheckedSheetRow(
@@ -152,28 +152,6 @@ private fun SubtitleRows(
     }
 }
 
-private fun SubtitleTrack.toOption(selected: Boolean) = TrackOption(
-    groupIndex = index,
-    label = title,
-    language = language,
-    codec = serverSubtitleCodec(codec),
-    channels = null,
-    isForced = isForced,
-    isSdh = false,
-    isSelected = selected,
-)
-
-private fun serverSubtitleCodec(codec: String): String = when {
-    codec.contains("pgs", ignoreCase = true) -> "PGS"
-
-    codec.contains(
-        "dvd",
-        ignoreCase = true,
-    ) || codec.contains("vobsub", ignoreCase = true) -> "VobSub"
-
-    else -> codec.uppercase(Locale.ROOT)
-}
-
 private fun String?.isAtmos(): Boolean = this?.contains("atmos", ignoreCase = true) == true
 
 private fun audioTitle(language: String?, label: String?, codec: String?, locale: Locale): String =
@@ -187,20 +165,6 @@ private fun audioDetail(codec: String?, channels: Int?, atmos: Boolean): String 
     channels?.let { stringResource(R.string.player_channels, it) },
     "Atmos".takeIf { atmos },
 ).joinToString(" · ")
-
-@Composable
-private fun subtitleTitle(entry: SubtitleEntry, position: Int): String {
-    val base = entry.language ?: entry.title ?: stringResource(R.string.player_track, position + 1)
-    return entry.number?.let { "$base $it" } ?: base
-}
-
-@Composable
-private fun subtitleDetail(entry: SubtitleEntry): String? = listOfNotNull(
-    entry.title.takeIf { entry.language != null },
-    stringResource(R.string.player_sdh).takeIf { entry.isSdh },
-    stringResource(R.string.player_forced).takeIf { entry.isForced },
-    stringResource(R.string.player_image).takeIf { entry.isImage },
-).joinToString(" · ").ifEmpty { null }
 
 /** Auto, then each level that really shrinks the file, highest first. Closes on a choice. */
 @Composable

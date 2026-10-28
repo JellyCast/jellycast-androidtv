@@ -2,6 +2,7 @@ package nl.jellycast.mobile.core.remote
 
 import kotlinx.serialization.Serializable
 import nl.jellycast.core.model.PlayMethod
+import nl.jellycast.core.model.SubtitleTrack
 
 data class RemoteItem(
     val id: String,
@@ -90,5 +91,9 @@ data class PairedTv(
 
 data class RemoteTrack(val index: Int, val title: String)
 
-/** The item's tracks by the server's stream index. */
-data class RemoteTracks(val audio: List<RemoteTrack>, val subtitles: List<RemoteTrack>)
+/** The item's tracks by the server's stream index; subtitles sort by [preferredLanguages]. */
+data class RemoteTracks(
+    val audio: List<RemoteTrack>,
+    val subtitles: List<SubtitleTrack>,
+    val preferredLanguages: List<String> = emptyList(),
+)

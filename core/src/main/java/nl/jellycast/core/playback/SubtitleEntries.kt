@@ -2,6 +2,7 @@ package nl.jellycast.core.playback
 
 import java.text.Collator
 import java.util.Locale
+import nl.jellycast.core.model.SubtitleTrack
 
 /** A subtitle track as the menu shows it: the language, and what tells it apart from the others. */
 data class SubtitleEntry(
@@ -75,6 +76,27 @@ private fun SubtitleEntry.variantOrder(): Int = when {
     isForced -> 2
     isSdh -> 1
     else -> 0
+}
+
+/** A track the server describes, by its stream index; [TrackOption.groupIndex] is that index. */
+fun SubtitleTrack.toTrackOption(isSelected: Boolean) = TrackOption(
+    groupIndex = index,
+    label = title,
+    language = language,
+    codec = serverSubtitleCodec(codec),
+    channels = null,
+    isForced = isForced,
+    isSdh = isHearingImpaired,
+    isSelected = isSelected,
+)
+
+private fun serverSubtitleCodec(codec: String): String = when {
+    codec.contains("pgs", ignoreCase = true) -> "PGS"
+
+    codec.contains("dvd", ignoreCase = true) ||
+        codec.contains("vobsub", ignoreCase = true) -> "VobSub"
+
+    else -> codec.uppercase(Locale.ROOT)
 }
 
 /** "Nederlands" for "nl" when [locale] is Dutch; the code itself when Java does not know it. */

@@ -9,10 +9,15 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import nl.jellycast.core.model.RemoteCommand
+import nl.jellycast.core.playback.SubtitleEntry
+import nl.jellycast.core.playback.subtitleEntries
+import nl.jellycast.core.playback.toTrackOption
 import nl.jellycast.mobile.R
 import nl.jellycast.mobile.core.designsystem.component.CheckedSheetRow
 import nl.jellycast.mobile.core.designsystem.component.ListSectionLabel
@@ -20,6 +25,8 @@ import nl.jellycast.mobile.core.designsystem.component.SheetTitle
 import nl.jellycast.mobile.core.designsystem.theme.JellyCastColors
 import nl.jellycast.mobile.core.remote.RemoteSession
 import nl.jellycast.mobile.core.remote.RemoteTracks
+import nl.jellycast.mobile.core.ui.subtitleDetail
+import nl.jellycast.mobile.core.ui.subtitleTitle
 
 /**
  * The TV's own tracks, by the server's stream index. Only offered for direct play: there every
@@ -66,13 +73,27 @@ internal fun RemoteTrackSheet(
                 selected = subtitle == null,
                 onClick = { onCommand(RemoteCommand.SetSubtitleStream(RemoteCommand.NO_STREAM)) },
             )
-            tracks.subtitles.forEach { track ->
+            rememberSubtitleEntries(tracks, subtitle).forEachIndexed { position, entry ->
+                val index = entry.option.groupIndex
                 CheckedSheetRow(
-                    title = track.title,
-                    selected = track.index == subtitle,
-                    onClick = { onCommand(RemoteCommand.SetSubtitleStream(track.index)) },
+                    title = subtitleTitle(entry, position),
+                    selected = entry.option.isSelected,
+                    onClick = { onCommand(RemoteCommand.SetSubtitleStream(index)) },
+                    detail = subtitleDetail(entry),
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun rememberSubtitleEntries(tracks: RemoteTracks, selected: Int?): List<SubtitleEntry> {
+    val locale = LocalConfiguration.current.locales[0]
+    return remember(tracks, selected, locale) {
+        subtitleEntries(
+            tracks.subtitles.map { it.toTrackOption(it.index == selected) },
+            tracks.preferredLanguages,
+            locale,
+        )
     }
 }

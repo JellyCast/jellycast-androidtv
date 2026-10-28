@@ -1,10 +1,13 @@
 package nl.jellycast.mobile.core.remote
 
 import java.time.LocalDateTime
+import java.util.Locale
 import java.util.UUID
 import nl.jellycast.core.model.PlayMethod
 import nl.jellycast.core.network.ImageKind
 import nl.jellycast.core.network.ImageUrlBuilder
+import nl.jellycast.core.playback.subtitleEntries
+import nl.jellycast.core.playback.toTrackOption
 import org.jellyfin.sdk.model.api.BaseItemDto
 import org.jellyfin.sdk.model.api.BaseItemKind
 import org.jellyfin.sdk.model.api.ImageType
@@ -114,24 +117,62 @@ class RemoteSessionMappersTest {
                     listOf(
                         stream(0, MediaStreamType.VIDEO, "4K HEVC"),
                         stream(1, MediaStreamType.AUDIO, "English - EAC3 5.1"),
-                        stream(2, MediaStreamType.SUBTITLE, "Dutch - SRT"),
+                        stream(2, MediaStreamType.SUBTITLE, "Dutch - SRT", "dut", sdh = true),
                     ),
             )
 
-        val tracks = item.toRemoteTracks()
+        val tracks = item.toRemoteTracks(listOf("nld", "eng"))
 
         assertEquals(listOf(RemoteTrack(1, "English - EAC3 5.1")), tracks.audio)
-        assertEquals(listOf(RemoteTrack(2, "Dutch - SRT")), tracks.subtitles)
+        val subtitle = tracks.subtitles.single()
+        assertEquals(2, subtitle.index)
+        assertEquals("dut", subtitle.language)
+        assertTrue(subtitle.isHearingImpaired)
+        assertEquals(listOf("nld", "eng"), tracks.preferredLanguages)
     }
 
-    private fun stream(index: Int, type: MediaStreamType, title: String) = MediaStream(
+    @Test
+    fun `the TV's subtitles sort like the player's, preferred languages first`() {
+        val languages = listOf("spa", "eng", "ara", "dut", "fre")
+        val item =
+            movie().copy(
+                mediaStreams =
+                    languages.mapIndexed { index, code ->
+                        stream(index + 2, MediaStreamType.SUBTITLE, code, code)
+                    },
+            )
+        val tracks = item.toRemoteTracks(listOf("nld", "eng"))
+
+        val entries =
+            subtitleEntries(
+                tracks.subtitles.map { it.toTrackOption(isSelected = false) },
+                tracks.preferredLanguages,
+                Locale.ENGLISH,
+            )
+
+        assertEquals(
+            listOf("Dutch", "English", "Arabic", "French", "Spanish"),
+            entries.map { it.language },
+        )
+        assertEquals(listOf(5, 3, 4, 6, 2), entries.map { it.option.groupIndex })
+    }
+
+    private fun stream(
+        index: Int,
+        type: MediaStreamType,
+        title: String,
+        language: String? = null,
+        sdh: Boolean = false,
+    ) = MediaStream(
         type = type,
         index = index,
         displayTitle = title,
+        language = language,
+        codec = "subrip",
         isInterlaced = false,
         isDefault = false,
         isForced = false,
-        isHearingImpaired = false,
+        isHearingImpaired = sdh,
         isExternal = false,
         isTextSubtitleStream = type == MediaStreamType.SUBTITLE,
         supportsExternalStream = false,

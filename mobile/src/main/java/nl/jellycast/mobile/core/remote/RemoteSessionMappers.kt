@@ -2,6 +2,7 @@ package nl.jellycast.mobile.core.remote
 
 import java.time.LocalDateTime
 import java.time.ZoneOffset
+import nl.jellycast.core.data.mapper.toSubtitleTrack
 import nl.jellycast.core.model.PlayMethod
 import nl.jellycast.core.model.ticksToMs
 import nl.jellycast.core.network.ImageKind
@@ -91,12 +92,13 @@ private fun BaseItemDto.toRemoteItem(images: ImageUrlBuilder): RemoteItem {
 }
 
 /** Audio and subtitles of the item's first source, by the server's stream index. */
-fun BaseItemDto.toRemoteTracks(): RemoteTracks {
+fun BaseItemDto.toRemoteTracks(preferredLanguages: List<String>): RemoteTracks {
     val streams = mediaSources?.firstOrNull()?.mediaStreams ?: mediaStreams.orEmpty()
     return RemoteTracks(
         audio = streams.filter { it.type == MediaStreamType.AUDIO }.map { it.toRemoteTrack() },
         subtitles =
-            streams.filter { it.type == MediaStreamType.SUBTITLE }.map { it.toRemoteTrack() },
+            streams.filter { it.type == MediaStreamType.SUBTITLE }.map { it.toSubtitleTrack() },
+        preferredLanguages = preferredLanguages,
     )
 }
 

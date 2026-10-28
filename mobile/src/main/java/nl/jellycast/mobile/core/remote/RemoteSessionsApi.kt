@@ -95,7 +95,11 @@ class JellyfinRemoteSessionsApi(
         }
 
     override suspend fun getTracks(itemId: String): Result<RemoteTracks> = request {
-        api.userLibraryApi.getItem(itemId.toUUID(), userId()).content.toRemoteTracks()
+        val session = store.session.first()
+        api.userLibraryApi
+            .getItem(itemId.toUUID(), session.userId?.toUUID())
+            .content
+            .toRemoteTracks(session.preferredLanguages)
     }
 
     private suspend fun sendIndex(sessionId: String, name: GeneralCommandType, index: Int) {

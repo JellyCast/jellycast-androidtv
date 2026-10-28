@@ -82,13 +82,14 @@ private fun MediaStream.toAudioTrack() = AudioTrack(
     isAtmos = audioSpatialFormat == AudioSpatialFormat.DOLBY_ATMOS,
 )
 
-private fun MediaStream.toSubtitleTrack() = SubtitleTrack(
+fun MediaStream.toSubtitleTrack() = SubtitleTrack(
     index = index,
     language = language,
     codec = codec.orEmpty(),
     title = title,
     isDefault = isDefault,
     isForced = isForced,
+    isHearingImpaired = isHearingImpaired,
 )
 
 fun MediaSegmentDto.toMediaSegment(): MediaSegment? {

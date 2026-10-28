@@ -1,6 +1,7 @@
 package nl.jellycast.core.playback
 
 import java.util.Locale
+import nl.jellycast.core.model.SubtitleTrack
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
@@ -123,5 +124,53 @@ class SubtitleEntriesTest {
 
         assertTrue(entries.first().isImage)
         assertEquals("Commentary", entries.last().title)
+    }
+
+    @Test
+    fun `tracks without a language sort by their name, after every language`() {
+        val entries =
+            subtitleEntries(
+                listOf(
+                    track(null, label = "Signs"),
+                    track("spa"),
+                    track(null, label = "Commentary"),
+                ),
+                emptyList(),
+                dutch,
+            )
+
+        assertEquals(listOf("Spaans", null, null), entries.map { it.language })
+        assertEquals(listOf(null, "Commentary", "Signs"), entries.map { it.title })
+    }
+
+    @Test
+    fun `tracks that look the same keep the file's order`() {
+        val tracks = listOf(3, 1, 2).map { track("eng").copy(groupIndex = it) }
+
+        val entries = subtitleEntries(tracks, emptyList(), dutch)
+
+        assertEquals(listOf(3, 1, 2), entries.map { it.option.groupIndex })
+    }
+
+    @Test
+    fun `a server track keeps its stream index, SDH flag and image format`() {
+        val server =
+            SubtitleTrack(
+                index = 7,
+                language = "dut",
+                codec = "PGSSUB",
+                title = null,
+                isDefault = false,
+                isForced = false,
+                isHearingImpaired = true,
+            )
+
+        val entry = subtitleEntries(listOf(server.toTrackOption(true)), emptyList(), dutch).single()
+
+        assertEquals(7, entry.option.groupIndex)
+        assertEquals("Nederlands", entry.language)
+        assertTrue(entry.isSdh)
+        assertTrue(entry.isImage)
+        assertTrue(entry.option.isSelected)
     }
 }
