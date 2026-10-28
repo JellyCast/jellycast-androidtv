@@ -69,6 +69,7 @@ data class ExternalTitle(
 /** "★ 7.8" or "91%", when the server has this site's rating for the title. */
 fun RatingSource.rating(title: ExternalTitle, locale: Locale): String? = when (this) {
     RatingSource.RottenTomatoes -> title.criticRating?.let { "${it.roundToInt()}%" }
+
     RatingSource.Imdb, RatingSource.Tmdb ->
         title.communityRating
             ?.takeIf { title.communityRatingSource == this }
@@ -87,10 +88,13 @@ fun starRating(value: Float, locale: Locale): String {
 /** The title's page; a search where the server keeps no id for this site. */
 fun RatingSource.url(title: ExternalTitle): String? = when (this) {
     RatingSource.Imdb -> title.imdbId?.let { "https://www.imdb.com/title/$it/" }
+
     RatingSource.Tmdb -> title.tmdbId?.let { tmdb ->
         when (val kind = title.kind) {
             ExternalTitle.Kind.Movie -> "$TMDB/movie/$tmdb"
+
             ExternalTitle.Kind.Series -> "$TMDB/tv/$tmdb"
+
             is ExternalTitle.Kind.Episode ->
                 if (kind.season != null && kind.episode != null) {
                     "$TMDB/tv/$tmdb/season/${kind.season}/episode/${kind.episode}"
@@ -99,6 +103,7 @@ fun RatingSource.url(title: ExternalTitle): String? = when (this) {
                 }
         }
     }
+
     RatingSource.RottenTomatoes -> search(ROTTEN_TOMATOES_SEARCH, "search", title.searchName)
 }
 
@@ -107,8 +112,10 @@ fun RatingSource.personUrl(imdbId: String?, tmdbId: String?, name: String): Stri
     RatingSource.Imdb ->
         imdbId?.let { "https://www.imdb.com/name/$it/" }
             ?: (search("https://www.imdb.com/find/", "q", name) + "&s=nm")
+
     RatingSource.Tmdb ->
         tmdbId?.let { "$TMDB/person/$it" } ?: search("$TMDB/search/person", "query", name)
+
     RatingSource.RottenTomatoes -> search(ROTTEN_TOMATOES_SEARCH, "search", name)
 }
 

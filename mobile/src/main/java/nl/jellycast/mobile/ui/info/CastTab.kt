@@ -54,6 +54,7 @@ internal fun CastTab(
 ) {
     when (cast) {
         CastState.Loading -> TabSpinner(modifier)
+
         CastState.Failed ->
             Column(
                 modifier.fillMaxWidth().padding(vertical = 24.dp),
@@ -63,6 +64,7 @@ internal fun CastTab(
                 Text(stringResource(R.string.info_cast_failed), color = JellyCastColors.TextMuted)
                 GlassButton(stringResource(R.string.retry), onRetry)
             }
+
         is CastState.Loaded -> CastContent(cast.credits, source, isEpisode, modifier)
     }
 }
@@ -106,7 +108,11 @@ private fun ExpandLink(cast: CastCredits, onClick: () -> Unit) {
         if (cast.guestStars.isEmpty()) {
             stringResource(R.string.info_all_actors, cast.actors.size)
         } else {
-            stringResource(R.string.info_all_actors_and_guests, cast.actors.size, cast.guestStars.size)
+            stringResource(
+                R.string.info_all_actors_and_guests,
+                cast.actors.size,
+                cast.guestStars.size,
+            )
         }
     Row(
         Modifier.pressable(onClick),
@@ -128,7 +134,12 @@ private fun ExpandLink(cast: CastCredits, onClick: () -> Unit) {
 }
 
 @Composable
-private fun Makers(cast: CastCredits, source: RatingSource, isEpisode: Boolean, open: (Credit) -> Unit) {
+private fun Makers(
+    cast: CastCredits,
+    source: RatingSource,
+    isEpisode: Boolean,
+    open: (Credit) -> Unit,
+) {
     Column(Modifier.padding(top = 4.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Box(Modifier.fillMaxWidth().height(1.dp).background(JellyCastColors.Rail))
         Text(
@@ -137,16 +148,19 @@ private fun Makers(cast: CastCredits, source: RatingSource, isEpisode: Boolean, 
             color = JellyCastColors.Text,
         )
         if (cast.directors.isNotEmpty()) {
-            val label = if (isEpisode) R.string.info_directed_by_episode else R.string.info_directed_by
+            val label =
+                if (isEpisode) R.string.info_directed_by_episode else R.string.info_directed_by
             MakerGroup(stringResource(label), cast.directors, cast, source, open)
         }
         if (cast.writers.isNotEmpty()) {
-            val label = if (isEpisode) R.string.info_written_by_episode else R.string.info_written_by
+            val label =
+                if (isEpisode) R.string.info_written_by_episode else R.string.info_written_by
             MakerGroup(stringResource(label), cast.writers, cast, source, open)
         }
         if (cast.producers.isNotEmpty()) {
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                val label = if (isEpisode) R.string.info_produced_by_series else R.string.info_produced_by
+                val label =
+                    if (isEpisode) R.string.info_produced_by_series else R.string.info_produced_by
                 ListSectionLabel(stringResource(label))
                 Text(
                     cast.producers.joinToString(" · ") { it.name },
@@ -169,7 +183,10 @@ private fun MakerGroup(
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         ListSectionLabel(title)
         credits.forEach { credit ->
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
                 PersonPhoto(credit, 44.dp)
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(1.dp)) {
                     Text(

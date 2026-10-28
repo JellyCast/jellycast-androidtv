@@ -25,8 +25,8 @@ import nl.jellycast.mobile.ui.actions.ActionTarget
 import nl.jellycast.mobile.ui.actions.MediaActionDrawer
 import nl.jellycast.mobile.ui.chat.ChatTab
 import nl.jellycast.mobile.ui.downloads.OfflineAvailability
-import org.koin.compose.koinInject
 import org.koin.compose.getKoin
+import org.koin.compose.koinInject
 
 @Composable
 internal fun InfoTabContent(
@@ -42,7 +42,10 @@ internal fun InfoTabContent(
     Box(modifier.fillMaxWidth(), contentAlignment = Alignment.TopStart) {
         when (panel.currentTab) {
             InfoTab.Episodes ->
-                EpisodesContent(panel, isLarge, margin, navigation, onDrawer = { drawerTarget = it })
+                EpisodesContent(panel, isLarge, margin, navigation, onDrawer = {
+                    drawerTarget = it
+                })
+
             InfoTab.Cast ->
                 CastTab(
                     cast = state.cast,
@@ -51,6 +54,7 @@ internal fun InfoTabContent(
                     onRetry = panel.onRetryCast,
                     modifier = textWidth,
                 )
+
             InfoTab.Related ->
                 RelatedTab(
                     collectionTitle = state.collectionTitle,
@@ -58,6 +62,7 @@ internal fun InfoTabContent(
                     related = state.related,
                     onSelect = { movie -> openRelated(movie, panel.inPlayer, navigation) },
                 )
+
             InfoTab.Chat -> ChatTab(state.subject, textWidth)
         }
     }
@@ -87,7 +92,7 @@ private fun EpisodesContent(
             ratingSource = state.ratingSource,
             isLarge = isLarge,
             playingId = panel.playingItemId,
-            nextId = if (state.subject is InfoSubject.SeriesInfo) state.progress?.next?.id else null,
+            nextId = state.progress?.next?.id?.takeIf { state.subject is InfoSubject.SeriesInfo },
             playingOn = panel.playingOn,
             isAvailable = rememberEpisodeAvailability(),
         )

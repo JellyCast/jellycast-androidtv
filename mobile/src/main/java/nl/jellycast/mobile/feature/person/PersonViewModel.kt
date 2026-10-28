@@ -72,13 +72,19 @@ class PersonViewModel(
 
     private fun stateOf(snapshot: LibrarySnapshot?, load: IdsLoad): PersonUiState = when (load) {
         IdsLoad.Loading -> PersonUiState.Loading
+
         is IdsLoad.Failed -> PersonUiState.Error(load.message)
+
         is IdsLoad.Loaded -> {
             if (snapshot == null) {
                 PersonUiState.Loading
             } else {
-                val movies = snapshot.movies.filter { it.id in load.ids }.map(PersonEntry::MovieEntry)
-                val series = snapshot.series.filter { it.id in load.ids }.map(PersonEntry::SeriesEntry)
+                val movies = snapshot.movies.filter {
+                    it.id in load.ids
+                }.map(PersonEntry::MovieEntry)
+                val series = snapshot.series.filter {
+                    it.id in load.ids
+                }.map(PersonEntry::SeriesEntry)
                 PersonUiState.Ready(movies + series)
             }
         }

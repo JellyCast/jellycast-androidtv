@@ -62,7 +62,11 @@ internal fun InfoSummary(
                     color = JellyCastColors.Text,
                 )
             }
-            Text(metaLine(state, locale), style = JellyCastText.Subheadline, color = JellyCastColors.TextMuted)
+            Text(
+                metaLine(state, locale),
+                style = JellyCastText.Subheadline,
+                color = JellyCastColors.TextMuted,
+            )
             if (state.subject !is InfoSubject.SeriesInfo) {
                 val badges = state.media?.let(::techBadges).orEmpty()
                 if (badges.isNotEmpty()) TechBadges(badges, Modifier.padding(top = 2.dp))
@@ -115,6 +119,7 @@ private fun metaLine(state: ItemInfoUiState, locale: Locale): String {
                     state.genres,
                     movie.ageRating?.label,
                 )
+
             state.subject is InfoSubject.SeriesInfo -> {
                 val seasons = state.progress?.seasons.orEmpty().count { it > 0 }
                 listOf(
@@ -124,6 +129,7 @@ private fun metaLine(state: ItemInfoUiState, locale: Locale): String {
                     series?.ageRating?.label,
                 )
             }
+
             else -> {
                 val episode = state.episode
                 listOf(
@@ -145,7 +151,7 @@ internal fun joined(parts: List<String?>): String =
     parts.filterNot { it.isNullOrBlank() }.joinToString(" · ")
 
 @Composable
-internal fun currentLocale(): Locale = LocalConfiguration.current.locales[0] ?: Locale.getDefault()
+internal fun currentLocale(): Locale = LocalConfiguration.current.locales.get(0)
 
 @Composable
 private fun TechBadges(parts: List<String>, modifier: Modifier = Modifier) {
@@ -220,7 +226,11 @@ private fun ExternalLinkCapsule(source: RatingSource, url: String, modifier: Mod
 
 /** "IMDb ↗" as small text, for rows where a capsule would be too heavy. */
 @Composable
-internal fun InlineExternalLink(source: RatingSource, onClick: () -> Unit, modifier: Modifier = Modifier) {
+internal fun InlineExternalLink(
+    source: RatingSource,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Row(
         modifier.pressable(onClick),
         horizontalArrangement = Arrangement.spacedBy(3.dp),

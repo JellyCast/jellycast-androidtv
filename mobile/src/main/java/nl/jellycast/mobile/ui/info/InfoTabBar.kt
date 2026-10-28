@@ -53,7 +53,9 @@ internal fun InfoTabBar(
                     .weight(1f)
                     .fillMaxHeight()
                     .clip(CircleShape)
-                    .background(if (isSelected) JellyCastColors.TabSelected else JellyCastColors.Rail)
+                    .background(
+                        if (isSelected) JellyCastColors.TabSelected else JellyCastColors.Rail,
+                    )
                     .pressable({ onSelect(tab) })
                     .semantics {
                         this.selected = isSelected

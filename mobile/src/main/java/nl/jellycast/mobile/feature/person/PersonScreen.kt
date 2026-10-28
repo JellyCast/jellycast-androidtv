@@ -114,7 +114,10 @@ private fun PersonContent(
                 title = { Text(name, maxLines = 1, overflow = TextOverflow.Ellipsis) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(painterResource(R.drawable.ic_arrow_back), stringResource(R.string.back))
+                        Icon(
+                            painterResource(R.drawable.ic_arrow_back),
+                            stringResource(R.string.back),
+                        )
                     }
                 },
                 colors =
@@ -133,6 +136,7 @@ private fun PersonContent(
                         Modifier.align(Alignment.Center).size(28.dp),
                         color = JellyCastColors.TextMuted,
                     )
+
                 is PersonUiState.Error ->
                     ContentErrorView(
                         message = state.message ?: stringResource(R.string.retry),
@@ -140,6 +144,7 @@ private fun PersonContent(
                         onRetry = onRetry,
                         modifier = Modifier.align(Alignment.Center),
                     )
+
                 is PersonUiState.Ready ->
                     if (state.entries.isEmpty()) {
                         Text(
@@ -169,10 +174,17 @@ private fun PersonGrid(
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val width = maxWidth - layout.margin * 2
         val columns =
-            ((width + columnSpacing) / (minWidth + columnSpacing)).toInt().coerceAtLeast(MIN_COLUMNS)
+            ((width + columnSpacing) / (minWidth + columnSpacing)).toInt().coerceAtLeast(
+                MIN_COLUMNS,
+            )
         LazyVerticalGrid(
             columns = GridCells.Fixed(columns),
-            contentPadding = PaddingValues(start = layout.margin, end = layout.margin, top = 12.dp, bottom = 24.dp),
+            contentPadding = PaddingValues(
+                start = layout.margin,
+                end = layout.margin,
+                top = 12.dp,
+                bottom = 24.dp,
+            ),
             horizontalArrangement = Arrangement.spacedBy(columnSpacing),
             verticalArrangement = Arrangement.spacedBy(rowSpacing),
         ) {
@@ -199,11 +211,27 @@ private fun PersonTile(
     val tile =
         when (entry) {
             is PersonEntry.MovieEntry ->
-                TileData(entry.movie.title, entry.movie.year, entry.movie.artwork, entry.movie.isPlayed, entry.movie.progress)
+                TileData(
+                    entry.movie.title,
+                    entry.movie.year,
+                    entry.movie.artwork,
+                    entry.movie.isPlayed,
+                    entry.movie.progress,
+                )
+
             is PersonEntry.SeriesEntry ->
-                TileData(entry.series.title, entry.series.year, entry.series.artwork, entry.series.isPlayed, null)
+                TileData(
+                    entry.series.title,
+                    entry.series.year,
+                    entry.series.artwork,
+                    entry.series.isPlayed,
+                    null,
+                )
         }
-    Column(modifier.pressable(onClick, onLongClick), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+    Column(
+        modifier.pressable(onClick, onLongClick),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
         Box(Modifier.padding(bottom = 2.dp)) {
             PosterImage(
                 tile.artwork.poster,
@@ -243,7 +271,12 @@ private fun WatchedBadge(modifier: Modifier = Modifier) {
             .background(JellyCastColors.Background.copy(alpha = 0.72f)),
         contentAlignment = Alignment.Center,
     ) {
-        Icon(painterResource(R.drawable.ic_check), null, Modifier.size(12.dp), tint = JellyCastColors.Text)
+        Icon(
+            painterResource(R.drawable.ic_check),
+            null,
+            Modifier.size(12.dp),
+            tint = JellyCastColors.Text,
+        )
     }
 }
 

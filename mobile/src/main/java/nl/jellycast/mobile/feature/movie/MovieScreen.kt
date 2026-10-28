@@ -58,7 +58,7 @@ fun MovieScreen(
             movie = movie,
             onPlay = { navigation.play(PlayableItem.MovieItem(movie)) },
             onPlayOn = { playOn = PlayOnRequest(PlayableItem.MovieItem(movie)) },
-            onToggleWatched = viewModel::onToggleWatched,
+            onWatchedToggle = viewModel::onToggleWatched,
             onAddToList = { navigation.addToList(movie.title, listOf(movie.id)) },
         )
     }
@@ -80,6 +80,7 @@ private fun MovieContent(
                     Modifier.align(Alignment.Center).size(28.dp),
                     color = JellyCastColors.TextMuted,
                 )
+
             MovieUiState.Missing ->
                 ContentErrorView(
                     message = stringResource(R.string.info_movie_missing),
@@ -87,6 +88,7 @@ private fun MovieContent(
                     onRetry = onRetry,
                     modifier = Modifier.align(Alignment.Center),
                 )
+
             is MovieUiState.Ready -> detail(state.movie)
         }
         GlassCircleButton(
@@ -103,7 +105,7 @@ private fun MovieDetail(
     movie: Movie,
     onPlay: () -> Unit,
     onPlayOn: () -> Unit,
-    onToggleWatched: () -> Unit,
+    onWatchedToggle: () -> Unit,
     onAddToList: () -> Unit,
 ) {
     val inProgress = !movie.isPlayed && movie.resumePositionMs > 0
@@ -117,7 +119,9 @@ private fun MovieDetail(
             ) {
                 HeroPlayButton(
                     contentDescription =
-                        stringResource(if (inProgress) R.string.info_continue else R.string.info_play),
+                        stringResource(
+                            if (inProgress) R.string.info_continue else R.string.info_play,
+                        ),
                     onPlay = onPlay,
                     progress = if (inProgress) movie.progress else null,
                 )
@@ -125,15 +129,19 @@ private fun MovieDetail(
         },
     ) {
         if (hasRemoteTargets()) {
-            RailCircleButton(R.drawable.ic_tv, stringResource(R.string.info_play_on), onPlayOn, size = 34.dp)
+            RailCircleButton(
+                R.drawable.ic_tv,
+                stringResource(R.string.info_play_on),
+                onPlayOn,
+                size = 34.dp,
+            )
         }
+        val watchedLabel =
+            if (movie.isPlayed) R.string.info_mark_not_watched else R.string.info_mark_watched
         RailCircleButton(
             icon = if (movie.isPlayed) R.drawable.ic_info_check_circle else R.drawable.ic_check,
-            contentDescription =
-                stringResource(
-                    if (movie.isPlayed) R.string.info_mark_not_watched else R.string.info_mark_watched,
-                ),
-            onClick = onToggleWatched,
+            contentDescription = stringResource(watchedLabel),
+            onClick = onWatchedToggle,
             size = 34.dp,
         )
         RailCircleButton(

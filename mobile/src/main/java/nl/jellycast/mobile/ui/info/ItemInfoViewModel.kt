@@ -117,7 +117,9 @@ class ItemInfoViewModel(
             viewModelScope.launch {
                 val own = details.getItemDetail(ownItemId()).getOrNull()
                 if (own == null) {
-                    loaded.update { it.copy(cast = CastState.Failed, rankedRelatedIds = emptyList()) }
+                    loaded.update {
+                        it.copy(cast = CastState.Failed, rankedRelatedIds = emptyList())
+                    }
                     return@launch
                 }
                 loaded.update { it.copy(media = own.media) }
@@ -153,7 +155,8 @@ class ItemInfoViewModel(
         val snapshot = store.snapshot.filterNotNull().first()
         val movie = snapshot.moviesById[movieId]
         val excluded =
-            setOf(movieId) + movie?.let { collectionOf(it, snapshot.movies) }.orEmpty().map { it.id }
+            setOf(movieId) +
+                movie?.let { collectionOf(it, snapshot.movies) }.orEmpty().map { it.id }
         loaded.update { it.copy(rankedRelatedIds = rankRelated(candidates, own, excluded)) }
     }
 
@@ -178,9 +181,11 @@ class ItemInfoViewModel(
         snapshot ?: return base
         return when (subject) {
             is InfoSubject.MovieInfo -> movieState(base, snapshot, subject.movieId, extras)
+
             is InfoSubject.EpisodeInfo -> seriesState(base, snapshot, subject.seriesId)
                 .let { state -> state.copy(episode = snapshot.episodesById[subject.episodeId]) }
                 .let { state -> state.copy(episodeWindow = episodeWindow(state)) }
+
             is InfoSubject.SeriesInfo -> seriesState(base, snapshot, subject.seriesId).let {
                 it.copy(episode = it.progress?.let(::playableNext))
             }

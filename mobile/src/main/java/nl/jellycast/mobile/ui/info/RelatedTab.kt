@@ -42,8 +42,10 @@ internal fun RelatedTab(
         }
         when {
             related == null -> TabSpinner()
+
             related.isNotEmpty() ->
                 PosterSection(stringResource(R.string.info_tab_related), related, onSelect)
+
             collection.isEmpty() ->
                 Text(
                     stringResource(R.string.info_nothing_related),

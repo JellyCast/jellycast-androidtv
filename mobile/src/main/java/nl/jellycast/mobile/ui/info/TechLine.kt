@@ -46,16 +46,22 @@ private fun audioName(stream: MediaStreamInfo): String? {
     val atmos = "Atmos" in profile
     return when (stream.codec?.lowercase()) {
         "truehd" -> if (atmos) "TrueHD Atmos" else "TrueHD"
+
         "eac3" -> if (atmos) "Dolby Atmos" else "Dolby Digital+"
+
         "ac3" -> "Dolby Digital"
+
         "dts" ->
             when {
                 "MA" in profile -> "DTS-HD MA"
                 ":X" in profile -> "DTS:X"
                 else -> "DTS"
             }
+
         "aac" -> stream.channels?.takeIf { it > 2 }?.let { "AAC ${it}ch" }
+
         "flac" -> "FLAC"
+
         else -> null
     }
 }

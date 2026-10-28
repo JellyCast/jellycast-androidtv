@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -111,10 +112,7 @@ private fun EpisodeInfoRow(
                 isPlaying = isPlaying,
                 isOutlined = isPlaying || episode.id == style.nextId,
             )
-            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(3.dp)) {
-                EpisodeTitleLines(episode, style, isPlaying)
-                if (large) EpisodeOverview(episode, isPlaying, Modifier.padding(top = 3.dp))
-            }
+            EpisodeText(episode, style, isPlaying, Modifier.weight(1f))
             Box(Modifier.width(28.dp), contentAlignment = Alignment.Center) {
                 if (episode.isPlayed && !isPlaying) {
                     Icon(
@@ -139,9 +137,7 @@ private fun EpisodeStill(episode: Episode, width: Dp, isPlaying: Boolean, isOutl
             .width(width)
             .aspectRatio(STILL_RATIO)
             .clip(CardShape)
-            .then(
-                if (isOutlined) Modifier.border(2.dp, JellyCastColors.Accent, CardShape) else Modifier,
-            ),
+            .then(if (isOutlined) OutlinedStill else Modifier),
     ) {
         ArtworkImage(
             url = episode.stillUrl ?: episode.artwork.backdrop,
@@ -151,15 +147,37 @@ private fun EpisodeStill(episode: Episode, width: Dp, isPlaying: Boolean, isOutl
         episode.progress?.let {
             WatchProgressBar(
                 it,
-                Modifier.align(Alignment.BottomCenter).padding(start = 8.dp, end = 8.dp, bottom = 6.dp),
+                Modifier
+                    .align(Alignment.BottomCenter)
+                    .padding(start = 8.dp, end = 8.dp, bottom = 6.dp),
                 onImage = true,
             )
         }
     }
 }
 
+private val OutlinedStill = Modifier.border(2.dp, JellyCastColors.Accent, CardShape)
+
+/** Title, status, rating link and (on tablets) the overview, next to the still. */
 @Composable
-private fun EpisodeTitleLines(episode: Episode, style: EpisodeRowStyle, isPlaying: Boolean) {
+private fun EpisodeText(
+    episode: Episode,
+    style: EpisodeRowStyle,
+    isPlaying: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(3.dp)) {
+        EpisodeTitleLines(episode, style, isPlaying)
+        if (style.isLarge) EpisodeOverview(episode, isPlaying, Modifier.padding(top = 3.dp))
+    }
+}
+
+@Composable
+private fun ColumnScope.EpisodeTitleLines(
+    episode: Episode,
+    style: EpisodeRowStyle,
+    isPlaying: Boolean,
+) {
     val watched = episode.isPlayed && !isPlaying
     Text(
         episode.episodeNumber?.let { "$it. ${episode.title}" } ?: episode.title,
@@ -201,12 +219,21 @@ private fun EpisodeTitleLines(episode: Episode, style: EpisodeRowStyle, isPlayin
 @Composable
 private fun statusLine(episode: Episode, style: EpisodeRowStyle, isPlaying: Boolean): String {
     val runtime = episode.runtimeMs?.let { durationText(it) }
-    val remaining = remainingMs(episode.resumePositionMs, episode.runtimeMs)?.let { remainingText(it) }
+    val remaining = remainingMs(episode.resumePositionMs, episode.runtimeMs)?.let {
+        remainingText(it)
+    }
     return when {
-        isPlaying && style.playingOn != null -> stringResource(R.string.info_playing_on, style.playingOn)
+        isPlaying && style.playingOn != null -> stringResource(
+            R.string.info_playing_on,
+            style.playingOn,
+        )
+
         isPlaying -> joined(listOf(stringResource(R.string.info_playing_now), remaining))
+
         episode.isPlayed -> joined(listOf(stringResource(R.string.info_watched), runtime))
+
         episode.resumePositionMs > 0 -> remaining.orEmpty()
+
         else -> runtime.orEmpty()
     }
 }
@@ -320,7 +347,11 @@ private fun SeasonChip(
     ) {
         val style = JellyCastText.Subheadline
         if (isSelected) {
-            Text(seasonTitle(season), style = style.copy(fontWeight = FontWeight.Bold), color = color)
+            Text(
+                seasonTitle(season),
+                style = style.copy(fontWeight = FontWeight.Bold),
+                color = color,
+            )
             Text("$watched/$total", style = style, color = color.copy(alpha = 0.6f))
         } else {
             val label =
