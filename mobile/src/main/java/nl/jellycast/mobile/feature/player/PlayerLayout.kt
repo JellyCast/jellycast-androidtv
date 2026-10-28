@@ -29,6 +29,30 @@ data class SwipeTransform(val offsetPx: Float, val heightPx: Float) {
     }
 }
 
+enum class SwipeDownOutcome { SpringBack, LeaveFullScreen, Minimize }
+
+/**
+ * A swipe down that goes far or fast enough leaves full screen for the player panel, and from
+ * the panel minimises to the mini player; anything shorter springs back.
+ */
+fun swipeDownOutcome(
+    offsetPx: Float,
+    velocityPxPerS: Float,
+    closeDistancePx: Float,
+    heightPx: Float,
+    fullScreen: Boolean,
+): SwipeDownOutcome {
+    val predicted = offsetPx + velocityPxPerS * SWIPE_PREDICTION_S
+    val far = offsetPx > closeDistancePx || predicted > heightPx / 2
+    return when {
+        !far -> SwipeDownOutcome.SpringBack
+        fullScreen -> SwipeDownOutcome.LeaveFullScreen
+        else -> SwipeDownOutcome.Minimize
+    }
+}
+
+private const val SWIPE_PREDICTION_S = 0.25f
+
 /** The 16:9 video under the status bar, full width (the portrait player). */
 fun pinnedVideoRect(widthPx: Float, topPx: Float): Rect =
     Rect(0f, topPx, widthPx, topPx + widthPx / VIDEO_ASPECT)

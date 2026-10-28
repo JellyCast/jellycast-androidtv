@@ -169,3 +169,38 @@ class PlayerLayoutTest {
         assertEquals(750f, moved.width)
     }
 }
+
+class SwipeDownOutcomeTest {
+    private fun outcome(offset: Float, velocity: Float = 0f, fullScreen: Boolean) =
+        swipeDownOutcome(
+            offsetPx = offset,
+            velocityPxPerS = velocity,
+            closeDistancePx = 300f,
+            heightPx = 1000f,
+            fullScreen = fullScreen,
+        )
+
+    @Test
+    fun `a long swipe from full screen goes back to the player panel`() {
+        assertEquals(SwipeDownOutcome.LeaveFullScreen, outcome(400f, fullScreen = true))
+    }
+
+    @Test
+    fun `a long swipe from the player panel minimises`() {
+        assertEquals(SwipeDownOutcome.Minimize, outcome(400f, fullScreen = false))
+    }
+
+    @Test
+    fun `a short fast flick counts as a long swipe`() {
+        assertEquals(
+            SwipeDownOutcome.LeaveFullScreen,
+            outcome(100f, velocity = 2_000f, fullScreen = true),
+        )
+    }
+
+    @Test
+    fun `a short slow swipe springs back`() {
+        assertEquals(SwipeDownOutcome.SpringBack, outcome(100f, fullScreen = true))
+        assertEquals(SwipeDownOutcome.SpringBack, outcome(100f, fullScreen = false))
+    }
+}

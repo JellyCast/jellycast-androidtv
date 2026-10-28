@@ -44,7 +44,6 @@ import nl.jellycast.mobile.ui.remote.PlayOnSheet
 import nl.jellycast.mobile.ui.remote.hasRemoteTargets
 
 private val CloseDistance = 120.dp
-private const val SWIPE_PREDICTION_S = 0.25f
 private const val BACK_SWIPE_SHARE = 0.3f
 private const val SLOW_HINT_SHOWN_MS = 10_000L
 private const val BUFFER_SAMPLE_MS = 1_000L
@@ -177,7 +176,10 @@ fun FullPlayer(
         if (engine.isPlaying && chrome.controlsVisible) chrome.interact()
     }
     SlowConnectionWatch(engine, chrome, state.quality)
-    MinimizeOnBack(chrome, heightPx, actions::onMinimize)
+    val leaveFullScreen = {
+        if (regular) chrome.videoOnly = false else orientation.force(landscape = false)
+    }
+    SwipeDownOnBack(chrome, heightPx, fullScreen, leaveFullScreen, actions::onMinimize)
 
     val seekBy: (Long) -> Unit = { deltaMs ->
         engine.player?.let { it.seekTo((it.currentPosition + deltaMs).coerceAtLeast(0)) }
@@ -193,13 +195,23 @@ fun FullPlayer(
             onSeekStep = { side -> seekBy(side.direction * SEEK_STEP_MS) },
             onSwipe = chrome::dragTo,
             onSwipeEnd = { velocity ->
-                val offset = chrome.swipeOffset.value
-                if (offset > closeDistancePx ||
-                    offset + velocity * SWIPE_PREDICTION_S > heightPx / 2
-                ) {
-                    chrome.animateClose(heightPx, actions::onMinimize)
-                } else {
-                    chrome.springBack()
+                val outcome =
+                    swipeDownOutcome(
+                        chrome.swipeOffset.value,
+                        velocity,
+                        closeDistancePx,
+                        heightPx,
+                        fullScreen,
+                    )
+                when (outcome) {
+                    SwipeDownOutcome.Minimize -> chrome.animateClose(heightPx, actions::onMinimize)
+
+                    SwipeDownOutcome.LeaveFullScreen -> {
+                        leaveFullScreen()
+                        chrome.springBack()
+                    }
+
+                    SwipeDownOutcome.SpringBack -> chrome.springBack()
                 }
             },
             onPill = { pill ->
@@ -346,13 +358,27 @@ private fun PlayerSheets(
     }
 }
 
-/** Predictive back pulls the player down like the swipe; completing it minimises. */
+/**
+ * Predictive back pulls the player down like the swipe; completing it leaves full screen, or
+ * from the player panel minimises.
+ */
 @Composable
-private fun MinimizeOnBack(chrome: PlayerChromeState, heightPx: Float, onMinimize: () -> Unit) {
+private fun SwipeDownOnBack(
+    chrome: PlayerChromeState,
+    heightPx: Float,
+    fullScreen: Boolean,
+    onLeaveFullScreen: () -> Unit,
+    onMinimize: () -> Unit,
+) {
     PredictiveBackHandler { progress ->
         try {
             progress.collect { chrome.dragTo(it.progress * heightPx * BACK_SWIPE_SHARE) }
-            chrome.animateClose(heightPx, onMinimize)
+            if (fullScreen) {
+                onLeaveFullScreen()
+                chrome.springBack()
+            } else {
+                chrome.animateClose(heightPx, onMinimize)
+            }
         } catch (e: CancellationException) {
             chrome.springBack()
             throw e
