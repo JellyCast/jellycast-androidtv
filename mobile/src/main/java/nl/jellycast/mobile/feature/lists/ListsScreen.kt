@@ -37,6 +37,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import nl.jellycast.mobile.R
@@ -45,6 +46,7 @@ import nl.jellycast.mobile.core.designsystem.component.ContentErrorView
 import nl.jellycast.mobile.core.designsystem.component.pressable
 import nl.jellycast.mobile.core.designsystem.theme.JellyCastColors
 import nl.jellycast.mobile.core.designsystem.theme.JellyCastText
+import nl.jellycast.mobile.core.designsystem.theme.JellyCastTheme
 import nl.jellycast.mobile.core.designsystem.theme.LocalLayout
 import nl.jellycast.mobile.navigation.ListRoute
 import nl.jellycast.mobile.navigation.LocalAppNavigation
@@ -90,7 +92,10 @@ fun ListsContent(
         topBar = {
             ListsTopBar(stringResource(R.string.lists_title), onBack, scrollBehavior) {
                 IconButton(onClick = { isNaming = true }) {
-                    Icon(painterResource(R.drawable.ic_lists_add), stringResource(R.string.lists_new))
+                    Icon(
+                        painterResource(R.drawable.ic_lists_add),
+                        stringResource(R.string.lists_new),
+                    )
                 }
             }
         },
@@ -103,6 +108,7 @@ fun ListsContent(
             val load = state.load
             when {
                 state.lists.isNotEmpty() -> ListsList(state.lists, onOpen)
+
                 load is ListsLoad.Failed ->
                     ContentErrorView(
                         message = load.message.orEmpty(),
@@ -110,7 +116,9 @@ fun ListsContent(
                         onRetry = onRefresh,
                         modifier = Modifier.align(Alignment.Center),
                     )
+
                 load == ListsLoad.Loaded -> EmptyLists(Modifier.align(Alignment.Center))
+
                 else ->
                     CircularProgressIndicator(
                         Modifier.align(Alignment.Center),
@@ -175,8 +183,11 @@ private fun ListSummaryRow(list: ListSummary, modifier: Modifier = Modifier) {
             val (status, accented) =
                 when (val status = list.status) {
                     ListStatus.Empty -> stringResource(R.string.lists_empty) to false
+
                     ListStatus.AllWatched -> stringResource(R.string.lists_all_watched) to false
+
                     ListStatus.NotStarted -> stringResource(R.string.lists_not_started) to false
+
                     is ListStatus.ContinueWith ->
                         stringResource(R.string.lists_continue_with, listItemTitle(status.next)) to
                             true
@@ -203,7 +214,11 @@ private fun ListSummaryRow(list: ListSummary, modifier: Modifier = Modifier) {
 fun countLine(count: Int, watchedCount: Int): String {
     val titles = pluralStringResource(R.plurals.lists_titles, count, count)
     return if (watchedCount > 0) {
-        "$titles · ${stringResource(R.string.lists_watched_count, watchedCount)}"
+        "$titles · ${pluralStringResource(
+            R.plurals.lists_watched_count,
+            watchedCount,
+            watchedCount,
+        )}"
     } else {
         titles
     }
@@ -226,6 +241,35 @@ private fun PosterStack(posterUrls: List<String?>, name: String) {
                     .alpha(if (offset == 0) 1f else BACK_POSTER_ALPHA),
             )
         }
+    }
+}
+
+@Preview
+@Composable
+private fun ListsContentPreview() {
+    JellyCastTheme {
+        ListsContent(
+            state =
+                ListsUiState(
+                    load = ListsLoad.Loaded,
+                    lists =
+                        listOf(
+                            ListSummary(
+                                "a",
+                                "Nolan",
+                                listOf(null, null),
+                                2,
+                                1,
+                                ListStatus.NotStarted,
+                            ),
+                            ListSummary("b", "Christmas", emptyList(), 0, 0, ListStatus.Empty),
+                        ),
+                ),
+            onBack = {},
+            onOpen = {},
+            onCreate = {},
+            onRefresh = {},
+        )
     }
 }
 

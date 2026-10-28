@@ -140,10 +140,12 @@ object LibraryListing {
                 shown
                     .sortedByDescending { it.addedAt ?: Long.MIN_VALUE }
                     .groupInOrder { addedSection(it.addedAt, nowMs) }
+
             LibrarySort.Title ->
                 shown
                     .sortedWith { a, b -> collator.compare(sortKey(a.title), sortKey(b.title)) }
                     .groupInOrder { letterSection(it.title) }
+
             LibrarySort.Year ->
                 shown
                     .sortedByDescending { it.year ?: 0 }
@@ -151,6 +153,7 @@ object LibraryListing {
                         entry.year?.let { SectionKey.Decade(it / DECADE * DECADE) }
                             ?: SectionKey.UnknownYear
                     }
+
             LibrarySort.Length ->
                 shown
                     .sortedByDescending { it.runtimeMs }

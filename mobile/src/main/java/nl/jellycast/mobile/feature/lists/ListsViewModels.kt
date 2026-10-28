@@ -107,8 +107,11 @@ sealed interface ListUiState {
     ) : ListUiState
 }
 
-class ListViewModel(private val listId: String, private val lists: ListsStore, library: LibraryStore) :
-    ViewModel() {
+class ListViewModel(
+    private val listId: String,
+    private val lists: ListsStore,
+    library: LibraryStore,
+) : ViewModel() {
     val uiState: StateFlow<ListUiState> =
         combine(lists.state, library.snapshot) { state, snapshot ->
             val list = state.list(listId)
@@ -117,7 +120,11 @@ class ListViewModel(private val listId: String, private val lists: ListsStore, l
                 state.load == ListsLoad.Loaded -> ListUiState.Gone
                 else -> ListUiState.Loading
             }
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), ListUiState.Loading)
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS),
+            ListUiState.Loading,
+        )
 
     init {
         if (lists.state.value.list(listId) == null) onRefresh()
@@ -186,7 +193,11 @@ class AddToListViewModel(private val lists: ListsStore) : ViewModel() {
                 isDone = progress.isDone,
                 changeError = state.changeError,
             )
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), AddToListUiState())
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS),
+            AddToListUiState(),
+        )
 
     fun onOpen() {
         viewModelScope.launch { lists.load() }

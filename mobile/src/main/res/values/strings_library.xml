@@ -59,7 +59,6 @@
     <string name="lists_subtitle">Movies and episodes in your own order</string>
     <string name="lists_empty_title">No lists yet</string>
     <string name="lists_empty_body">Make one with + above, or hold a movie, series or episode and choose Add to list…</string>
-    <string name="lists_watched_count">%1$d watched</string>
     <string name="lists_continue_with">Continue with %1$s</string>
     <string name="lists_not_started">Not started</string>
     <string name="lists_all_watched">All watched</string>
@@ -88,6 +87,10 @@
     <string name="lists_already_in_as">already in it, as %1$d</string>
     <string name="lists_already_in">already in it</string>
     <string name="lists_change_failed">The list wasn\'t changed</string>
+    <plurals name="lists_watched_count">
+        <item quantity="one">%d watched</item>
+        <item quantity="other">%d watched</item>
+    </plurals>
     <plurals name="lists_titles">
         <item quantity="one">%d title</item>
         <item quantity="other">%d titles</item>

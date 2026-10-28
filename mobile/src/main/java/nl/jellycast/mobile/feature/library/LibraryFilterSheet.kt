@@ -94,7 +94,6 @@ fun LibraryFilterSheet(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun <T> ChoiceGroup(
     label: String,
@@ -102,11 +101,26 @@ private fun <T> ChoiceGroup(
     selected: T,
     title: @Composable (T) -> String,
     onSelect: (T) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    ListSectionLabel(label, Modifier.padding(top = 20.dp, bottom = 8.dp))
+    Column(modifier) {
+        ListSectionLabel(label, Modifier.padding(top = 20.dp, bottom = 8.dp))
+        ChoiceChips(options, selected, title, onSelect)
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun <T> ChoiceChips(
+    options: List<T>,
+    selected: T,
+    title: @Composable (T) -> String,
+    onSelect: (T) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     FlowRow(
+        modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(0.dp),
     ) {
         options.forEach { option ->
             FilterChip(

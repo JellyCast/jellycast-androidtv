@@ -43,6 +43,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import nl.jellycast.core.model.PlayableItem
@@ -54,6 +55,7 @@ import nl.jellycast.mobile.core.designsystem.component.WatchProgressBar
 import nl.jellycast.mobile.core.designsystem.component.pressable
 import nl.jellycast.mobile.core.designsystem.theme.JellyCastColors
 import nl.jellycast.mobile.core.designsystem.theme.JellyCastText
+import nl.jellycast.mobile.core.designsystem.theme.JellyCastTheme
 import nl.jellycast.mobile.core.designsystem.theme.LocalLayout
 import nl.jellycast.mobile.core.ui.durationText
 import nl.jellycast.mobile.core.ui.remainingText
@@ -136,12 +138,14 @@ fun ListContent(state: ListUiState, actions: ListActions, modifier: Modifier = M
                         Modifier.align(Alignment.Center),
                         color = JellyCastColors.TextMuted,
                     )
+
                 ListUiState.Gone ->
                     Text(
                         stringResource(R.string.lists_gone),
                         color = JellyCastColors.TextMuted,
                         modifier = Modifier.align(Alignment.Center),
                     )
+
                 is ListUiState.Ready -> ListItems(state, actions)
             }
         }
@@ -240,7 +244,12 @@ private fun ListItems(state: ListUiState.Ready, actions: ListActions) {
             ListHeader(
                 state,
                 onPlay = actions.onPlay,
-                modifier = Modifier.padding(start = margin, end = margin, top = 4.dp, bottom = 12.dp),
+                modifier = Modifier.padding(
+                    start = margin,
+                    end = margin,
+                    top = 4.dp,
+                    bottom = 12.dp,
+                ),
             )
         }
         itemsIndexed(rows, key = { _, row -> row.entryId }) { index, row ->
@@ -249,7 +258,7 @@ private fun ListItems(state: ListUiState.Ready, actions: ListActions) {
                 ListItemRow(
                     number = number,
                     row = row,
-                    handle =
+                    handleModifier =
                         Modifier.reorderHandle(reorder, row.entryId) { from, to ->
                             actions.onMove(from, to)
                         },
@@ -280,7 +289,9 @@ private fun SwipeToDelete(onDelete: () -> Unit, content: @Composable () -> Unit)
         onDismiss = { value -> if (value == SwipeToDismissBoxValue.EndToStart) onDelete() },
         backgroundContent = {
             Box(
-                Modifier.fillMaxSize().background(JellyCastColors.Warning).padding(horizontal = 24.dp),
+                Modifier.fillMaxSize().background(
+                    JellyCastColors.Warning,
+                ).padding(horizontal = 24.dp),
                 contentAlignment = Alignment.CenterEnd,
             ) {
                 Icon(
@@ -294,7 +305,11 @@ private fun SwipeToDelete(onDelete: () -> Unit, content: @Composable () -> Unit)
 }
 
 @Composable
-private fun ListHeader(state: ListUiState.Ready, onPlay: (PlayRequest) -> Unit, modifier: Modifier) {
+private fun ListHeader(
+    state: ListUiState.Ready,
+    onPlay: (PlayRequest) -> Unit,
+    modifier: Modifier = Modifier,
+) {
     val progress = state.progress
     Column(modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
         val parts = mutableListOf(countLine(progress.items.size, progress.watchedCount))
@@ -311,8 +326,13 @@ private fun ListHeader(state: ListUiState.Ready, onPlay: (PlayRequest) -> Unit, 
             val title =
                 when {
                     next == null -> stringResource(R.string.lists_play_from_start)
+
                     !progress.isStarted -> stringResource(R.string.lists_play)
-                    else -> stringResource(R.string.lists_continue_title, listItemTitle(next.playable))
+
+                    else -> stringResource(
+                        R.string.lists_continue_title,
+                        listItemTitle(next.playable),
+                    )
                 }
             AccentButton(
                 title = title,
@@ -336,8 +356,8 @@ private const val WATCHED_ALPHA = 0.55f
 private fun ListItemRow(
     number: Int,
     row: ListRowItem,
-    handle: Modifier,
     modifier: Modifier = Modifier,
+    handleModifier: Modifier = Modifier,
 ) {
     val playable = row.playable
     val watched = playable.isPlayed
@@ -376,7 +396,10 @@ private fun ListItemRow(
                 }
             }
         }
-        Box(handle.size(width = 28.dp, height = 44.dp), contentAlignment = Alignment.Center) {
+        Box(
+            handleModifier.size(width = 28.dp, height = 44.dp),
+            contentAlignment = Alignment.Center,
+        ) {
             Icon(
                 painterResource(R.drawable.ic_lists_drag),
                 null,
@@ -397,6 +420,7 @@ private fun InfoLine(playable: PlayableItem, isNext: Boolean) {
                     stringResource(R.string.library_type_movie),
                     playable.movie.year?.toString(),
                 ).joinToString(" · ")
+
             is PlayableItem.EpisodeItem -> playable.episode.title
         }
     val time =
@@ -406,7 +430,10 @@ private fun InfoLine(playable: PlayableItem, isNext: Boolean) {
             playable.runtimeMs > 0 -> durationText(playable.runtimeMs)
             else -> ""
         }
-    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(5.dp)) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(5.dp),
+    ) {
         if (watched) {
             Icon(
                 painterResource(R.drawable.ic_lists_check_circle),
@@ -421,6 +448,17 @@ private fun InfoLine(playable: PlayableItem, isNext: Boolean) {
             color = if (isNext && !watched) JellyCastColors.Accent else JellyCastColors.TextMuted,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun ListContentPreview() {
+    JellyCastTheme {
+        ListContent(
+            state = ListUiState.Ready("a", "Nolan", ListProgress(emptyList()), emptyList()),
+            actions = ListActions({}, {}, { _, _ -> }, {}, {}, {}),
         )
     }
 }

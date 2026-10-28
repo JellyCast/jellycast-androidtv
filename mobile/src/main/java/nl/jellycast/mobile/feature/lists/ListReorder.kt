@@ -18,10 +18,7 @@ import androidx.compose.ui.zIndex
  * Drag a row by its handle to reorder: the rows swap locally while dragging, and [onMove] gets
  * the start and end position once the finger lifts.
  */
-class ReorderState<T>(
-    private val listState: LazyListState,
-    private val keyOf: (T) -> String,
-) {
+class ReorderState<T>(private val listState: LazyListState, private val keyOf: (T) -> String) {
     var items by mutableStateOf<List<T>>(emptyList())
         private set
 
@@ -65,7 +62,8 @@ class ReorderState<T>(
         val neighbourInfo = visible.firstOrNull { it.key == keyOf(neighbour) } ?: return
         val crossed =
             if (offsetPx > 0) {
-                current.offset + current.size + offsetPx > neighbourInfo.offset + neighbourInfo.size / 2
+                current.offset + current.size + offsetPx >
+                    neighbourInfo.offset + neighbourInfo.size / 2
             } else {
                 current.offset + offsetPx < neighbourInfo.offset + neighbourInfo.size / 2
             }

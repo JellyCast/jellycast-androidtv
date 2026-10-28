@@ -78,6 +78,7 @@ val PlayableItem.runtimeMs: Long
 /** An episode is pictured and named by its series. */
 fun PlayableItem.listPosterUrl(snapshot: LibrarySnapshot?): String? = when (this) {
     is PlayableItem.MovieItem -> movie.artwork.poster
+
     is PlayableItem.EpisodeItem ->
         snapshot?.seriesById?.get(episode.seriesId)?.artwork?.poster ?: episode.artwork.landscape
 }

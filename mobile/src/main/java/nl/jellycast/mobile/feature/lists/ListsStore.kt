@@ -43,7 +43,9 @@ class ListsStore(private val repository: PlaylistRepository, private val scope: 
         if (_state.value.lists.isEmpty()) _state.update { it.copy(load = ListsLoad.Loading) }
         repository
             .getPlaylists()
-            .onSuccess { lists -> _state.update { it.copy(lists = lists, load = ListsLoad.Loaded) } }
+            .onSuccess { lists ->
+                _state.update { it.copy(lists = lists, load = ListsLoad.Loaded) }
+            }
             .onFailure { error ->
                 _state.update {
                     if (it.lists.isEmpty()) it.copy(load = ListsLoad.Failed(error.message)) else it
@@ -78,7 +80,9 @@ class ListsStore(private val repository: PlaylistRepository, private val scope: 
     }
 
     fun remove(entryId: String, listId: String) {
-        update(listId) { list -> list.copy(entries = list.entries.filterNot { it.entryId == entryId }) }
+        update(listId) { list ->
+            list.copy(entries = list.entries.filterNot { it.entryId == entryId })
+        }
         save { repository.remove(listId, listOf(entryId)) }
     }
 

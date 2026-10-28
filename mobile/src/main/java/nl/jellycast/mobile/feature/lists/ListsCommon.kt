@@ -1,5 +1,6 @@
 package nl.jellycast.mobile.feature.lists
 
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -18,7 +19,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -35,6 +35,7 @@ import nl.jellycast.mobile.core.ui.episodeCode
 @Composable
 fun listItemTitle(playable: PlayableItem): String = when (playable) {
     is PlayableItem.MovieItem -> playable.movie.title
+
     is PlayableItem.EpisodeItem ->
         listOf(playable.episode.seriesTitle, episodeCode(playable.episode))
             .filter { it.isNotEmpty() }
@@ -87,9 +88,11 @@ fun ListsTopBar(
     title: String,
     onBack: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior,
+    modifier: Modifier = Modifier,
     actions: @Composable RowScope.() -> Unit = {},
 ) {
     LargeTopAppBar(
+        modifier = modifier,
         title = {
             Text(
                 title,

@@ -59,7 +59,6 @@
     <string name="lists_subtitle">Films en afleveringen in je eigen volgorde</string>
     <string name="lists_empty_title">Nog geen lijsten</string>
     <string name="lists_empty_body">Maak er een met + hierboven, of houd een film, serie of aflevering vast en kies Aan lijst toevoegen…</string>
-    <string name="lists_watched_count">%1$d gezien</string>
     <string name="lists_continue_with">Verder met %1$s</string>
     <string name="lists_not_started">Nog niet begonnen</string>
     <string name="lists_all_watched">Alles gezien</string>
@@ -88,6 +87,10 @@
     <string name="lists_already_in_as">staat er al in, als %1$d</string>
     <string name="lists_already_in">staat er al in</string>
     <string name="lists_change_failed">De lijst is niet aangepast</string>
+    <plurals name="lists_watched_count">
+        <item quantity="one">%d gezien</item>
+        <item quantity="other">%d gezien</item>
+    </plurals>
     <plurals name="lists_titles">
         <item quantity="one">%d titel</item>
         <item quantity="other">%d titels</item>

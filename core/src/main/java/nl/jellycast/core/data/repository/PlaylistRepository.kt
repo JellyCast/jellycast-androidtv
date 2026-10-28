@@ -137,15 +137,14 @@ class DefaultPlaylistRepository(
         ).content.items
         .mapNotNull { it.toPlaylistEntry() }
 
-    private suspend fun <T> call(block: suspend () -> T): Result<T> =
-        withContext(dispatchers.io) {
-            try {
-                Result.success(block())
-            } catch (e: ApiClientException) {
-                Timber.w(e, "A list request failed")
-                Result.failure(e)
-            }
+    private suspend fun <T> call(block: suspend () -> T): Result<T> = withContext(dispatchers.io) {
+        try {
+            Result.success(block())
+        } catch (e: ApiClientException) {
+            Timber.w(e, "A list request failed")
+            Result.failure(e)
         }
+    }
 
     private suspend fun userId(): UUID =
         requireNotNull(store.session.first().userId) { "Not logged in" }.toUUID()

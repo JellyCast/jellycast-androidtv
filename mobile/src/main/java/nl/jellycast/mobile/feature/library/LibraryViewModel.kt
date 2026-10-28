@@ -161,11 +161,17 @@ class LibraryViewModel(
                     .toList()
             }
         return LibraryBody.Ready(
-            sections = LibraryListing.sections(matching, filters.status, filters.sort, clock.nowMs()),
+            sections = LibraryListing.sections(
+                matching,
+                filters.status,
+                filters.sort,
+                clock.nowMs(),
+            ),
             genres = LibraryListing.genreCounts(entries),
             people = if (term.isEmpty()) emptyList() else input.people,
             episodes = episodes,
-            statusCount = filters.status?.let { status -> matching.count { it.status == status } } ?: 0,
+            statusCount =
+                filters.status?.let { status -> matching.count { it.status == status } } ?: 0,
         )
     }
 

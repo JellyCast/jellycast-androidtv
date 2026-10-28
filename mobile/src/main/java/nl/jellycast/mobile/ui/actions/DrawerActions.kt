@@ -50,7 +50,10 @@ fun drawerActions(target: ActionTarget, context: DrawerContext): List<DrawerActi
         val episodeLabel =
             (playable as? PlayableItem.EpisodeItem)
                 ?.episode
-                ?.takeIf { target is ActionTarget.SeriesTarget || target is ActionTarget.SeasonTarget }
+                ?.takeIf {
+                    target is ActionTarget.SeriesTarget ||
+                        target is ActionTarget.SeasonTarget
+                }
         add(DrawerAction.Play(playable, inProgress, episodeLabel))
         if (inProgress) add(DrawerAction.PlayFromStart(playable))
         if (context.hasRemoteTargets) add(DrawerAction.PlayOn(playable))
@@ -92,12 +95,15 @@ private fun playableOf(target: ActionTarget, index: LibraryIndex?): PlayableItem
     return when (target) {
         is ActionTarget.MovieTarget ->
             PlayableItem.MovieItem(snapshot?.moviesById?.get(target.movie.id) ?: target.movie)
+
         is ActionTarget.EpisodeTarget ->
             PlayableItem.EpisodeItem(
                 snapshot?.episodesById?.get(target.episode.id) ?: target.episode,
             )
+
         is ActionTarget.SeriesTarget ->
             index?.progress(target.series.id)?.next?.let { PlayableItem.EpisodeItem(it) }
+
         is ActionTarget.SeasonTarget -> {
             val episodes = seasonEpisodes(target, index)
             (episodes.firstOrNull { it.isInProgress } ?: episodes.firstOrNull { !it.isPlayed })
@@ -119,6 +125,7 @@ private fun statusOf(target: ActionTarget, index: LibraryIndex?): SeriesStatus =
                 target.series.hasPlayedEpisodes -> SeriesStatus.InProgress
                 else -> SeriesStatus.NotStarted
             }
+
     is ActionTarget.SeasonTarget -> {
         val episodes = seasonEpisodes(target, index)
         when {
@@ -127,12 +134,15 @@ private fun statusOf(target: ActionTarget, index: LibraryIndex?): SeriesStatus =
             else -> SeriesStatus.NotStarted
         }
     }
+
     else ->
         when (val playable = playableOf(target, index)) {
             is PlayableItem.MovieItem ->
                 statusOf(playable.movie.isPlayed, playable.movie.resumePositionMs)
+
             is PlayableItem.EpisodeItem ->
                 statusOf(playable.episode.isPlayed, playable.episode.resumePositionMs)
+
             null -> SeriesStatus.NotStarted
         }
 }
@@ -153,12 +163,17 @@ private fun playedIds(target: ActionTarget): List<String> = when (target) {
 private fun externalUrl(target: ActionTarget, context: DrawerContext): String? {
     val source = context.ratingSource
     return when (target) {
-        is ActionTarget.MovieTarget ->
-            titleUrl(source, target.movie.externalIds, target.movie.title, TitleKind.Movie)
+        is ActionTarget.MovieTarget -> {
+            val movie = context.index?.snapshot?.moviesById?.get(target.movie.id) ?: target.movie
+            titleUrl(source, movie.externalIds, movie.title, TitleKind.Movie)
+        }
+
         is ActionTarget.SeriesTarget ->
             titleUrl(source, target.series.externalIds, target.series.title, TitleKind.Series)
+
         is ActionTarget.SeasonTarget ->
             titleUrl(source, target.series.externalIds, target.series.title, TitleKind.Series)
+
         is ActionTarget.EpisodeTarget -> {
             val episode = target.episode
             val series = context.index?.snapshot?.seriesById?.get(episode.seriesId)
@@ -189,11 +204,14 @@ private fun titleUrl(
     kind: TitleKind,
 ): String? = when (source) {
     RatingSource.Imdb -> ids.imdb?.let { "https://www.imdb.com/title/$it/" }
+
     RatingSource.Tmdb ->
         ids.tmdb?.let { tmdb ->
             when (kind) {
                 TitleKind.Movie -> "https://www.themoviedb.org/movie/$tmdb"
+
                 TitleKind.Series -> "https://www.themoviedb.org/tv/$tmdb"
+
                 is TitleKind.Episode ->
                     if (kind.season != null && kind.number != null) {
                         "https://www.themoviedb.org/tv/$tmdb/season/${kind.season}" +
@@ -203,6 +221,7 @@ private fun titleUrl(
                     }
             }
         }
+
     RatingSource.RottenTomatoes ->
         "https://www.rottentomatoes.com/search?search=" +
             URLEncoder.encode(searchName, Charsets.UTF_8).replace("+", "%20")

@@ -123,7 +123,15 @@ fun AddToListSheet(
                         selected = target.position != null,
                         onClick = { if (target.position == null) onAdd(target.list.id) },
                         detail = detail(target, request.itemIds.size),
-                        modifier = Modifier.alpha(if (state.addingTo == target.list.id) 0.5f else 1f),
+                        modifier = Modifier.alpha(
+                            if (state.addingTo ==
+                                target.list.id
+                            ) {
+                                0.5f
+                            } else {
+                                1f
+                            },
+                        ),
                     )
                 }
                 SheetRow(

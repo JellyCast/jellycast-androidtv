@@ -119,15 +119,23 @@ fun MediaActionDrawer(
             onDismiss()
             when (action) {
                 is DrawerAction.Play -> navigation.play(PlayRequest(action.item))
+
                 is DrawerAction.PlayFromStart ->
                     navigation.play(PlayRequest(action.item, fromStart = true))
+
                 is DrawerAction.PlayOn -> playOn = PlayOnRequest(action.item)
+
                 is DrawerAction.SetPlayed ->
                     appScope.launch { store.setPlayed(action.itemIds, action.played) }
+
                 is DrawerAction.AddToList -> navigation.addToList(listTitle, action.itemIds)
+
                 is DrawerAction.GoToMovie -> navigation.open(MovieRoute(action.movieId))
+
                 is DrawerAction.GoToSeries -> navigation.open(SeriesRoute(action.seriesId))
+
                 is DrawerAction.OpenOn -> uriHandler.openUri(action.url)
+
                 is DrawerAction.Download -> Unit
             }
         }
@@ -171,36 +179,60 @@ private fun actionTitle(action: DrawerAction): String = when (action) {
     is DrawerAction.Play ->
         when {
             action.isInProgress -> stringResource(R.string.library_drawer_continue)
+
             action.episodeLabel != null ->
-                stringResource(R.string.library_drawer_play_episode, episodeCode(action.episodeLabel))
+                stringResource(
+                    R.string.library_drawer_play_episode,
+                    episodeCode(action.episodeLabel),
+                )
+
             else -> stringResource(R.string.library_drawer_play)
         }
+
     is DrawerAction.PlayFromStart -> stringResource(R.string.library_drawer_play_from_start)
+
     is DrawerAction.PlayOn -> stringResource(R.string.library_drawer_play_on)
+
     is DrawerAction.SetPlayed ->
         if (action.played) {
             stringResource(R.string.library_drawer_mark_watched)
         } else {
             stringResource(R.string.library_drawer_mark_not_watched)
         }
+
     is DrawerAction.AddToList -> stringResource(R.string.library_drawer_add_to_list)
+
     is DrawerAction.GoToMovie -> stringResource(R.string.library_drawer_go_to_movie)
+
     is DrawerAction.GoToSeries -> stringResource(R.string.library_drawer_go_to_series)
-    is DrawerAction.OpenOn -> stringResource(R.string.library_drawer_open_on, action.source.siteName)
+
+    is DrawerAction.OpenOn -> stringResource(
+        R.string.library_drawer_open_on,
+        action.source.siteName,
+    )
+
     is DrawerAction.Download -> ""
 }
 
 @DrawableRes
 private fun actionIcon(action: DrawerAction): Int = when (action) {
     is DrawerAction.Play -> R.drawable.ic_play
+
     is DrawerAction.PlayFromStart -> R.drawable.ic_library_replay
+
     is DrawerAction.PlayOn -> R.drawable.ic_tv
+
     is DrawerAction.SetPlayed ->
         if (action.played) R.drawable.ic_library_check_circle else R.drawable.ic_library_circle
+
     is DrawerAction.AddToList -> R.drawable.ic_library_playlist_add
+
     is DrawerAction.GoToMovie -> R.drawable.ic_movie
+
     is DrawerAction.GoToSeries -> R.drawable.ic_library
+
     is DrawerAction.OpenOn -> R.drawable.ic_library_open_in_new
+
     is DrawerAction.Download -> R.drawable.ic_download
 }
 
@@ -235,12 +267,14 @@ private fun DrawerHeader(target: ActionTarget, modifier: Modifier = Modifier) {
                     joined(movieLabel, target.movie.year?.toString()),
                     target.movie.artwork.poster,
                 )
+
             is ActionTarget.SeriesTarget ->
                 HeaderInfo(
                     target.series.title,
                     joined(seriesLabel, target.series.year?.toString()),
                     target.series.artwork.poster,
                 )
+
             is ActionTarget.EpisodeTarget ->
                 HeaderInfo(
                     target.episode.seriesTitle,
@@ -248,6 +282,7 @@ private fun DrawerHeader(target: ActionTarget, modifier: Modifier = Modifier) {
                     target.episode.stillUrl ?: target.episode.artwork.backdrop,
                     isWide = true,
                 )
+
             is ActionTarget.SeasonTarget ->
                 HeaderInfo(
                     target.series.title,

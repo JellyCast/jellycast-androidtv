@@ -6,8 +6,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -21,6 +21,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -30,12 +31,18 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import nl.jellycast.core.model.Artwork
+import nl.jellycast.core.model.MediaTech
+import nl.jellycast.core.model.Movie
+import nl.jellycast.core.model.Spine
 import nl.jellycast.mobile.R
 import nl.jellycast.mobile.core.designsystem.component.ContentErrorView
 import nl.jellycast.mobile.core.designsystem.component.POSTER_RATIO
 import nl.jellycast.mobile.core.designsystem.component.SurfaceBlock
+import nl.jellycast.mobile.core.designsystem.theme.JellyCastTheme
 import nl.jellycast.mobile.navigation.ListsRoute
 import nl.jellycast.mobile.navigation.LocalAppNavigation
 import nl.jellycast.mobile.navigation.MovieRoute
@@ -65,6 +72,8 @@ fun LibraryScreen(modifier: Modifier = Modifier, viewModel: LibraryViewModel = k
     val koin = getKoin()
     val availability = remember(koin) { koin.getOrNull<OfflineAvailability>() }
     var query by rememberSaveable { mutableStateOf("") }
+    LaunchedEffect(viewModel) { if (query.isNotEmpty()) viewModel.onQueryChange(query) }
+    val isOffline by rememberUpdatedState(state.isOffline)
     var target by remember { mutableStateOf<ActionTarget?>(null) }
     val haptics = LocalHapticFeedback.current
     fun hold(next: ActionTarget) {
@@ -72,43 +81,43 @@ fun LibraryScreen(modifier: Modifier = Modifier, viewModel: LibraryViewModel = k
         target = next
     }
     val actions =
-        LibraryGridActions(
-            onOpenEntry = { entry ->
-                viewModel.onRemember()
-                navigation.open(
-                    when (entry) {
-                        is LibraryEntry.MovieEntry -> MovieRoute(entry.id)
-                        is LibraryEntry.SeriesEntry -> SeriesRoute(entry.id)
-                    },
-                )
-            },
-            onHoldEntry = { entry ->
-                hold(
-                    when (entry) {
-                        is LibraryEntry.MovieEntry -> ActionTarget.MovieTarget(entry.movie)
-                        is LibraryEntry.SeriesEntry -> ActionTarget.SeriesTarget(entry.series)
-                    },
-                )
-            },
-            onOpenPerson = { person ->
-                viewModel.onRemember()
-                navigation.open(PersonRoute(person.id, person.name))
-            },
-            onOpenEpisode = { episode ->
-                viewModel.onRemember()
-                navigation.open(SeriesRoute(episode.seriesId))
-            },
-            onHoldEpisode = { hold(ActionTarget.EpisodeTarget(it)) },
-            onFiltersChange = viewModel::onFiltersChange,
-            onSelectRecent = { term ->
-                query = term
-                viewModel.onQueryChange(term)
-            },
-            onForgetRecent = viewModel::onForget,
-            isDimmed = { id ->
-                state.isOffline && availability?.isAvailableOffline(id) != true
-            },
-        )
+        remember(viewModel, navigation, availability) {
+            LibraryGridActions(
+                onOpenEntry = { entry ->
+                    viewModel.onRemember()
+                    navigation.open(
+                        when (entry) {
+                            is LibraryEntry.MovieEntry -> MovieRoute(entry.id)
+                            is LibraryEntry.SeriesEntry -> SeriesRoute(entry.id)
+                        },
+                    )
+                },
+                onHoldEntry = { entry ->
+                    hold(
+                        when (entry) {
+                            is LibraryEntry.MovieEntry -> ActionTarget.MovieTarget(entry.movie)
+                            is LibraryEntry.SeriesEntry -> ActionTarget.SeriesTarget(entry.series)
+                        },
+                    )
+                },
+                onOpenPerson = { person ->
+                    viewModel.onRemember()
+                    navigation.open(PersonRoute(person.id, person.name))
+                },
+                onOpenEpisode = { episode ->
+                    viewModel.onRemember()
+                    navigation.open(SeriesRoute(episode.seriesId))
+                },
+                onHoldEpisode = { hold(ActionTarget.EpisodeTarget(it)) },
+                onFiltersChange = viewModel::onFiltersChange,
+                onSelectRecent = { term ->
+                    query = term
+                    viewModel.onQueryChange(term)
+                },
+                onForgetRecent = viewModel::onForget,
+                isDimmed = { id -> isOffline && availability?.isAvailableOffline(id) != true },
+            )
+        }
     LibraryContent(
         state = state,
         query = query,
@@ -148,6 +157,7 @@ fun LibraryContent(
     Box(modifier.fillMaxSize()) {
         when (val content = state.content) {
             LibraryBody.Loading -> LibrarySkeleton(Modifier.statusBarsPadding())
+
             is LibraryBody.Failed ->
                 ContentErrorView(
                     message = content.message ?: stringResource(R.string.library_sync_failed),
@@ -155,6 +165,7 @@ fun LibraryContent(
                     onRetry = onRefresh,
                     modifier = Modifier.align(Alignment.Center),
                 )
+
             is LibraryBody.Ready ->
                 PullToRefreshBox(
                     isRefreshing = pulled && state.isSyncing,
@@ -239,3 +250,61 @@ private fun LibrarySkeleton(modifier: Modifier = Modifier) {
         }
     }
 }
+
+@Preview
+@Composable
+private fun LibraryContentPreview() {
+    val entries =
+        listOf(
+            LibraryEntry.MovieEntry(previewMovie("1", "Interstellar"), WatchStatus.NotStarted),
+            LibraryEntry.MovieEntry(previewMovie("2", "Dune"), WatchStatus.Watched),
+        )
+    JellyCastTheme {
+        LibraryContent(
+            state =
+                LibraryUiState(
+                    content =
+                        LibraryBody.Ready(
+                            sections = listOf(LibrarySection(SectionKey.AddedThisWeek, entries)),
+                            genres = emptyList(),
+                            people = emptyList(),
+                            episodes = emptyList(),
+                            statusCount = 1,
+                        ),
+                ),
+            query = "",
+            onQueryChange = {},
+            onSubmit = {},
+            onRefresh = {},
+            onOpenLists = {},
+            actions =
+                LibraryGridActions(
+                    onOpenEntry = {},
+                    onHoldEntry = {},
+                    onOpenPerson = {},
+                    onOpenEpisode = {},
+                    onHoldEpisode = {},
+                    onFiltersChange = {},
+                    onSelectRecent = {},
+                    onForgetRecent = {},
+                    isDimmed = { false },
+                ),
+        )
+    }
+}
+
+private fun previewMovie(id: String, title: String) = Movie(
+    id = id,
+    title = title,
+    year = 2014,
+    runtimeMs = 10_140_000,
+    overview = null,
+    genres = emptyList(),
+    ageRating = null,
+    resumePositionMs = 0,
+    lastPlayedAt = null,
+    addedAt = null,
+    artwork = Artwork(),
+    spine = Spine(posterUrl = null, logoUrl = null, color = 0, isLight = false),
+    tech = MediaTech(),
+)
