@@ -12,15 +12,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.NavigationRail
 import androidx.compose.material3.NavigationRailItem
-import androidx.compose.material3.NavigationRailItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -30,7 +31,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
@@ -43,7 +43,6 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import nl.jellycast.mobile.R
 import nl.jellycast.mobile.core.designsystem.theme.JellyCastColors
-import nl.jellycast.mobile.core.designsystem.theme.LocalLayout
 import nl.jellycast.mobile.core.library.LibraryStore
 import nl.jellycast.mobile.feature.downloads.DownloadedSeriesScreen
 import nl.jellycast.mobile.feature.downloads.DownloadsScreen
@@ -65,8 +64,8 @@ import org.koin.compose.koinInject
 /**
  * The signed-in app, as iOS `MainView`: three tabs (Home, Library, Downloads), each with its own
  * back stack; the TV bar or download bar above the tab bar; the player (mini or full) over
- * everything; settings and "Add to list" as sheets. Phones get a bottom navigation bar, tablets
- * a navigation rail.
+ * everything; settings and "Add to list" as sheets. The navigation bar is at the bottom on phones
+ * and tablets alike.
  */
 @Composable
 fun MainShell(modifier: Modifier = Modifier) {
@@ -75,22 +74,19 @@ fun MainShell(modifier: Modifier = Modifier) {
     LaunchedEffect(store) { store.start() }
 
     CompositionLocalProvider(LocalAppNavigation provides navigation) {
-        val regular = LocalLayout.current.isRegular
         var bottomBarHeightPx by remember { mutableIntStateOf(0) }
         val density = LocalDensity.current
         Box(modifier.fillMaxSize()) {
-            Row(Modifier.fillMaxSize()) {
-                if (regular) TabRail(navigation)
-                Column(Modifier.weight(1f)) {
-                    TabContent(navigation, Modifier.weight(1f))
-                    Column(Modifier.onSizeChanged { bottomBarHeightPx = it.height }) {
-                        AccessoryBar(navigation)
-                        if (!regular) TabBar(navigation)
-                    }
+            // The bar stays at the bottom on tablets too: the design is made for it, and apps such
+            // as Netflix and Spotify keep it there instead of Material's side rail.
+            Column(Modifier.fillMaxSize()) {
+                TabContent(navigation, Modifier.weight(1f))
+                Column(Modifier.onSizeChanged { bottomBarHeightPx = it.height }) {
+                    AccessoryBar(navigation)
+                    TabBar(navigation)
                 }
             }
-            val bottomInset =
-                with(density) { bottomBarHeightPx.toDp() } + if (regular) 16.dp else 0.dp
+            val bottomInset = with(density) { bottomBarHeightPx.toDp() }
             PlayerHost(bottomInset = bottomInset)
             RemoteNowPlayingHost()
             SettingsHost()
@@ -162,46 +158,29 @@ private val TabItems =
 @Composable
 private fun TabBar(navigation: AppNavigation) {
     NavigationBar(containerColor = JellyCastColors.Surface) {
-        TabItems.forEach { item ->
-            NavigationBarItem(
-                selected = navigation.tab == item.tab,
-                onClick = { navigation.select(item.tab) },
-                icon = { Icon(painterResource(item.icon), contentDescription = null) },
-                label = { Text(stringResource(item.label)) },
-                colors =
-                    NavigationBarItemDefaults.colors(
-                        selectedIconColor = JellyCastColors.Accent,
-                        selectedTextColor = JellyCastColors.Accent,
-                        indicatorColor = JellyCastColors.Rail,
-                    ),
-            )
+        // On a tablet the three tabs stay together in the middle instead of spreading out.
+        Row(
+            Modifier.fillMaxWidth().wrapContentWidth().widthIn(max = TabBarMaxWidth),
+        ) {
+            TabItems.forEach { item ->
+                NavigationBarItem(
+                    selected = navigation.tab == item.tab,
+                    onClick = { navigation.select(item.tab) },
+                    icon = { Icon(painterResource(item.icon), contentDescription = null) },
+                    label = { Text(stringResource(item.label)) },
+                    colors =
+                        NavigationBarItemDefaults.colors(
+                            selectedIconColor = JellyCastColors.Accent,
+                            selectedTextColor = JellyCastColors.Accent,
+                            indicatorColor = JellyCastColors.Rail,
+                        ),
+                )
+            }
         }
     }
 }
 
-@Composable
-private fun TabRail(navigation: AppNavigation) {
-    NavigationRail(
-        containerColor = JellyCastColors.Background,
-        modifier = Modifier.navigationBarsPadding(),
-        header = { Box(Modifier.padding(top = 8.dp), contentAlignment = Alignment.Center) {} },
-    ) {
-        TabItems.forEach { item ->
-            NavigationRailItem(
-                selected = navigation.tab == item.tab,
-                onClick = { navigation.select(item.tab) },
-                icon = { Icon(painterResource(item.icon), contentDescription = null) },
-                label = { Text(stringResource(item.label)) },
-                colors =
-                    NavigationRailItemDefaults.colors(
-                        selectedIconColor = JellyCastColors.Accent,
-                        selectedTextColor = JellyCastColors.Accent,
-                        indicatorColor = JellyCastColors.Rail,
-                    ),
-            )
-        }
-    }
-}
+private val TabBarMaxWidth = 520.dp
 
 private const val SCREEN_FADE_MS = 200
 
