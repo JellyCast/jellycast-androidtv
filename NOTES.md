@@ -13,7 +13,9 @@ Decisions, known issues and codec findings. Newest first in each section.
 
 Checked 2026-10-28 in the emulator over the VPN (`adb reverse` to a local proxy, because the emulator NAT drops VPN connections): Home, Library, movie and series pages, the player layout and the mini player, Downloads, Settings. Fixed there: the app stayed offline after one failed server check at launch.
 
-Not checked yet: video frames (the emulator's decoders fail on every stream; needs a real device), downloads end to end, PiP, pairing and waking the Chromecast, the AI chat with a real key, tablet layouts with content.
+Checked 2026-10-28 on a real tablet (Tab 16, Unisoc, Android 12, wireless adb): discovery, Quick Connect, Home, Library, movie and series pages in portrait and landscape (rail, split layouts), direct play H.264 on the hardware decoder (first frame in 1.2 s, resume position right), a 4K HEVC file transcoded by the server and played on the HEVC decoder (2.5 s), the controls, double-tap seek, the landscape split player, the mini player, system PiP, progress reported to the server, the download sheet. Fixed there: Android 12 support (minSdk 31 for :core and :mobile), the slow-connection hint firing on a healthy stream, heroes and the Library search bar measured wrong in landscape on Android 12.
+
+Not checked yet: a download end to end, pairing and waking the Chromecast from the phone, the AI chat with a real key.
 
 ## Status (2026-10-25)
 
