@@ -1,4 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Owner: the player worker. Every key in all four languages. -->
 <resources>
+    <string name="player_pip">Picture-in-picture</string>
+    <string name="player_continue_on">Continuer sur…</string>
+    <string name="player_tracks">Audio et sous-titres</string>
+    <string name="player_quality">Qualité</string>
+    <string name="player_full_screen">Plein écran</string>
+    <string name="player_exit_full_screen">Quitter le plein écran</string>
+    <string name="player_play_pause">Lire ou mettre en pause</string>
+    <string name="player_close">Fermer</string>
+    <string name="player_position">Position</string>
+    <string name="player_video">Vidéo</string>
+    <string name="player_back_10">Reculer de 10 secondes</string>
+    <string name="player_forward_10">Avancer de 10 secondes</string>
+    <string name="player_seconds">%1$d s</string>
+    <string name="player_auto_level">Auto · %1$s</string>
+    <string name="player_buffered">· %1$s en mémoire</string>
+    <string name="player_waiting">En attente de la connexion</string>
+    <string name="player_skip_intro">Passer l’intro</string>
+    <string name="player_skip_recap">Passer le résumé</string>
+    <string name="player_skip_preview">Passer l’aperçu</string>
+    <string name="player_next_episode_code">Épisode suivant · %1$s</string>
+    <string name="player_next_list_episode">Suivant · %1$s %2$s</string>
+    <string name="player_next_list">Suivant · %1$s</string>
+    <string name="player_slow_lower">Connexion lente · %1$s sous l’engrenage est plus fluide</string>
+    <string name="player_slow">La connexion ne suit pas ce fichier</string>
+    <string name="player_try_again">Réessayer</string>
+    <string name="player_via_server">Lire via le serveur · %1$s</string>
+    <string name="player_error_no_source">Cet élément n’a aucun fichier que le serveur peut lire.</string>
+    <string name="player_error_does_not_play">Ce fichier ne se lit pas sur ce téléphone.</string>
+    <string name="player_error_stopped">La lecture s’est arrêtée à cause d’une erreur dans le fichier ou la connexion.</string>
+    <string name="player_error_no_answer">Le serveur n’a pas répondu. Vérifiez la connexion et réessayez.</string>
+    <string name="player_mini_error">Cet élément ne se lit pas</string>
+    <string name="player_audio">Audio</string>
+    <string name="player_subtitles">Sous-titres</string>
+    <string name="player_off">Désactivés</string>
+    <string name="player_forced">Forcés</string>
+    <string name="player_sdh">SDH</string>
+    <string name="player_image">Image</string>
+    <string name="player_track">Piste %1$d</string>
+    <string name="player_channels">%1$dch</string>
+    <string name="player_auto">Auto</string>
+    <string name="player_original">Original</string>
+    <string name="player_original_bitrate">Original · %1$s Mbit/s</string>
+    <string name="player_level">%1$s Mbit/s · %2$s</string>
+    <string name="player_episode_code">S%1$d · É%2$d</string>
 </resources>

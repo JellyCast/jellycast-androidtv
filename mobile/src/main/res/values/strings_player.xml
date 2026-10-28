@@ -1,4 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Owner: the player worker. Every key in all four languages. -->
 <resources>
+    <string name="player_pip">Picture in Picture</string>
+    <string name="player_continue_on">Continue on…</string>
+    <string name="player_tracks">Audio and subtitles</string>
+    <string name="player_quality">Quality</string>
+    <string name="player_full_screen">Full screen</string>
+    <string name="player_exit_full_screen">Exit full screen</string>
+    <string name="player_play_pause">Play or pause</string>
+    <string name="player_close">Close</string>
+    <string name="player_position">Position</string>
+    <string name="player_video">Video</string>
+    <string name="player_back_10">Back 10 seconds</string>
+    <string name="player_forward_10">Forward 10 seconds</string>
+    <string name="player_seconds">%1$d s</string>
+    <string name="player_auto_level">Auto · %1$s</string>
+    <string name="player_buffered">· %1$s buffered</string>
+    <string name="player_waiting">Waiting for the connection</string>
+    <string name="player_skip_intro">Skip intro</string>
+    <string name="player_skip_recap">Skip recap</string>
+    <string name="player_skip_preview">Skip preview</string>
+    <string name="player_next_episode_code">Next episode · %1$s</string>
+    <string name="player_next_list_episode">Next · %1$s %2$s</string>
+    <string name="player_next_list">Next · %1$s</string>
+    <string name="player_slow_lower">Slow connection · %1$s under the gear plays smoother</string>
+    <string name="player_slow">The connection can\'t keep up with this file</string>
+    <string name="player_try_again">Try again</string>
+    <string name="player_via_server">Play via the server · %1$s</string>
+    <string name="player_error_no_source">This item has no file the server can play.</string>
+    <string name="player_error_does_not_play">This file doesn\'t play on this phone.</string>
+    <string name="player_error_stopped">Playback stopped because of an error in the file or the connection.</string>
+    <string name="player_error_no_answer">The server didn\'t answer. Check the connection and try again.</string>
+    <string name="player_mini_error">This item doesn\'t play</string>
+    <string name="player_audio">Audio</string>
+    <string name="player_subtitles">Subtitles</string>
+    <string name="player_off">Off</string>
+    <string name="player_forced">Forced</string>
+    <string name="player_sdh">SDH</string>
+    <string name="player_image">Image</string>
+    <string name="player_track">Track %1$d</string>
+    <string name="player_channels">%1$dch</string>
+    <string name="player_auto">Auto</string>
+    <string name="player_original">Original</string>
+    <string name="player_original_bitrate">Original · %1$s Mbit/s</string>
+    <string name="player_level">%1$s Mbit/s · %2$s</string>
+    <string name="player_episode_code">S%1$d · E%2$d</string>
 </resources>

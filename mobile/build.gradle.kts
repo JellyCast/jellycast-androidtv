@@ -102,6 +102,7 @@ dependencies {
 
     implementation(libs.media3.session)
     implementation(libs.media3.ui)
+    implementation(libs.media3.ui.compose)
 
     implementation(libs.koin.androidx.compose)
     implementation(libs.coil.compose)
