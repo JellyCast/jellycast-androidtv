@@ -27,9 +27,6 @@
     <string name="login_use_code">Sign in with code</string>
     <string name="login_use_password">Sign in with password</string>
     <string name="login_username">Username</string>
-    <string name="player_error">Can\'t play this</string>
-    <string name="player_error_server">The server is not responding. Please try again.</string>
-    <string name="player_next_episode">Next episode</string>
     <string name="remaining">%1$s left</string>
     <string name="retry">Try again</string>
     <string name="server_address_label">Server address</string>

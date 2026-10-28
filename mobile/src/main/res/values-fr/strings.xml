@@ -25,9 +25,6 @@
     <string name="login_use_code">Connexion par code</string>
     <string name="login_use_password">Connexion par mot de passe</string>
     <string name="login_username">Nom d\'utilisateur</string>
-    <string name="player_error">Lecture impossible</string>
-    <string name="player_error_server">Le serveur ne répond pas. Réessayez.</string>
-    <string name="player_next_episode">Épisode suivant</string>
     <string name="remaining">encore %1$s</string>
     <string name="retry">Réessayer</string>
     <string name="server_address_label">Adresse du serveur</string>

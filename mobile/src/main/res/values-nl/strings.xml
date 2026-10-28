@@ -25,9 +25,6 @@
     <string name="login_use_code">Inloggen met code</string>
     <string name="login_use_password">Inloggen met wachtwoord</string>
     <string name="login_username">Gebruikersnaam</string>
-    <string name="player_error">Afspelen lukt niet</string>
-    <string name="player_error_server">De server reageert niet. Probeer het opnieuw.</string>
-    <string name="player_next_episode">Volgende aflevering</string>
     <string name="remaining">nog %1$s</string>
     <string name="retry">Opnieuw proberen</string>
     <string name="server_address_label">Serveradres</string>

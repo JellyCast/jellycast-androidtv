@@ -25,9 +25,6 @@
     <string name="login_use_code">Entrar con código</string>
     <string name="login_use_password">Entrar con contraseña</string>
     <string name="login_username">Usuario</string>
-    <string name="player_error">No se puede reproducir</string>
-    <string name="player_error_server">El servidor no responde. Inténtalo de nuevo.</string>
-    <string name="player_next_episode">Siguiente episodio</string>
     <string name="remaining">quedan %1$s</string>
     <string name="retry">Reintentar</string>
     <string name="server_address_label">Dirección del servidor</string>
