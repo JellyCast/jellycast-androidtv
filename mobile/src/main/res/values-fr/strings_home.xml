@@ -1,4 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Owner: the home worker. Every key in all four languages. -->
 <resources>
+    <string name="home_settings">Réglages</string>
+    <string name="home_up_next">À suivre</string>
+    <string name="home_up_next_subtitle">en cours et épisode suivant</string>
+    <string name="home_new">Nouveau</string>
+    <string name="home_new_subtitle">30 derniers jours</string>
+    <string name="home_all">Tout</string>
+    <string name="home_not_started">Pas commencé</string>
+    <string name="home_not_started_subtitle">séries pas encore commencées</string>
+    <plurals name="home_seasons">
+        <item quantity="one">%1$d saison</item>
+        <item quantity="many">%1$d saisons</item>
+        <item quantity="other">%1$d saisons</item>
+    </plurals>
+    <string name="home_movie">Film</string>
+    <string name="home_series_new_season">Série · nouvelle saison</string>
+    <plurals name="home_series_new_count">
+        <item quantity="one">Série · %1$d nouveau</item>
+        <item quantity="many">Série · %1$d nouveaux</item>
+        <item quantity="other">Série · %1$d nouveaux</item>
+    </plurals>
+    <string name="home_label_continue">Reprendre</string>
+    <string name="home_label_next">Épisode suivant</string>
+    <string name="home_label_start_new">Commencer quelque chose</string>
+    <string name="home_play">Lecture</string>
+    <string name="home_continue">Reprendre</string>
+    <string name="home_season_code">S%1$d</string>
+    <string name="home_special">Spécial</string>
+    <string name="home_updated">Mis à jour %1$s</string>
+    <string name="home_offline">Vous êtes hors ligne.</string>
+    <string name="home_server_unreachable">Le serveur est injoignable pour le moment.</string>
+    <string name="home_not_downloaded">Non téléchargé</string>
+    <string name="home_refresh">Actualiser la bibliothèque</string>
 </resources>
