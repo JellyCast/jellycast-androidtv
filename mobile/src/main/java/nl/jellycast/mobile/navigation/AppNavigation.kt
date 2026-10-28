@@ -38,9 +38,6 @@ data class PlayQueue(
 /** What "Add to list…" adds: one item, or the episodes of a season. */
 data class AddToListRequest(val title: String, val itemIds: List<String>)
 
-/** How the Library opens when another screen sends the user there. */
-enum class LibraryOpenRequest { Newest, }
-
 /**
  * The tab, each tab's back stack, and the app-wide requests (play, add to list, settings). The
  * shell owns one instance and provides it through [LocalAppNavigation]; screens only call it.
@@ -58,8 +55,6 @@ class AppNavigation {
     var addToListRequest by mutableStateOf<AddToListRequest?>(null)
 
     var showsSettings by mutableStateOf(false)
-
-    var libraryOpenRequest by mutableStateOf<LibraryOpenRequest?>(null)
 
     val currentStack: SnapshotStateList<Route> get() = stacks.getValue(tab)
 
@@ -93,11 +88,6 @@ class AppNavigation {
 
     fun addToList(title: String, itemIds: List<String>) {
         addToListRequest = AddToListRequest(title, itemIds)
-    }
-
-    fun showNewInLibrary() {
-        libraryOpenRequest = LibraryOpenRequest.Newest
-        select(AppTab.Library)
     }
 }
 

@@ -2,28 +2,11 @@
 <!-- Owner: the home worker. Every key in all four languages. -->
 <resources>
     <string name="home_settings">Instellingen</string>
-    <string name="home_up_next">Volgende</string>
-    <string name="home_up_next_subtitle">bezig en volgende aflevering</string>
-    <string name="home_new">Nieuw</string>
-    <string name="home_new_subtitle">laatste 30 dagen</string>
-    <string name="home_all">Alles</string>
-    <string name="home_not_started">Nog niet begonnen</string>
-    <string name="home_not_started_subtitle">nog niet gekeken</string>
     <plurals name="home_seasons">
         <item quantity="one">%1$d seizoen</item>
         <item quantity="other">%1$d seizoenen</item>
     </plurals>
     <string name="home_movie">Film</string>
-    <string name="home_series_new_season">Serie · nieuw seizoen</string>
-    <plurals name="home_series_new_count">
-        <item quantity="one">Serie · %1$d nieuw</item>
-        <item quantity="other">Serie · %1$d nieuw</item>
-    </plurals>
-    <string name="home_label_continue">Verder kijken</string>
-    <string name="home_label_next">Volgende aflevering</string>
-    <string name="home_label_start_new">Iets nieuws beginnen</string>
-    <string name="home_play">Afspelen</string>
-    <string name="home_continue">Verder</string>
     <string name="home_season_code">S%1$d</string>
     <string name="home_special">Special</string>
     <string name="home_updated">Bijgewerkt %1$s</string>
@@ -31,4 +14,16 @@
     <string name="home_server_unreachable">De server is nu niet bereikbaar.</string>
     <string name="home_not_downloaded">Niet gedownload</string>
     <string name="home_refresh">Bibliotheek vernieuwen</string>
+    <string name="home_badge_new">NIEUW</string>
+    <string name="home_badge_not_started">NOG NIET GEZIEN</string>
+    <string name="home_series">Serie</string>
+    <string name="home_new_episode">nieuwe aflevering</string>
+    <plurals name="home_new_episodes">
+        <item quantity="one">%1$d nieuwe afleveringen</item>
+        <item quantity="other">%1$d nieuwe afleveringen</item>
+    </plurals>
+    <plurals name="home_episode_count">
+        <item quantity="one">%1$d aflevering</item>
+        <item quantity="other">%1$d afleveringen</item>
+    </plurals>
 </resources>

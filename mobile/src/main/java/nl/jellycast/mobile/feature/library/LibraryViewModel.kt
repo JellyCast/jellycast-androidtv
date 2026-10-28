@@ -121,10 +121,6 @@ class LibraryViewModel(
         filters.value = value
     }
 
-    fun onShowNewest() {
-        filters.update { it.copy(sort = LibrarySort.Newest, status = null) }
-    }
-
     fun onRemember() {
         val term = query.value.trim()
         if (term.isEmpty()) return

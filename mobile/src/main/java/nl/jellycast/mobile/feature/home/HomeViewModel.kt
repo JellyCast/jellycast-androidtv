@@ -33,12 +33,9 @@ class HomeViewModel(
 ) : ViewModel() {
     private val refreshing = MutableStateFlow(false)
 
-    private val library: Flow<Pair<LibrarySnapshot, HomeRows>?> =
+    private val library: Flow<Pair<LibrarySnapshot, List<HomeTile>>?> =
         store.snapshot.map { snapshot ->
-            snapshot?.let {
-                val now = nowMs()
-                it to homeRows(LibraryIndex(it, now), now)
-            }
+            snapshot?.let { it to homeTiles(LibraryIndex(it, nowMs())) }
         }
 
     /** The last failure stays while a retry runs, so the banner can show its spinner. */
@@ -88,7 +85,8 @@ class HomeViewModel(
                 isRefreshing = isRefreshing,
                 unavailableIds =
                     if (isOffline && library != null) {
-                        library.second.itemIds
+                        library.second
+                            .map { it.itemId }
                             .filterNot(offlineAvailability::isAvailableOffline)
                             .toSet()
                     } else {

@@ -4,12 +4,12 @@ import android.text.format.DateUtils
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -29,31 +29,40 @@ import androidx.compose.ui.unit.dp
 import nl.jellycast.mobile.R
 import nl.jellycast.mobile.core.designsystem.component.GlassBorder
 import nl.jellycast.mobile.core.designsystem.component.GlassFill
+import nl.jellycast.mobile.core.designsystem.component.LANDSCAPE_RATIO
 import nl.jellycast.mobile.core.designsystem.component.SurfaceBlock
 import nl.jellycast.mobile.core.designsystem.component.pressable
 import nl.jellycast.mobile.core.designsystem.theme.JellyCastColors
 import nl.jellycast.mobile.core.designsystem.theme.JellyCastText
+import nl.jellycast.mobile.core.designsystem.theme.LocalLayout
 
-private val SkeletonGutter = 20.dp
-
-/** The shape of Home in flat blocks while the first library loads. */
+/** The shape of Home's grid in flat blocks while the first library loads. */
 @Composable
 internal fun HomeSkeleton(modifier: Modifier = Modifier) {
-    Column(
-        modifier.fillMaxSize().statusBarsPadding().padding(top = 4.dp),
-        verticalArrangement = Arrangement.spacedBy(26.dp),
-    ) {
-        Box(Modifier.fillMaxWidth().height(300.dp).background(JellyCastColors.Surface))
-        SurfaceBlock(
-            Modifier.padding(horizontal = SkeletonGutter).width(140.dp).height(22.dp),
-            radius = 4.dp,
-        )
-        Row(
-            Modifier.padding(horizontal = SkeletonGutter),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
+    val isRegular = LocalLayout.current.isRegular
+    BoxWithConstraints(modifier.fillMaxSize().statusBarsPadding()) {
+        val spec = homeGridSpec(isRegular, maxWidth, maxHeight)
+        val tileWidth = spec.tileWidth(maxWidth)
+        Column(
+            Modifier.padding(horizontal = spec.margin).padding(top = spec.topGap),
+            verticalArrangement = Arrangement.spacedBy(spec.rowGap),
         ) {
-            SurfaceBlock(Modifier.width(220.dp).height(124.dp))
-            SurfaceBlock(Modifier.width(220.dp).height(124.dp))
+            SurfaceBlock(
+                if (spec.hasSideStack) {
+                    Modifier.width(tileWidth * 2 + spec.columnGap).aspectRatio(LANDSCAPE_RATIO)
+                } else {
+                    Modifier.fillMaxWidth().aspectRatio(LANDSCAPE_RATIO)
+                },
+                radius = 12.dp,
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(spec.columnGap)) {
+                repeat(spec.columns) {
+                    SurfaceBlock(
+                        Modifier.width(tileWidth).aspectRatio(LANDSCAPE_RATIO),
+                        radius = 10.dp,
+                    )
+                }
+            }
         }
     }
 }

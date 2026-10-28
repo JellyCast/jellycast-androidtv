@@ -44,8 +44,16 @@ data class NewEntry(val item: NewItem, val addedAtMs: Long)
 sealed interface NewItem {
     data class NewMovie(val movie: Movie) : NewItem
 
-    /** [count] episodes added in the window; [isNewSeason] when they start a season not seen before. */
-    data class NewSeries(val series: Series, val count: Int, val isNewSeason: Boolean) : NewItem
+    /**
+     * [count] episodes added in the window, [firstAdded] the first of them in air order;
+     * [isNewSeason] when they start a season not seen before.
+     */
+    data class NewSeries(
+        val series: Series,
+        val count: Int,
+        val isNewSeason: Boolean,
+        val firstAdded: Episode,
+    ) : NewItem
 }
 
 /** Watch status of a single movie, episode or series. */
@@ -102,7 +110,7 @@ class LibraryIndex(val snapshot: LibrarySnapshot, private val nowMs: Long) {
                     olderSeasons.isNotEmpty() &&
                         added.any { it.seasonNumber != null && it.seasonNumber !in olderSeasons }
                 NewEntry(
-                    NewItem.NewSeries(progress.series, added.size, isNewSeason),
+                    NewItem.NewSeries(progress.series, added.size, isNewSeason, added.first()),
                     added.maxOf { it.addedAt ?: 0L },
                 )
             }

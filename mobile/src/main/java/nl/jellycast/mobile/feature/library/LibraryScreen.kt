@@ -62,13 +62,6 @@ import org.koin.compose.getKoin
 fun LibraryScreen(modifier: Modifier = Modifier, viewModel: LibraryViewModel = koinViewModel()) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val navigation = LocalAppNavigation.current
-    val openRequest = navigation.libraryOpenRequest
-    LaunchedEffect(openRequest) {
-        if (openRequest != null) {
-            viewModel.onShowNewest()
-            navigation.libraryOpenRequest = null
-        }
-    }
     val koin = getKoin()
     val availability = remember(koin) { koin.getOrNull<OfflineAvailability>() }
     var query by rememberSaveable { mutableStateOf("") }

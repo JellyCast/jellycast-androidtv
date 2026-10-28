@@ -129,17 +129,6 @@ class LibraryViewModelTest {
     }
 
     @Test
-    fun `showing newest sorts by date and drops the status filter`() = runTest {
-        val viewModel = viewModel()
-        viewModel.onFiltersChange(LibraryFilters(sort = LibrarySort.Year))
-
-        viewModel.onShowNewest()
-
-        assertEquals(LibrarySort.Newest, viewModel.uiState.value.filters.sort)
-        assertNull(viewModel.uiState.value.filters.status)
-    }
-
-    @Test
     fun `a search that led somewhere is remembered and can be forgotten`() = runTest {
         val viewModel = viewModel()
         viewModel.onQueryChange("  dark ")

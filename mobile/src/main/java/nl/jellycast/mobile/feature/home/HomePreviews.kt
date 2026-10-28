@@ -25,23 +25,11 @@ private fun previewMovie(id: String, title: String, resumeMs: Long) = Movie(
     tech = MediaTech(),
 )
 
-private val PreviewRows =
-    HomeRows(
-        hero =
-            HomeHero(
-                item = PlayableItem.MovieItem(previewMovie("1", "Interstellar", 6_000_000)),
-                label = HeroLabel.ContinueWatching,
-                title = "Interstellar",
-                backdropUrl = null,
-                logoUrl = null,
-            ),
-        upNext =
-            listOf(
-                UpNextEntry(PlayableItem.MovieItem(previewMovie("2", "Arrival", 900_000)), false),
-                UpNextEntry(PlayableItem.MovieItem(previewMovie("3", "Dune", 3_000_000)), false),
-            ),
-        newEntries = emptyList(),
-        notStarted = emptyList(),
+private val PreviewTiles =
+    listOf(
+        HomeTile.Continue(PlayableItem.MovieItem(previewMovie("1", "Interstellar", 6_000_000))),
+        HomeTile.Continue(PlayableItem.MovieItem(previewMovie("2", "Arrival", 900_000))),
+        HomeTile.Continue(PlayableItem.MovieItem(previewMovie("3", "Dune", 3_000_000))),
     )
 
 @Preview(showBackground = true, widthDp = 393, heightDp = 852)
@@ -51,13 +39,12 @@ private fun HomeContentPreview() {
         HomeContent(
             uiState =
                 HomeUiState(
-                    content = HomeContent.Ready(PreviewRows),
+                    content = HomeContent.Ready(PreviewTiles),
                     syncProblem = SyncProblem(null, 0, isRetrying = false, isOffline = true),
                 ),
             onPlay = {},
             onOpen = {},
             onShowActions = {},
-            onShowAllNew = {},
             onOpenSettings = {},
             onRefresh = {},
             onRetry = {},
@@ -68,5 +55,5 @@ private fun HomeContentPreview() {
 @Preview(showBackground = true, widthDp = 393, heightDp = 852)
 @Composable
 private fun HomeSkeletonPreview() {
-    JellyCastTheme { HomeContent(HomeUiState(), {}, {}, {}, {}, {}, {}, {}) }
+    JellyCastTheme { HomeContent(HomeUiState(), {}, {}, {}, {}, {}, {}) }
 }

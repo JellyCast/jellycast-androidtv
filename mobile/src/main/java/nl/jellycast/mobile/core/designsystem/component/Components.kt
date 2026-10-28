@@ -180,44 +180,6 @@ fun RailCircleButton(
     }
 }
 
-/** Title (title3 bold), muted subtitle, and an optional trailing link, on one line. */
-@Composable
-fun SectionHeader(
-    title: String,
-    modifier: Modifier = Modifier,
-    subtitle: String? = null,
-    linkTitle: String? = null,
-    onLink: (() -> Unit)? = null,
-) {
-    Row(modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom) {
-        Text(
-            title,
-            style = JellyCastText.Title3.copy(fontWeight = FontWeight.Bold),
-            color = JellyCastColors.Text,
-            maxLines = 1,
-        )
-        if (subtitle != null) {
-            Text(
-                subtitle,
-                style = JellyCastText.Subheadline,
-                color = JellyCastColors.TextMuted,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.padding(start = 8.dp, bottom = 1.dp).weight(1f, fill = false),
-            )
-        }
-        Spacer(Modifier.weight(1f))
-        if (linkTitle != null && onLink != null) {
-            Text(
-                linkTitle,
-                style = JellyCastText.Subheadline,
-                color = JellyCastColors.Accent,
-                modifier = Modifier.pressable(onLink).padding(bottom = 1.dp),
-            )
-        }
-    }
-}
-
 /** Footnote semibold, uppercase, tracking 0.8, muted. */
 @Composable
 fun ListSectionLabel(text: String, modifier: Modifier = Modifier) {
@@ -255,21 +217,6 @@ fun WatchProgressBar(progress: Float, modifier: Modifier = Modifier, onImage: Bo
                     cornerRadius = radius,
                 )
             },
-    )
-}
-
-/** Caption2 bold uppercase on a dark capsule, e.g. "NEW". */
-@Composable
-fun ImageBadge(text: String, modifier: Modifier = Modifier) {
-    Text(
-        text.uppercase(),
-        style = JellyCastText.Caption2.copy(fontWeight = FontWeight.Bold, letterSpacing = 0.6.sp),
-        color = JellyCastColors.Text,
-        modifier =
-            modifier
-                .clip(CircleShape)
-                .background(JellyCastColors.Background.copy(alpha = 0.72f))
-                .padding(horizontal = 8.dp, vertical = 3.dp),
     )
 }
 

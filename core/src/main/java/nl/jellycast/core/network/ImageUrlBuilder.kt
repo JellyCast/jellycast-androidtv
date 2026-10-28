@@ -35,3 +35,12 @@ private fun ImageKind.toImageType(): ImageType = when (this) {
 
 // Jellyfin defaults to 100; 85 looks the same at 3 metres and is much smaller.
 private const val IMAGE_QUALITY = 85
+
+private val FillWidthParam = Regex("""([?&]fillWidth=)\d+""")
+
+/**
+ * [url] as [ImageUrlBuilder] built it, asking for [fillWidth] pixels instead; lets a screen fetch
+ * the size it draws without the models carrying image tags. A URL without the parameter stays.
+ */
+fun withFillWidth(url: String, fillWidth: Int): String =
+    FillWidthParam.replace(url) { "${it.groupValues[1]}$fillWidth" }
