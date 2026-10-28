@@ -1,4 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Owner: the series worker. Every key in all four languages. -->
 <resources>
+    <string name="series_missing">Deze serie staat niet meer in de bibliotheek.</string>
+    <string name="series_continue">Verder · %1$s</string>
+    <string name="series_watch_again">Opnieuw kijken · %1$s</string>
+    <string name="series_play">Afspelen · %1$s</string>
+    <string name="series_play_accessibility">Afspelen</string>
+    <plurals name="series_seasons">
+        <item quantity="one">%1$d seizoen</item>
+        <item quantity="other">%1$d seizoenen</item>
+    </plurals>
+    <string name="series_tab_episodes">Afleveringen</string>
+    <string name="series_tab_cast">Acteurs</string>
+    <string name="series_tab_chat">Chat</string>
+    <string name="series_season">Seizoen %1$d</string>
+    <string name="series_season_short">S%1$d</string>
+    <string name="series_specials">Specials</string>
+    <string name="series_episode_title">%1$d. %2$s</string>
+    <string name="series_watched">Gezien</string>
+    <string name="series_mark_watched">Markeren als gezien</string>
+    <string name="series_mark_not_watched">Markeren als niet gezien</string>
+    <string name="series_play_on">Afspelen op…</string>
 </resources>

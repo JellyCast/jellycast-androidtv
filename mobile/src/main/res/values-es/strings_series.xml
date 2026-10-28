@@ -1,4 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Owner: the series worker. Every key in all four languages. -->
 <resources>
+    <string name="series_missing">Esta serie ya no está en la biblioteca.</string>
+    <string name="series_continue">Continuar · %1$s</string>
+    <string name="series_watch_again">Volver a ver · %1$s</string>
+    <string name="series_play">Reproducir · %1$s</string>
+    <string name="series_play_accessibility">Reproducir</string>
+    <plurals name="series_seasons">
+        <item quantity="one">%1$d temporada</item>
+        <item quantity="many">%1$d temporadas</item>
+        <item quantity="other">%1$d temporadas</item>
+    </plurals>
+    <string name="series_tab_episodes">Episodios</string>
+    <string name="series_tab_cast">Reparto</string>
+    <string name="series_tab_chat">Chat</string>
+    <string name="series_season">Temporada %1$d</string>
+    <string name="series_season_short">T%1$d</string>
+    <string name="series_specials">Especiales</string>
+    <string name="series_episode_title">%1$d. %2$s</string>
+    <string name="series_watched">Visto</string>
+    <string name="series_mark_watched">Marcar como visto</string>
+    <string name="series_mark_not_watched">Marcar como no visto</string>
+    <string name="series_play_on">Reproducir en…</string>
 </resources>
