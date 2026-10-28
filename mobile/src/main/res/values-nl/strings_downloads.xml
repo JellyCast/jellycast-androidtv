@@ -1,4 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Owner: the downloads worker. Every key in all four languages. -->
 <resources>
+    <string name="downloads_title">Downloads</string>
+    <string name="downloads_in_progress">Bezig</string>
+    <string name="downloads_pause_all">Pauzeer alles</string>
+    <string name="downloads_on_this_phone">Op deze telefoon</string>
+    <string name="downloads_on_this_tablet">Op deze tablet</string>
+    <string name="downloads_empty_title">Nog geen downloads</string>
+    <string name="downloads_empty_message">Download thuis een film of aflevering met de pijlknop om hem overal te kijken.</string>
+    <string name="downloads_remove">Verwijderen</string>
+    <string name="downloads_used_of_total">%1$s van %2$s</string>
+    <string name="downloads_storage_app">JellyCast %1$s</string>
+    <string name="downloads_storage_other">Overig %1$s</string>
+    <string name="downloads_storage_free">Vrij %1$s</string>
+    <string name="downloads_movie">Film</string>
+    <string name="downloads_watched">gezien</string>
+    <string name="downloads_not_watched">nog niet gezien</string>
+    <string name="downloads_all_watched">Alles gezien</string>
+    <string name="downloads_kind_compact">Compact · 1080p</string>
+    <string name="downloads_kind_original">Origineel</string>
+    <string name="downloads_status_queued">In de wachtrij</string>
+    <string name="downloads_status_converting">Omzetten op de server</string>
+    <string name="downloads_status_downloading">Downloaden</string>
+    <string name="downloads_status_waiting_network">Wacht op het netwerk</string>
+    <string name="downloads_status_paused">Gepauzeerd</string>
+    <string name="downloads_status_failed">Niet gelukt: %1$s</string>
+    <string name="downloads_minutes_left">nog ± %1$d min</string>
+    <string name="downloads_download">Download</string>
+    <string name="downloads_remove_download">Verwijder download</string>
+    <string name="downloads_go_on">Ga verder</string>
+    <string name="downloads_cancel_download">Annuleer download</string>
+    <string name="downloads_pause">Pauzeren</string>
+    <string name="downloads_options">Downloadopties…</string>
+    <string name="downloads_only_at_home">Downloaden kan alleen thuis, waar de server staat.</string>
+    <string name="downloads_does_not_fit">Dit past niet: er is nog %1$s nodig.</string>
+    <string name="downloads_sheet_title">%1$s downloaden</string>
+    <string name="downloads_free_on_phone">Vrij op deze telefoon: %1$s</string>
+    <string name="downloads_free_on_tablet">Vrij op deze tablet: %1$s</string>
+    <string name="downloads_compact">Compact</string>
+    <string name="downloads_does_not_fit_short">Past niet · nog %1$s nodig</string>
+    <string name="downloads_compact_description">1080p, gewone kleuren (SDR), één audiotrack in stereo. De server zet hem om: klaar over ± %1$d min.</string>
+    <string name="downloads_original_tech">%1$s, alle audio- en ondertitelsporen.</string>
+    <string name="downloads_original_tracks">Alle audio- en ondertitelsporen.</string>
+    <string name="downloads_original_minutes">± %1$d min downloaden.</string>
+    <string name="downloads_next_on_device">De volgende afleveringen staan op dit apparaat</string>
+    <string name="downloads_download_next">Download volgende %1$d</string>
+    <string name="downloads_only_fit">Er passen er maar %1$d van de %2$d op dit apparaat.</string>
+    <string name="downloads_about_size">ongeveer %1$s</string>
+    <string name="downloads_series_page">Seriepagina</string>
+    <string name="downloads_shows_downloads">Toont de downloads</string>
+    <string name="downloads_not_downloaded">Niet gedownload</string>
+    <string name="downloads_ok">OK</string>
+    <string name="downloads_cancel">Annuleren</string>
+    <string name="downloads_notification_channel">Downloads</string>
+    <plurals name="downloads_movies">
+        <item quantity="one">%d film</item>
+        <item quantity="other">%d films</item>
+    </plurals>
+    <plurals name="downloads_episodes">
+        <item quantity="one">%d aflevering</item>
+        <item quantity="other">%d afleveringen</item>
+    </plurals>
+    <plurals name="downloads_unwatched_count">
+        <item quantity="one">%d niet gezien</item>
+        <item quantity="other">%d niet gezien</item>
+    </plurals>
+    <plurals name="downloads_download_episodes">
+        <item quantity="one">Download %d aflevering</item>
+        <item quantity="other">Download %d afleveringen</item>
+    </plurals>
 </resources>

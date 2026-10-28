@@ -1,4 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Owner: the downloads worker. Every key in all four languages. -->
 <resources>
+    <string name="downloads_title">Descargas</string>
+    <string name="downloads_in_progress">En curso</string>
+    <string name="downloads_pause_all">Pausar todo</string>
+    <string name="downloads_on_this_phone">En este teléfono</string>
+    <string name="downloads_on_this_tablet">En esta tableta</string>
+    <string name="downloads_empty_title">Aún no hay descargas</string>
+    <string name="downloads_empty_message">En casa, descarga una película o un episodio con el botón de la flecha para verlo en cualquier lugar.</string>
+    <string name="downloads_remove">Eliminar</string>
+    <string name="downloads_used_of_total">%1$s de %2$s</string>
+    <string name="downloads_storage_app">JellyCast %1$s</string>
+    <string name="downloads_storage_other">Otros %1$s</string>
+    <string name="downloads_storage_free">Libre %1$s</string>
+    <string name="downloads_movie">Película</string>
+    <string name="downloads_watched">visto</string>
+    <string name="downloads_not_watched">sin ver</string>
+    <string name="downloads_all_watched">Todo visto</string>
+    <string name="downloads_kind_compact">Compacto · 1080p</string>
+    <string name="downloads_kind_original">Original</string>
+    <string name="downloads_status_queued">En cola</string>
+    <string name="downloads_status_converting">Convirtiendo en el servidor</string>
+    <string name="downloads_status_downloading">Descargando</string>
+    <string name="downloads_status_waiting_network">Esperando la red</string>
+    <string name="downloads_status_paused">En pausa</string>
+    <string name="downloads_status_failed">No se completó: %1$s</string>
+    <string name="downloads_minutes_left">quedan unos %1$d min</string>
+    <string name="downloads_download">Descargar</string>
+    <string name="downloads_remove_download">Eliminar descarga</string>
+    <string name="downloads_go_on">Continuar</string>
+    <string name="downloads_cancel_download">Cancelar descarga</string>
+    <string name="downloads_pause">Pausar</string>
+    <string name="downloads_options">Opciones de descarga…</string>
+    <string name="downloads_only_at_home">Solo se puede descargar en casa, donde está el servidor.</string>
+    <string name="downloads_does_not_fit">No cabe: se necesitan %1$s más.</string>
+    <string name="downloads_sheet_title">Descargar %1$s</string>
+    <string name="downloads_free_on_phone">Libre en este teléfono: %1$s</string>
+    <string name="downloads_free_on_tablet">Libre en esta tableta: %1$s</string>
+    <string name="downloads_compact">Compacto</string>
+    <string name="downloads_does_not_fit_short">No cabe · faltan %1$s</string>
+    <string name="downloads_compact_description">1080p, colores estándar (SDR), una pista de audio en estéreo. El servidor la convierte: lista en unos %1$d min.</string>
+    <string name="downloads_original_tech">%1$s, todas las pistas de audio y subtítulos.</string>
+    <string name="downloads_original_tracks">Todas las pistas de audio y subtítulos.</string>
+    <string name="downloads_original_minutes">Unos %1$d min de descarga.</string>
+    <string name="downloads_next_on_device">Los próximos episodios están en este dispositivo</string>
+    <string name="downloads_download_next">Descargar los próximos %1$d</string>
+    <string name="downloads_only_fit">Solo caben %1$d de %2$d en este dispositivo.</string>
+    <string name="downloads_about_size">unos %1$s</string>
+    <string name="downloads_series_page">Página de la serie</string>
+    <string name="downloads_shows_downloads">Muestra las descargas</string>
+    <string name="downloads_not_downloaded">No descargado</string>
+    <string name="downloads_ok">Aceptar</string>
+    <string name="downloads_cancel">Cancelar</string>
+    <string name="downloads_notification_channel">Descargas</string>
+    <plurals name="downloads_movies">
+        <item quantity="one">%d película</item>
+        <item quantity="many">%d películas</item>
+        <item quantity="other">%d películas</item>
+    </plurals>
+    <plurals name="downloads_episodes">
+        <item quantity="one">%d episodio</item>
+        <item quantity="many">%d episodios</item>
+        <item quantity="other">%d episodios</item>
+    </plurals>
+    <plurals name="downloads_unwatched_count">
+        <item quantity="one">%d sin ver</item>
+        <item quantity="many">%d sin ver</item>
+        <item quantity="other">%d sin ver</item>
+    </plurals>
+    <plurals name="downloads_download_episodes">
+        <item quantity="one">Descargar %d episodio</item>
+        <item quantity="many">Descargar %d episodios</item>
+        <item quantity="other">Descargar %d episodios</item>
+    </plurals>
 </resources>
