@@ -162,7 +162,7 @@ private fun SeriesContentPreview() {
             id = "s1",
             title = "Severance",
             year = 2022,
-            overview = "Mark leads a team of office workers whose memories have been surgically divided.",
+            overview = "Office workers whose memories are split between work and home.",
             genres = listOf("Drama", "Mystery"),
             ageRating = null,
             seasonCount = 2,

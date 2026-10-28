@@ -258,7 +258,7 @@ private fun PageSummary(page: SeriesPage, actions: SeriesActions, modifier: Modi
     SeriesSummary(
         page = page,
         onPlayOn = onPlayOn?.let { { it(page.next) } },
-        onToggleWatched = actions.onToggleWatched,
+        onToggleWatchState = actions.onToggleWatched,
         modifier = modifier,
     )
 }

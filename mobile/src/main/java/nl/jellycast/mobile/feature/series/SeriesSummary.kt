@@ -41,7 +41,7 @@ private val ActionButtonSize = 34.dp
 internal fun SeriesSummary(
     page: SeriesPage,
     onPlayOn: (() -> Unit)?,
-    onToggleWatched: () -> Unit,
+    onToggleWatchState: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val series = page.series
@@ -66,13 +66,18 @@ internal fun SeriesSummary(
                     size = ActionButtonSize,
                 )
             }
+            val watchedIcon =
+                if (page.isWatched) R.drawable.ic_series_check_circle else R.drawable.ic_check
+            val watchedLabel =
+                if (page.isWatched) {
+                    R.string.series_mark_not_watched
+                } else {
+                    R.string.series_mark_watched
+                }
             RailCircleButton(
-                icon = if (page.isWatched) R.drawable.ic_series_check_circle else R.drawable.ic_check,
-                contentDescription =
-                    stringResource(
-                        if (page.isWatched) R.string.series_mark_not_watched else R.string.series_mark_watched,
-                    ),
-                onClick = onToggleWatched,
+                icon = watchedIcon,
+                contentDescription = stringResource(watchedLabel),
+                onClick = onToggleWatchState,
                 size = ActionButtonSize,
             )
         }
