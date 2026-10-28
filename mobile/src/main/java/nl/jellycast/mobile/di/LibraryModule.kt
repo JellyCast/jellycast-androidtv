@@ -12,8 +12,6 @@ import nl.jellycast.mobile.core.library.FileLibraryCache
 import nl.jellycast.mobile.core.library.LibraryCache
 import nl.jellycast.mobile.core.library.LibraryDiagnostics
 import nl.jellycast.mobile.core.library.LibraryStore
-import nl.jellycast.mobile.core.library.NoPendingProgress
-import nl.jellycast.mobile.core.library.PendingProgress
 import nl.jellycast.mobile.core.network.Connectivity
 import nl.jellycast.mobile.core.network.DefaultConnectivity
 import org.koin.android.ext.koin.androidContext
@@ -33,7 +31,6 @@ val libraryModule =
             )
         }
         // The downloads area replaces this with the positions it kept while offline.
-        single<PendingProgress> { NoPendingProgress }
         single {
             DefaultLibraryStore(
                 sync = get(),

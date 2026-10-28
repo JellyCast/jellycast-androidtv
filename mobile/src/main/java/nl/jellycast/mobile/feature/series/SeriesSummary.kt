@@ -31,6 +31,7 @@ import nl.jellycast.mobile.core.designsystem.component.RailCircleButton
 import nl.jellycast.mobile.core.designsystem.component.pressable
 import nl.jellycast.mobile.core.designsystem.theme.JellyCastColors
 import nl.jellycast.mobile.core.designsystem.theme.JellyCastText
+import nl.jellycast.mobile.ui.downloads.DownloadNextButton
 
 private const val META_GENRES = 2
 private const val COLLAPSED_OVERVIEW_LINES = 3
@@ -80,6 +81,7 @@ internal fun SeriesSummary(
                 onClick = onToggleWatchState,
                 size = ActionButtonSize,
             )
+            DownloadNextButton(series.id, size = ActionButtonSize)
         }
     }
 }
