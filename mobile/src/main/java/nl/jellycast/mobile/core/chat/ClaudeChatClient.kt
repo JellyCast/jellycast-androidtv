@@ -24,7 +24,12 @@ class ClaudeChatClient(private val apiKey: String, private val http: ChatHttp) :
                 if (message.blocks.isEmpty()) {
                     emptyList()
                 } else {
-                    listOf(json("role" to "assistant", "content" to JsonArray(message.blocks)))
+                    listOf(
+                        json(
+                            "role" to "assistant",
+                            "content" to JsonArray(message.blocks.toList()),
+                        ),
+                    )
                 }
             message.stopReason = null
             http.stream(messagesRequest(system, messages + paused, searchesWeb)) { event ->
@@ -38,7 +43,7 @@ class ClaudeChatClient(private val apiKey: String, private val http: ChatHttp) :
         if (text.isEmpty()) throw ChatException(ChatError.EmptyReply)
         return ChatReply(
             text = text,
-            providerContent = JsonArray(message.blocks),
+            providerContent = JsonArray(message.blocks.toList()),
             sources = ClaudeStreamedMessage.sources(message.blocks),
         )
     }
@@ -221,7 +226,9 @@ class ClaudeStreamedMessage {
         private fun progressOnStart(block: JsonObject): ChatProgress? {
             if (block["type"].string != "web_search_tool_result") return null
             val results = block["content"].array ?: return null
-            val sites = results.mapNotNull { result -> result["url"].string?.let(ChatSource::siteOf) }
+            val sites = results.mapNotNull { result ->
+                result["url"].string?.let(ChatSource::siteOf)
+            }
             return if (sites.isEmpty()) null else ChatProgress.Found(sites)
         }
 

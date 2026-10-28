@@ -105,7 +105,15 @@ private class MarkdownParser(private val lines: List<String>) {
                 afterDigits.length >= 2 &&
                 afterDigits[0] in ".)" &&
                 afterDigits[1] == ' '
-        return if (isNumbered) MarkdownBlock.ListItem("$digits.", depth, afterDigits.drop(2)) else null
+        return if (isNumbered) {
+            MarkdownBlock.ListItem(
+                "$digits.",
+                depth,
+                afterDigits.drop(2),
+            )
+        } else {
+            null
+        }
     }
 
     private fun readCode() {
@@ -182,11 +190,15 @@ object MarkdownInline {
             val rest = text.substring(index)
             val consumed = when {
                 rest.startsWith("`") -> code(rest, style, out, ::flush)
+
                 rest.startsWith("**") || rest.startsWith("__") ->
                     styled(rest, rest.take(2), style.copy(bold = true), out, ::flush)
+
                 rest.startsWith("*") || rest.startsWith("_") ->
                     styled(rest, rest.take(1), style.copy(italic = true), out, ::flush)
+
                 rest.startsWith("[") -> link(rest, style, out, ::flush)
+
                 else -> 0
             }
             if (consumed > 0) {
@@ -238,7 +250,10 @@ object MarkdownInline {
         return match.value.length
     }
 
-    private fun merge(runs: List<InlineRun>): List<InlineRun> = runs.fold(mutableListOf()) { acc, run ->
+    private fun merge(runs: List<InlineRun>): List<InlineRun> = runs.fold(mutableListOf()) {
+            acc,
+            run,
+        ->
         val last = acc.lastOrNull()
         if (last != null && last.copy(text = "") == run.copy(text = "")) {
             acc[acc.lastIndex] = last.copy(text = last.text + run.text)

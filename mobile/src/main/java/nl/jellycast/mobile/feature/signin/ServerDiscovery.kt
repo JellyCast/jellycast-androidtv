@@ -98,7 +98,9 @@ class UdpServerDiscovery(private val dispatchers: AppDispatchers) : ServerDiscov
             .filter { it.isUp && !it.isLoopback && !it.isPointToPoint }
             .flatMap { it.interfaceAddresses }
             .mapNotNull { address ->
-                (address.address as? Inet4Address)?.let { it.toInt() to address.networkPrefixLength }
+                (address.address as? Inet4Address)?.let {
+                    it.toInt() to address.networkPrefixLength
+                }
             }
             .flatMap { (own, prefix) -> subnetHosts(own, prefix.toInt()) }
             .distinct()

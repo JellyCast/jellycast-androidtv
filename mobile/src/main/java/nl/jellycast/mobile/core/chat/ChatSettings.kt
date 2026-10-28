@@ -56,8 +56,7 @@ interface SecretCipher {
     fun decrypt(encrypted: String): String?
 }
 
-fun maskKey(key: String): String =
-    "${key.take(MASK_PREFIX)}•••• ${key.takeLast(MASK_SUFFIX)}"
+fun maskKey(key: String): String = "${key.take(MASK_PREFIX)}•••• ${key.takeLast(MASK_SUFFIX)}"
 
 private const val MASK_PREFIX = 7
 private const val MASK_SUFFIX = 4

@@ -160,7 +160,11 @@ private fun DiscoverySection(
             )
             if (!uiState.isSearching) {
                 OutlinedButton(onClick = onSearchAgain) {
-                    Icon(painterResource(R.drawable.ic_settings_refresh), null, Modifier.size(18.dp))
+                    Icon(
+                        painterResource(R.drawable.ic_settings_refresh),
+                        null,
+                        Modifier.size(18.dp),
+                    )
                     Spacer(Modifier.width(8.dp))
                     Text(stringResource(R.string.settings_signin_search_again))
                 }
@@ -187,7 +191,11 @@ private fun ServerRow(found: FoundServer, enabled: Boolean, onClick: () -> Unit)
                 style = JellyCastText.Body.copy(fontWeight = FontWeight.SemiBold),
                 color = JellyCastColors.Text,
             )
-            Text(serverDetail(found), style = JellyCastText.Footnote, color = JellyCastColors.TextMuted)
+            Text(
+                serverDetail(found),
+                style = JellyCastText.Footnote,
+                color = JellyCastColors.TextMuted,
+            )
         }
         if (found.isCurrent) {
             Text(
@@ -210,7 +218,13 @@ private fun serverDetail(found: FoundServer): String {
     val address = hostAndPort(found.server.url)
     return when (val check = found.check) {
         ServerCheck.Checking -> address
-        is ServerCheck.Ready -> stringResource(R.string.settings_signin_server_version, address, check.version)
+
+        is ServerCheck.Ready -> stringResource(
+            R.string.settings_signin_server_version,
+            address,
+            check.version,
+        )
+
         ServerCheck.Unreachable -> stringResource(R.string.settings_signin_not_responding, address)
     }
 }
@@ -318,7 +332,11 @@ private fun QuickConnectCode(serverName: String, code: String, onCancel: () -> U
             color = JellyCastColors.TextMuted,
             textAlign = TextAlign.Center,
         )
-        CircularProgressIndicator(Modifier.size(24.dp), color = JellyCastColors.TextMuted, strokeWidth = 2.dp)
+        CircularProgressIndicator(
+            Modifier.size(24.dp),
+            color = JellyCastColors.TextMuted,
+            strokeWidth = 2.dp,
+        )
         OutlinedButton(onClick = onCancel) {
             Text(stringResource(R.string.settings_signin_cancel))
         }
@@ -328,11 +346,20 @@ private fun QuickConnectCode(serverName: String, code: String, onCancel: () -> U
 @Composable
 private fun SignInError.message(): String = when (this) {
     SignInError.InvalidAddress -> stringResource(R.string.settings_signin_error_invalid)
+
     SignInError.NotJellyfin -> stringResource(R.string.settings_signin_error_not_jellyfin)
+
     SignInError.Unreachable -> stringResource(R.string.settings_signin_error_unreachable)
+
     SignInError.Offline -> stringResource(R.string.settings_signin_error_offline)
-    is SignInError.UnsupportedVersion -> stringResource(R.string.settings_signin_error_version, version)
+
+    is SignInError.UnsupportedVersion -> stringResource(
+        R.string.settings_signin_error_version,
+        version,
+    )
+
     SignInError.QuickConnectDisabled -> stringResource(R.string.settings_signin_error_qc_disabled)
+
     SignInError.QuickConnectFailed -> stringResource(R.string.settings_signin_error_qc_failed)
 }
 
@@ -372,7 +399,9 @@ private fun SignInContentPreview() {
 private fun SignInCodePreview() {
     JellyCastTheme {
         SignInContent(
-            uiState = SignInUiState(phase = SignInPhase.WaitingForApproval("home server", "804134")),
+            uiState = SignInUiState(
+                phase = SignInPhase.WaitingForApproval("home server", "804134"),
+            ),
             onAddressChange = {},
             onConnect = {},
             onServerClick = {},

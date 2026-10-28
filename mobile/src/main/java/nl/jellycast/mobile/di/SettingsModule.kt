@@ -13,6 +13,7 @@ import nl.jellycast.mobile.core.chat.DataStoreChatSettings
 import nl.jellycast.mobile.core.chat.KeystoreSecretCipher
 import nl.jellycast.mobile.core.chat.ModelMemory
 import nl.jellycast.mobile.core.chat.OkHttpChatHttp
+import nl.jellycast.mobile.core.chat.SecretCipher
 import nl.jellycast.mobile.core.settings.AppPreferences
 import nl.jellycast.mobile.core.settings.DataStoreAppPreferences
 import nl.jellycast.mobile.feature.settings.AiChatSettingsViewModel
@@ -41,6 +42,7 @@ val settingsModule =
                 get(named(APP_SCOPE)),
             )
         }
+        single<SecretCipher> { KeystoreSecretCipher() }
         single<ServerDiscovery> { UdpServerDiscovery(get()) }
         viewModel { SignInViewModel(get(), get(), get(), get()) }
         viewModel { SettingsViewModel(get(), get(), get(), get(), get(), get()) }
@@ -50,7 +52,7 @@ val settingsModule =
                 PreferenceDataStoreFactory.create {
                     androidContext().preferencesDataStoreFile("chat_prefs")
                 },
-                KeystoreSecretCipher(),
+                get(),
                 get(named(APP_SCOPE)),
             )
         } binds arrayOf(ChatSettings::class, ModelMemory::class)

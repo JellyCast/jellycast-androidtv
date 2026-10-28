@@ -77,7 +77,11 @@ fun ChatContent(
         if (chat.isSending) ChatWorking(chat.steps, chat.draft)
         chat.error?.let { error ->
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(error.message(), style = JellyCastText.Subheadline, color = JellyCastColors.TextMuted)
+                Text(
+                    error.message(),
+                    style = JellyCastText.Subheadline,
+                    color = JellyCastColors.TextMuted,
+                )
                 OutlinedButton(onClick = onRetry) {
                     Text(stringResource(R.string.settings_chat_try_again))
                 }
@@ -101,10 +105,17 @@ fun ChatContent(
 
 @Composable
 private fun ContextRow(uiState: ChatUiState, onNewConversation: () -> Unit) {
-    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
         Icon(
             painterResource(
-                if (uiState.avoidsSpoilers) R.drawable.ic_settings_visibility_off else R.drawable.ic_settings_visibility,
+                if (uiState.avoidsSpoilers) {
+                    R.drawable.ic_settings_visibility_off
+                } else {
+                    R.drawable.ic_settings_visibility
+                },
             ),
             contentDescription = null,
             tint = JellyCastColors.TextMuted,
@@ -171,7 +182,10 @@ private fun SuggestionChips(subject: ChatSubject?, enabled: Boolean, onSend: (St
 @Composable
 private fun ChatBubble(message: ChatMessage) {
     when (message.role) {
-        ChatRole.User -> Box(Modifier.fillMaxWidth().padding(start = 40.dp), contentAlignment = Alignment.CenterEnd) {
+        ChatRole.User -> Box(
+            Modifier.fillMaxWidth().padding(start = 40.dp),
+            contentAlignment = Alignment.CenterEnd,
+        ) {
             SelectionContainer {
                 Text(
                     message.text,
@@ -186,7 +200,10 @@ private fun ChatBubble(message: ChatMessage) {
             }
         }
 
-        ChatRole.Assistant -> Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        ChatRole.Assistant -> Column(
+            Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
             SelectionContainer { MarkdownText(message.text) }
             if (message.searchCount > 0) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -226,7 +243,11 @@ private fun ChatWorking(steps: List<ChatStep>, draft: String) {
         }
         if (draft.isEmpty()) {
             if (steps.isEmpty()) {
-                WorkingRow(stringResource(R.string.settings_chat_thinking), R.drawable.ic_settings_sparkle, isCurrent = true)
+                WorkingRow(
+                    stringResource(R.string.settings_chat_thinking),
+                    R.drawable.ic_settings_sparkle,
+                    isCurrent = true,
+                )
             }
         } else {
             MarkdownText(draft)
@@ -236,7 +257,10 @@ private fun ChatWorking(steps: List<ChatStep>, draft: String) {
 
 @Composable
 private fun WorkingRow(text: String, icon: Int, isCurrent: Boolean) {
-    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
         Box(Modifier.size(16.dp), contentAlignment = Alignment.Center) {
             if (isCurrent) {
                 CircularProgressIndicator(
@@ -245,7 +269,12 @@ private fun WorkingRow(text: String, icon: Int, isCurrent: Boolean) {
                     strokeWidth = 1.5.dp,
                 )
             } else {
-                Icon(painterResource(icon), null, Modifier.size(13.dp), tint = JellyCastColors.TextMuted)
+                Icon(
+                    painterResource(icon),
+                    null,
+                    Modifier.size(13.dp),
+                    tint = JellyCastColors.TextMuted,
+                )
             }
         }
         Text(
@@ -265,7 +294,13 @@ private fun ChatStep.text(): String = when (this) {
     is ChatStep.Read -> {
         val shown = sites.take(SITES_SHOWN).joinToString(", ")
         val more = sites.size - minOf(sites.size, SITES_SHOWN)
-        val list = if (more > 0) stringResource(R.string.settings_chat_sites_more, shown, more) else shown
+        val list = if (more >
+            0
+        ) {
+            stringResource(R.string.settings_chat_sites_more, shown, more)
+        } else {
+            shown
+        }
         pluralStringResource(R.plurals.settings_chat_results, count, count, list)
     }
 
@@ -417,7 +452,12 @@ private fun ChatContentPreview() {
                                         ChatRole.Assistant,
                                         "Mostly **Walter** and *Jesse*.\n\n- Walter White\n- Jesse Pinkman",
                                         searchCount = 1,
-                                        sources = listOf(ChatSource("IMDb", "https://www.imdb.com/title/tt0903747/")),
+                                        sources = listOf(
+                                            ChatSource(
+                                                "IMDb",
+                                                "https://www.imdb.com/title/tt0903747/",
+                                            ),
+                                        ),
                                     ),
                                 ),
                             isSending = true,

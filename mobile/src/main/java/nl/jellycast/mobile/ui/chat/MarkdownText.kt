@@ -57,7 +57,13 @@ private fun MarkdownBlockView(block: MarkdownBlock) {
     when (block) {
         is MarkdownBlock.Heading -> Text(
             inline(block.text),
-            style = if (block.level <= 2) JellyCastText.Headline else body.copy(fontWeight = FontWeight.SemiBold),
+            style = if (block.level <=
+                2
+            ) {
+                JellyCastText.Headline
+            } else {
+                body.copy(fontWeight = FontWeight.SemiBold)
+            },
             color = JellyCastColors.Text,
             modifier = Modifier.padding(top = 4.dp),
         )
@@ -107,7 +113,9 @@ private fun MarkdownBlockView(block: MarkdownBlock) {
 
         is MarkdownBlock.Table -> MarkdownTable(block.header, block.rows)
 
-        MarkdownBlock.Rule -> Box(Modifier.fillMaxWidth().height(1.dp).background(JellyCastColors.Rail))
+        MarkdownBlock.Rule -> Box(
+            Modifier.fillMaxWidth().height(1.dp).background(JellyCastColors.Rail),
+        )
     }
 }
 
@@ -125,7 +133,17 @@ private fun MarkdownTable(header: List<String>, rows: List<List<String>>) {
             content = {
                 TableRow(header, isHeader = true)
                 rows.forEachIndexed { index, row ->
-                    Box(Modifier.height(if (index == 0) 2.dp else 1.dp).background(JellyCastColors.Rail))
+                    Box(
+                        Modifier.height(
+                            if (index ==
+                                0
+                            ) {
+                                2.dp
+                            } else {
+                                1.dp
+                            },
+                        ).background(JellyCastColors.Rail),
+                    )
                     TableRow(row, isHeader = false)
                 }
             },
@@ -203,7 +221,12 @@ private fun inline(text: String): AnnotatedString {
                     )
                 val url = run.url
                 if (url != null) {
-                    withLink(LinkAnnotation.Url(url, TextLinkStyles(SpanStyle(color = JellyCastColors.Accent)))) {
+                    withLink(
+                        LinkAnnotation.Url(
+                            url,
+                            TextLinkStyles(SpanStyle(color = JellyCastColors.Accent)),
+                        ),
+                    ) {
                         withStyle(style) { append(run.text) }
                     }
                 } else {

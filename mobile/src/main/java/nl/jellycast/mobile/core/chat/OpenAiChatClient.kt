@@ -74,7 +74,9 @@ class OpenAiChatClient(
                     progress(ChatProgress.Answer(text.toString()))
                 }
 
-                "response.output_item.done" -> event["item"]?.let(::progressOf)?.let { progress(it) }
+                "response.output_item.done" -> event["item"]?.let(::progressOf)?.let {
+                    progress(it)
+                }
 
                 "response.completed", "response.incomplete" -> completed = event["response"]
 

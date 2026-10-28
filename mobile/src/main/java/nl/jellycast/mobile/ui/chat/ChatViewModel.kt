@@ -15,6 +15,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.JsonElement
 import nl.jellycast.core.data.repository.ChatCreditsRepository
 import nl.jellycast.core.model.ChatCredits
+import nl.jellycast.core.model.Episode
 import nl.jellycast.mobile.core.chat.ChatClientFactory
 import nl.jellycast.mobile.core.chat.ChatContext
 import nl.jellycast.mobile.core.chat.ChatError
@@ -26,10 +27,9 @@ import nl.jellycast.mobile.core.chat.ChatSettings
 import nl.jellycast.mobile.core.chat.ChatSource
 import nl.jellycast.mobile.core.chat.ChatSubject
 import nl.jellycast.mobile.core.chat.ChatTurn
-import nl.jellycast.core.model.Episode
-import nl.jellycast.mobile.core.library.progressOf
 import nl.jellycast.mobile.core.library.LibrarySnapshot
 import nl.jellycast.mobile.core.library.LibraryStore
+import nl.jellycast.mobile.core.library.progressOf
 import nl.jellycast.mobile.ui.info.InfoSubject
 
 data class ChatMessage(
@@ -110,7 +110,9 @@ class ChatViewModel(
     fun onSend(text: String) {
         val question = text.trim()
         if (question.isEmpty() || conversation.value.isSending) return
-        conversation.update { it.copy(messages = it.messages + ChatMessage(ChatRole.User, question)) }
+        conversation.update {
+            it.copy(messages = it.messages + ChatMessage(ChatRole.User, question))
+        }
         ask()
     }
 
@@ -174,10 +176,15 @@ class ChatViewModel(
 
                 is ChatProgress.Found ->
                     chat.copy(
-                        steps = chat.steps + ChatStep.Read(progress.sites.size, progress.sites.distinct()),
+                        steps =
+                            chat.steps +
+                                ChatStep.Read(progress.sites.size, progress.sites.distinct()),
                     )
 
-                is ChatProgress.Opening -> chat.copy(steps = chat.steps + ChatStep.Open(progress.site))
+                is ChatProgress.Opening -> chat.copy(
+                    steps =
+                        chat.steps + ChatStep.Open(progress.site),
+                )
 
                 ChatProgress.Filtering ->
                     if (chat.steps.lastOrNull() == ChatStep.Filter) {
@@ -194,7 +201,9 @@ class ChatViewModel(
     private suspend fun cast(subject: ChatSubject): ChatCredits? {
         castByItem[subject.itemId]?.let { return it }
         val seriesId = (subject as? ChatSubject.EpisodeSubject)?.episode?.seriesId
-        return credits.getCredits(subject.itemId, seriesId)?.also { castByItem[subject.itemId] = it }
+        return credits.getCredits(subject.itemId, seriesId)?.also {
+            castByItem[subject.itemId] = it
+        }
     }
 }
 

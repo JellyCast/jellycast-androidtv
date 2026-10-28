@@ -88,7 +88,7 @@
     <string name="settings_signin_error_qc_disabled">Quick Connect est désactivé sur ce serveur. Activez-le dans le tableau de bord de Jellyfin.</string>
     <string name="settings_signin_error_qc_failed">La connexion a échoué. Réessayez pour obtenir un nouveau code.</string>
     <plurals name="settings_chat_searched">
-        <item quantity="one">Une recherche sur le web</item>
+        <item quantity="one">%1$d recherche sur le web</item>
         <item quantity="many">%1$d recherches sur le web</item>
         <item quantity="other">%1$d recherches sur le web</item>
     </plurals>

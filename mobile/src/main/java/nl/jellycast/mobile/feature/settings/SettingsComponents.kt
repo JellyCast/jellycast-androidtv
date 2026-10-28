@@ -129,7 +129,11 @@ internal fun SettingsRadioRow(
         headlineContent = { Text(title) },
         leadingContent = { RadioButton(selected = selected, onClick = null) },
         colors = RowColors,
-        modifier = modifier.selectable(selected = selected, role = Role.RadioButton, onClick = onClick),
+        modifier = modifier.selectable(
+            selected = selected,
+            role = Role.RadioButton,
+            onClick = onClick,
+        ),
     )
 }
 

@@ -76,7 +76,9 @@ fun AiChatSettingsContent(
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = JellyCastColors.Background),
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = JellyCastColors.Background,
+                ),
             )
         },
     ) { padding ->

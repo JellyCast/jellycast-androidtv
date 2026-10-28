@@ -58,7 +58,10 @@ private fun SettingsScreen(
 }
 
 @Composable
-private fun AiChatSettingsScreen(onBack: () -> Unit, viewModel: AiChatSettingsViewModel = koinViewModel()) {
+private fun AiChatSettingsScreen(
+    onBack: () -> Unit,
+    viewModel: AiChatSettingsViewModel = koinViewModel(),
+) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     AiChatSettingsContent(
         uiState = uiState,

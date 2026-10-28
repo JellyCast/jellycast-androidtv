@@ -80,13 +80,16 @@ object ChatContext {
         }
 
     /** The regular episodes before [episode] in air order, then [episode] itself. */
-    fun episodesUpTo(episode: Episode, episodes: List<Episode>): List<Episode> =
-        episodes
-            .filter { (it.seasonNumber ?: 0) > 0 }
-            .takeWhile { it.id != episode.id } + episode
+    fun episodesUpTo(episode: Episode, episodes: List<Episode>): List<Episode> = episodes
+        .filter { (it.seasonNumber ?: 0) > 0 }
+        .takeWhile { it.id != episode.id } + episode
 
     private fun movieContext(movie: Movie, avoidsSpoilers: Boolean) = buildList {
-        add("The user is watching the movie ${movie.title}${movie.year?.let { " ($it)" }.orEmpty()}.")
+        add(
+            "The user is watching the movie ${movie.title}${movie.year?.let {
+                " ($it)"
+            }.orEmpty()}.",
+        )
         if (movie.genres.isNotEmpty()) add("Genres: ${movie.genres.joinToString(", ")}.")
         movie.overview?.let { add("Overview: $it") }
         if (avoidsSpoilers && !movie.isPlayed) {
@@ -127,5 +130,6 @@ object ChatContext {
         return text
     }
 
-    private fun code(episode: Episode) = "S${episode.seasonNumber ?: 0}E${episode.episodeNumber ?: 0}"
+    private fun code(episode: Episode) =
+        "S${episode.seasonNumber ?: 0}E${episode.episodeNumber ?: 0}"
 }

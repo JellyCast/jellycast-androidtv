@@ -45,7 +45,11 @@ class SettingsViewModel(
     appInfo: AppInfo,
 ) : ViewModel() {
     private val account =
-        combine(sessionRepository.authState, store.snapshot, store.syncState) { auth, snapshot, sync ->
+        combine(sessionRepository.authState, store.snapshot, store.syncState) {
+                auth,
+                snapshot,
+                sync,
+            ->
             val server =
                 when (auth) {
                     is AuthState.LoggedIn -> auth.server
@@ -58,7 +62,12 @@ class SettingsViewModel(
                 userName = (auth as? AuthState.LoggedIn)?.userName.orEmpty(),
                 library =
                     snapshot?.let {
-                        LibraryCounts(it.movies.size, it.series.size, it.episodes.size, it.syncedAtMs)
+                        LibraryCounts(
+                            it.movies.size,
+                            it.series.size,
+                            it.episodes.size,
+                            it.syncedAtMs,
+                        )
                     },
                 syncState = sync,
                 versionName = appInfo.versionName,
@@ -75,7 +84,11 @@ class SettingsViewModel(
             chatSettings.state,
         ) { base, quality, rating, network, chat ->
             base.copy(quality = quality, ratingSource = rating, networkKind = network, chat = chat)
-        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), SettingsUiState())
+        }.stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS),
+            SettingsUiState(),
+        )
 
     fun onRefreshLibrary() {
         if (store.syncState.value == SyncState.Syncing) return

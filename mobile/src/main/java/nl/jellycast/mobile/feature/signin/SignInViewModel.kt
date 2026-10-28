@@ -176,7 +176,10 @@ class SignInViewModel(
                             _uiState.update {
                                 it.copy(
                                     phase =
-                                        SignInPhase.WaitingForApproval(result.server.name, state.code),
+                                        SignInPhase.WaitingForApproval(
+                                            result.server.name,
+                                            state.code,
+                                        ),
                                 )
                             }
 

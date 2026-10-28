@@ -94,7 +94,9 @@ fun BrandMark(modifier: Modifier = Modifier, drawProgress: () -> Float = { 1f })
                             drawWeld(
                                 head = measure.getPosition(head),
                                 tailStart =
-                                    measure.getPosition((head - WELD_TAIL_LENGTH).coerceAtLeast(0f)),
+                                    measure.getPosition(
+                                        (head - WELD_TAIL_LENGTH).coerceAtLeast(0f),
+                                    ),
                                 tangent = measure.getTangent(head),
                             )
                         }

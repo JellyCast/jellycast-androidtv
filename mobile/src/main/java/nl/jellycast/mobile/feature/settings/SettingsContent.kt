@@ -70,7 +70,9 @@ fun SettingsContent(
                         )
                     }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = JellyCastColors.Background),
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = JellyCastColors.Background,
+                ),
             )
         },
     ) { padding ->
@@ -143,9 +145,18 @@ private fun LibrarySection(uiState: SettingsUiState, onRefreshLibrary: () -> Uni
     SettingsSection(title = stringResource(R.string.settings_library)) {
         uiState.library?.let { library ->
             val numbers = NumberFormat.getIntegerInstance()
-            SettingsRow(stringResource(R.string.settings_movies), value = numbers.format(library.movies))
-            SettingsRow(stringResource(R.string.settings_series), value = numbers.format(library.series))
-            SettingsRow(stringResource(R.string.settings_episodes), value = numbers.format(library.episodes))
+            SettingsRow(
+                stringResource(R.string.settings_movies),
+                value = numbers.format(library.movies),
+            )
+            SettingsRow(
+                stringResource(R.string.settings_series),
+                value = numbers.format(library.series),
+            )
+            SettingsRow(
+                stringResource(R.string.settings_episodes),
+                value = numbers.format(library.episodes),
+            )
             SettingsRow(
                 stringResource(R.string.settings_updated),
                 value =
@@ -198,7 +209,10 @@ private fun QualitySection(
                 onClick = { picking = network },
             )
         }
-        SettingsRow(stringResource(R.string.settings_now_on), value = networkName(uiState.networkKind))
+        SettingsRow(
+            stringResource(R.string.settings_now_on),
+            value = networkName(uiState.networkKind),
+        )
     }
     picking?.let { network ->
         val options = QualityPreference.all
