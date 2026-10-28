@@ -104,6 +104,7 @@ fun TrackSheet(
             Modifier.padding(start = 4.dp, top = 8.dp),
         )
         SubtitleRows(plan, engine, player, locale, onTranscodeStreams)
+        AudioDelaySection()
     }
 }
 

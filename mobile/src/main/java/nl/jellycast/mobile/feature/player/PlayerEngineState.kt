@@ -38,6 +38,7 @@ import nl.jellycast.core.playback.classifyPlaybackFailure
 import nl.jellycast.core.playback.holdTracksUntilChosen
 import nl.jellycast.core.playback.toMediaItem
 import nl.jellycast.core.playback.videoWithoutDecoder
+import nl.jellycast.mobile.core.settings.AudioOutputDelay
 import timber.log.Timber
 
 private val ProgressInterval = 10.seconds
@@ -107,6 +108,7 @@ fun rememberPlayerEngine(
     load: PlaybackLoad?,
     callbacks: EngineCallbacks,
     playerFactory: PlayerFactory,
+    audioDelay: AudioOutputDelay,
 ): PlayerEngineState {
     val state = remember { PlayerEngineState() }
     val context = LocalContext.current
@@ -115,7 +117,8 @@ fun rememberPlayerEngine(
     DisposableEffect(load) {
         if (load == null) return@DisposableEffect onDispose { }
         val plan = load.plan
-        val exoPlayer = playerFactory.create(plan)
+        val exoPlayer =
+            playerFactory.create(plan, extraOutputLatencyUs = audioDelay::currentLatencyUs)
         val session = MediaSession.Builder(context, exoPlayer).setId("play-${load.id}").build()
         state.reset()
         var failed = false

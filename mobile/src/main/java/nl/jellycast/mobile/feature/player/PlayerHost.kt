@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import nl.jellycast.core.playback.PlayerFactory
 import nl.jellycast.mobile.core.designsystem.theme.LocalLayout
+import nl.jellycast.mobile.core.settings.AudioOutputDelay
 import nl.jellycast.mobile.navigation.LocalAppNavigation
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
@@ -35,6 +36,7 @@ fun PlayerHost(bottomInset: Dp) {
     // Composed outside the tab back stacks, so this is the Activity's ViewModel.
     val viewModel: NowPlayingViewModel = koinViewModel()
     val playerFactory: PlayerFactory = koinInject()
+    val audioDelay: AudioOutputDelay = koinInject()
     val navigation = LocalAppNavigation.current
     val request = navigation.playRequest
     LaunchedEffect(request) {
@@ -44,7 +46,7 @@ fun PlayerHost(bottomInset: Dp) {
         }
     }
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val engine = rememberPlayerEngine(state.load, viewModel, playerFactory)
+    val engine = rememberPlayerEngine(state.load, viewModel, playerFactory, audioDelay)
     if (state.item != null) NowPlaying(state, engine, viewModel, bottomInset)
 }
 

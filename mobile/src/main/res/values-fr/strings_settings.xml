@@ -101,4 +101,8 @@
     <string name="settings_downloads_remove_watched">Supprimer les téléchargements vus</string>
     <string name="settings_downloads_keep_ahead">Garder les séries à jour</string>
     <string name="settings_downloads_footer">Les téléchargements vus disparaissent un jour après les avoir regardés. Une série téléchargée avec Télécharger les suivants garde ses %1$d prochains épisodes sur cet appareil : à la maison, le suivant se télécharge dès que vous en regardez un.</string>
+    <string name="settings_audio_delay">Décalage du son Bluetooth</string>
+    <string name="settings_audio_delay_footer">Se règle dans le lecteur, sous Audio et sous-titres, pendant que l\u2019appareil joue. Il s\u2019applique chaque fois que cet appareil rejoue.</string>
+    <string name="settings_audio_delay_none">Aucun pour l\u2019instant</string>
+    <string name="settings_audio_delay_remove">Supprimer</string>
 </resources>

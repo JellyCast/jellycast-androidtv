@@ -45,4 +45,8 @@
     <string name="player_original_bitrate">Origineel · %1$s Mbit/s</string>
     <string name="player_level">%1$s Mbit/s · %2$s</string>
     <string name="player_episode_code">S%1$d · A%2$d</string>
+    <string name="player_sound_delay">Geluidsvertraging</string>
+    <string name="player_sound_delay_hint">Loopt het geluid achter op het beeld? Schuif tot de lippen gelijk lopen.</string>
+    <string name="player_sound_delay_less">Minder vertraging</string>
+    <string name="player_sound_delay_more">Meer vertraging</string>
 </resources>

@@ -102,4 +102,8 @@
     <string name="settings_downloads_remove_watched">Remove watched downloads</string>
     <string name="settings_downloads_keep_ahead">Keep series ahead</string>
     <string name="settings_downloads_footer">Watched downloads go a day after you watched them. A series you downloaded with Download next keeps its next %1$d episodes on this device: at home, the next one downloads once you watch one.</string>
+    <string name="settings_audio_delay">Bluetooth sound delay</string>
+    <string name="settings_audio_delay_footer">Set in the player, under Audio and subtitles, while the device plays. It applies whenever that device plays again.</string>
+    <string name="settings_audio_delay_none">None yet</string>
+    <string name="settings_audio_delay_remove">Remove</string>
 </resources>

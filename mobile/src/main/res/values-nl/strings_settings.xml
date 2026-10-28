@@ -99,4 +99,8 @@
     <string name="settings_downloads_remove_watched">Gekeken downloads verwijderen</string>
     <string name="settings_downloads_keep_ahead">Series bijhouden</string>
     <string name="settings_downloads_footer">Gekeken downloads verdwijnen een dag nadat je ze keek. Een serie die je met Download volgende hebt gedownload, houdt de volgende %1$d afleveringen op dit apparaat: thuis wordt de volgende gedownload zodra je er een kijkt.</string>
+    <string name="settings_audio_delay">Geluidsvertraging bij Bluetooth</string>
+    <string name="settings_audio_delay_footer">Stel je in de speler in, onder Audio en ondertitels, terwijl het apparaat speelt. Het geldt elke keer dat dat apparaat weer speelt.</string>
+    <string name="settings_audio_delay_none">Nog geen</string>
+    <string name="settings_audio_delay_remove">Verwijderen</string>
 </resources>

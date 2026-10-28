@@ -1,5 +1,7 @@
 package nl.jellycast.mobile.di
 
+import android.content.Context
+import android.media.AudioManager
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.preferencesDataStoreFile
 import java.util.concurrent.TimeUnit
@@ -15,7 +17,9 @@ import nl.jellycast.mobile.core.chat.ModelMemory
 import nl.jellycast.mobile.core.chat.OkHttpChatHttp
 import nl.jellycast.mobile.core.chat.SecretCipher
 import nl.jellycast.mobile.core.settings.AppPreferences
+import nl.jellycast.mobile.core.settings.AudioOutputDelay
 import nl.jellycast.mobile.core.settings.DataStoreAppPreferences
+import nl.jellycast.mobile.core.settings.SystemAudioOutputDelay
 import nl.jellycast.mobile.feature.settings.AiChatSettingsViewModel
 import nl.jellycast.mobile.feature.settings.SettingsViewModel
 import nl.jellycast.mobile.feature.signin.ServerDiscovery
@@ -34,6 +38,12 @@ private const val CHAT_TIMEOUT_SECONDS = 120L
 /** Owner: the settings worker (settings, sign-in, AI chat). */
 val settingsModule =
     module {
+        single<AudioOutputDelay>(createdAtStart = true) {
+            SystemAudioOutputDelay(
+                androidContext().getSystemService(AudioManager::class.java),
+                androidContext().getSharedPreferences("audio_delay", Context.MODE_PRIVATE),
+            )
+        }
         single<AppPreferences> {
             DataStoreAppPreferences(
                 PreferenceDataStoreFactory.create {

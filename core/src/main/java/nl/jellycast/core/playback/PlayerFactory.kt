@@ -39,12 +39,14 @@ class PlayerFactory(
         plan: PlaybackPlan,
         tunneling: Boolean = false,
         frameStats: FrameStats = FrameStats(),
+        extraOutputLatencyUs: () -> Long = { 0L },
     ): ExoPlayer {
         val renderers =
             JellyCastRenderersFactory(
                 context,
                 passthroughAudio = plan.passthroughAudio,
                 frameStats = frameStats,
+                extraOutputLatencyUs = extraOutputLatencyUs,
             )
                 .setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_ON)
                 .setEnableDecoderFallback(true)

@@ -70,6 +70,7 @@ internal class JellyCastRenderersFactory(
     context: Context,
     private val passthroughAudio: Set<String>?,
     private val frameStats: FrameStats,
+    private val extraOutputLatencyUs: () -> Long,
 ) : DefaultRenderersFactory(context) {
     override fun buildTextRenderers(
         context: Context,
@@ -139,9 +140,29 @@ internal class JellyCastRenderersFactory(
         enableFloatOutput: Boolean,
         enableAudioOutputPlaybackParams: Boolean,
     ): AudioSink? {
-        val sink = super.buildAudioSink(context, enableFloatOutput, enableAudioOutputPlaybackParams)
-        val allowed = passthroughAudio ?: return sink
-        return sink?.let { PassthroughPolicyAudioSink(it, allowed) }
+        val sink =
+            super.buildAudioSink(context, enableFloatOutput, enableAudioOutputPlaybackParams)
+                ?: return null
+        val allowed = passthroughAudio
+        val policed = if (allowed == null) sink else PassthroughPolicyAudioSink(sink, allowed)
+        return LatencyCompensatingAudioSink(policed, extraOutputLatencyUs)
+    }
+}
+
+/**
+ * Reports the audio position [extraLatencyUs] behind what the system says, so the video, which
+ * follows the audio clock, waits that much longer. For outputs (car stereos over Bluetooth) that
+ * report less latency than they add.
+ */
+@OptIn(UnstableApi::class)
+private class LatencyCompensatingAudioSink(
+    sink: AudioSink,
+    private val extraLatencyUs: () -> Long,
+) : ForwardingAudioSink(sink) {
+    override fun getCurrentPositionUs(sourceEnded: Boolean): Long {
+        val position = super.getCurrentPositionUs(sourceEnded)
+        if (position == AudioSink.CURRENT_POSITION_NOT_SET) return position
+        return (position - extraLatencyUs()).coerceAtLeast(0)
     }
 }
 

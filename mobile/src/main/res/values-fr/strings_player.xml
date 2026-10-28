@@ -45,4 +45,8 @@
     <string name="player_original_bitrate">Original · %1$s Mbit/s</string>
     <string name="player_level">%1$s Mbit/s · %2$s</string>
     <string name="player_episode_code">S%1$d · É%2$d</string>
+    <string name="player_sound_delay">Décalage du son</string>
+    <string name="player_sound_delay_hint">Le son est en retard sur l\u2019image ? Ajustez jusqu\u2019à ce que les lèvres correspondent.</string>
+    <string name="player_sound_delay_less">Moins de décalage</string>
+    <string name="player_sound_delay_more">Plus de décalage</string>
 </resources>
