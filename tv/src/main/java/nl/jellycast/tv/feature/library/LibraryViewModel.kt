@@ -2,7 +2,6 @@ package nl.jellycast.tv.feature.library
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import java.text.Normalizer
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,6 +10,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
 import nl.jellycast.core.common.LOAD_TIMEOUT_MS
+import nl.jellycast.core.common.matchesIgnoringCaseAndAccents
 import nl.jellycast.core.data.repository.LibraryRepository
 import nl.jellycast.core.data.repository.UiPreferencesRepository
 import nl.jellycast.core.model.LibraryKind
@@ -194,13 +194,3 @@ internal fun librarySeries(
         }
     return sorted.map { LibraryTile(it.id, it.title, it.artwork.poster) }
 }
-
-private fun matchesIgnoringCaseAndAccents(title: String, query: String): Boolean {
-    val needle = query.trim()
-    return needle.isEmpty() || normalize(title).contains(normalize(needle))
-}
-
-private val Diacritics = Regex("\\p{Mn}+")
-
-private fun normalize(text: String): String =
-    Diacritics.replace(Normalizer.normalize(text, Normalizer.Form.NFD), "").lowercase()
