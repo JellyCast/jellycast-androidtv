@@ -42,7 +42,6 @@ private fun HomeContentPreview() {
                     content = HomeContent.Ready(PreviewTiles),
                     syncProblem = SyncProblem(null, 0, isRetrying = false, isOffline = true),
                 ),
-            onPlay = {},
             onOpen = {},
             onShowActions = {},
             onOpenSettings = {},
@@ -55,5 +54,5 @@ private fun HomeContentPreview() {
 @Preview(showBackground = true, widthDp = 393, heightDp = 852)
 @Composable
 private fun HomeSkeletonPreview() {
-    JellyCastTheme { HomeContent(HomeUiState(), {}, {}, {}, {}, {}, {}) }
+    JellyCastTheme { HomeContent(HomeUiState(), {}, {}, {}, {}, {}) }
 }

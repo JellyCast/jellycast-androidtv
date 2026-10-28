@@ -36,7 +36,7 @@ sealed interface HomeTile {
     /** The id that has to be downloaded for the tile to work offline. */
     val itemId: String
 
-    /** A movie in progress or a series' next episode; a tap plays it. */
+    /** A movie in progress or a series' next episode. */
     data class Continue(val item: PlayableItem) : HomeTile {
         override val contentId: String
             get() = when (item) {

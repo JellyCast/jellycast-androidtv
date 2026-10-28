@@ -35,7 +35,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import nl.jellycast.core.model.PlayableItem
 import nl.jellycast.mobile.R
 import nl.jellycast.mobile.core.designsystem.component.ContentErrorView
 import nl.jellycast.mobile.core.designsystem.theme.JellyCastColors
@@ -57,7 +56,6 @@ fun HomeScreen(modifier: Modifier = Modifier) {
     var actionTarget by remember { mutableStateOf<ActionTarget?>(null) }
     HomeContent(
         uiState = uiState,
-        onPlay = { navigation.play(it) },
         onOpen = navigation::open,
         onShowActions = { actionTarget = it },
         onOpenSettings = { navigation.showsSettings = true },
@@ -71,7 +69,6 @@ fun HomeScreen(modifier: Modifier = Modifier) {
 @Composable
 internal fun HomeContent(
     uiState: HomeUiState,
-    onPlay: (PlayableItem) -> Unit,
     onOpen: (Route) -> Unit,
     onShowActions: (ActionTarget) -> Unit,
     onOpenSettings: () -> Unit,
@@ -97,12 +94,7 @@ internal fun HomeContent(
                     HomeGrid(
                         tiles = content.tiles,
                         unavailableIds = uiState.unavailableIds,
-                        onTileClick = { tile ->
-                            when (tile) {
-                                is HomeTile.Continue -> onPlay(tile.item)
-                                else -> onOpen(tile.route)
-                            }
-                        },
+                        onTileClick = { onOpen(it.route) },
                         onTileLongPress = { onShowActions(it.actionTarget) },
                         featuredOverlay = {
                             SettingsButton(onOpenSettings, Modifier.padding(FeaturedButtonInset))

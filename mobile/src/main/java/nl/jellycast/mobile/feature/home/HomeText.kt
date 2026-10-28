@@ -146,7 +146,7 @@ internal val HomeTile.imageUrl: String?
         is HomeTile.NotStarted -> series.artwork.run { backdrop ?: landscape ?: poster }
     }
 
-/** Where a tap on a New or Not started tile goes; Continue tiles play instead. */
+/** Where a tap on a tile goes: the movie, or the series page at its next episode. */
 internal val HomeTile.route: Route
     get() = when (this) {
         is HomeTile.Continue -> when (item) {
