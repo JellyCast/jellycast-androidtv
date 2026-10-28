@@ -1,4 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Owner: the downloads worker. Every key in all four languages. -->
 <resources>
+    <string name="downloads_title">Downloads</string>
+    <string name="downloads_in_progress">In progress</string>
+    <string name="downloads_pause_all">Pause all</string>
+    <string name="downloads_on_this_phone">On this phone</string>
+    <string name="downloads_on_this_tablet">On this tablet</string>
+    <string name="downloads_empty_title">No downloads yet</string>
+    <string name="downloads_empty_message">At home, download a movie or episode with the arrow button to watch it anywhere.</string>
+    <string name="downloads_remove">Remove</string>
+    <string name="downloads_used_of_total">%1$s of %2$s</string>
+    <string name="downloads_storage_app">JellyCast %1$s</string>
+    <string name="downloads_storage_other">Other %1$s</string>
+    <string name="downloads_storage_free">Free %1$s</string>
+    <string name="downloads_movie">Movie</string>
+    <string name="downloads_watched">watched</string>
+    <string name="downloads_not_watched">not watched</string>
+    <string name="downloads_all_watched">All watched</string>
+    <string name="downloads_kind_compact">Compact · 1080p</string>
+    <string name="downloads_kind_original">Original</string>
+    <string name="downloads_status_queued">Waiting in line</string>
+    <string name="downloads_status_converting">Converting on the server</string>
+    <string name="downloads_status_downloading">Downloading</string>
+    <string name="downloads_status_waiting_network">Waiting for the network</string>
+    <string name="downloads_status_paused">Paused</string>
+    <string name="downloads_status_failed">Didn\'t finish: %1$s</string>
+    <string name="downloads_minutes_left">about %1$d min left</string>
+    <string name="downloads_download">Download</string>
+    <string name="downloads_remove_download">Remove download</string>
+    <string name="downloads_go_on">Go on</string>
+    <string name="downloads_cancel_download">Cancel download</string>
+    <string name="downloads_pause">Pause</string>
+    <string name="downloads_options">Download options…</string>
+    <string name="downloads_only_at_home">Downloading only works at home, where the server is.</string>
+    <string name="downloads_does_not_fit">This doesn\'t fit: %1$s more is needed.</string>
+    <string name="downloads_sheet_title">Download %1$s</string>
+    <string name="downloads_free_on_phone">Free on this phone: %1$s</string>
+    <string name="downloads_free_on_tablet">Free on this tablet: %1$s</string>
+    <string name="downloads_compact">Compact</string>
+    <string name="downloads_does_not_fit_short">Doesn\'t fit · %1$s more needed</string>
+    <string name="downloads_compact_description">1080p, standard colours (SDR), one audio track in stereo. The server converts it: ready in about %1$d min.</string>
+    <string name="downloads_original_tech">%1$s, every audio and subtitle track.</string>
+    <string name="downloads_original_tracks">Every audio and subtitle track.</string>
+    <string name="downloads_original_minutes">About %1$d min to download.</string>
+    <string name="downloads_next_on_device">Next episodes are on this device</string>
+    <string name="downloads_download_next">Download next %1$d</string>
+    <string name="downloads_only_fit">Only %1$d of %2$d fit on this device.</string>
+    <string name="downloads_about_size">about %1$s</string>
+    <string name="downloads_series_page">Series page</string>
+    <string name="downloads_shows_downloads">Shows the downloads</string>
+    <string name="downloads_not_downloaded">Not downloaded</string>
+    <string name="downloads_ok">OK</string>
+    <string name="downloads_cancel">Cancel</string>
+    <string name="downloads_notification_channel">Downloads</string>
+    <plurals name="downloads_movies">
+        <item quantity="one">%d movie</item>
+        <item quantity="other">%d movies</item>
+    </plurals>
+    <plurals name="downloads_episodes">
+        <item quantity="one">%d episode</item>
+        <item quantity="other">%d episodes</item>
+    </plurals>
+    <plurals name="downloads_unwatched_count">
+        <item quantity="one">%d not watched</item>
+        <item quantity="other">%d not watched</item>
+    </plurals>
+    <plurals name="downloads_download_episodes">
+        <item quantity="one">Download %d episode</item>
+        <item quantity="other">Download %d episodes</item>
+    </plurals>
 </resources>
