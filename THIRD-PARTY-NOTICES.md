@@ -25,7 +25,7 @@ A build without `media3-ffmpeg-decoder` leaves only the MIT, Apache-2.0 and LGPL
 | slf4j-timber | 0.0.8 | Apache-2.0 | https://github.com/unveloper/slf4j-timber |
 | SLF4J API (via the Jellyfin SDK) | | MIT | https://github.com/qos-ch/slf4j |
 
-These libraries bring their own dependencies, each under its own license; `./gradlew :app:dependencies --configuration releaseRuntimeClasspath` lists them all.
+These libraries bring their own dependencies, each under its own license; `./gradlew :tv:dependencies --configuration releaseRuntimeClasspath` lists them all.
 
 ## Trademarks
 

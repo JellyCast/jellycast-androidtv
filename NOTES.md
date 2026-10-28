@@ -187,7 +187,7 @@ Release build, `compile -m speed`, `measure-scroll.sh` (30 s of real key repeat)
 
 The audio HAL does not report TrueHD as passthrough (only AC3, EAC3, EAC3-JOC), but it does report `IEC61937`; Moonfin wraps TrueHD itself (MAT) and plays it as already packed IEC61937 data. TrueHD and DTS-HD MA then need 8 channels at 192 kHz (HBR). Question: does the platform allow that?
 
-- **Status: built.** `app/src/androidTest/java/nl/jellycast/tv/playback/Iec61937ProbeTest.kt`. Measures with the movie attributes (`USAGE_MEDIA`, `CONTENT_TYPE_MOVIE`): the output from `getAudioDevicesForAttributes` with encodings, channels, rates and `audioProfiles`; `getDirectProfilesForAttributes`; `isDirectPlaybackSupported` and `getDirectPlaybackSupport` per format; and whether an IEC61937 `AudioTrack` can be created (immediately `release()`). Plays nothing: no `play()`, no `write()`. Logs under tag `IecProbe` and as instrument status; always passes.
+- **Status: built.** `tv/src/androidTest/java/nl/jellycast/tv/playback/Iec61937ProbeTest.kt`. Measures with the movie attributes (`USAGE_MEDIA`, `CONTENT_TYPE_MOVIE`): the output from `getAudioDevicesForAttributes` with encodings, channels, rates and `audioProfiles`; `getDirectProfilesForAttributes`; `isDirectPlaybackSupported` and `getDirectPlaybackSupport` per format; and whether an IEC61937 `AudioTrack` can be created (immediately `release()`). Plays nothing: no `play()`, no `write()`. Logs under tag `IecProbe` and as instrument status; always passes.
 - **Status: run** on 2026-10-10 at 19:00, Chromecast with Google TV 4K (Android 14) via HDMI → LG (eARC) → Sonos. Plex was in the foreground, not JellyCast.
 
   | Format | Channels | Rate | isDirectPlaybackSupported | getDirectPlaybackSupport | Create AudioTrack |
@@ -464,7 +464,7 @@ Phase 2b (2026-10-09), tested by the user and with the `profile` build:
 - ✅ Casino: HDMI output is at **23.98 Hz** during playback (`dumpsys SurfaceFlinger`: `activeMode=23.98 Hz`). The LG's VRR screen always shows 60 Hz; that says nothing about the input signal.
 - ✅ Interstellar now seeks fast (user, after `CLOSEST_SYNC`).
 - Seeking to the nearest keyframe (`SeekParameters.CLOSEST_SYNC`) and the decoder scan once per app start: added, still to be tested by the user.
-- New build type **`profile`**: release speed (R8, not debuggable) with logs, debug start and overlay. `./gradlew assembleProfile` → `app/build/outputs/apk/profile/app-profile.apk`. Debug builds are 2–3× slower at starting (Interstellar: 20+ s in debug).
+- New build type **`profile`**: release speed (R8, not debuggable) with logs, debug start and overlay. `./gradlew :tv:assembleProfile` → `tv/build/outputs/apk/profile/app-profile.apk`. Debug builds are 2–3× slower at starting (Interstellar: 20+ s in debug).
 
 Testing:
 - Video is on a separate hardware layer: `screencap` shows only the UI (black picture is normal). Check via the debug overlay, logcat and the server session (API).

@@ -134,8 +134,8 @@ You'll need: a Jellyfin server, an Android TV device running Android 14 or later
 
    ```bash
    adb connect <your-tv-ip>:5555
-   ./gradlew assembleRelease
-   adb install -r app/build/outputs/apk/release/app-release.apk
+   ./gradlew :tv:assembleRelease
+   adb install -r tv/build/outputs/apk/release/tv-release.apk
    adb shell cmd package compile -m speed -f nl.jellycast.tv
    ```
 

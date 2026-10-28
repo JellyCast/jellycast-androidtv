@@ -17,7 +17,7 @@ Changing a text: find the key (e.g. `settings_logout`) in the file for that lang
 
 ## Adding a new language
 
-1. Copy `app/src/main/res/values/strings.xml` to `app/src/main/res/values-<code>/strings.xml`. The code is the two-letter language code: `de` (German), `it` (Italian), `pt` (Portuguese). For a region: `values-pt-rBR` (Brazilian Portuguese).
+1. Copy `tv/src/main/res/values/strings.xml` to `tv/src/main/res/values-<code>/strings.xml`. The code is the two-letter language code: `de` (German), `it` (Italian), `pt` (Portuguese). For a region: `values-pt-rBR` (Brazilian Portuguese).
 2. Translate every text. Leave the keys (`name="…"`) as they are.
 3. Done. After the next build the language appears automatically in **Settings → Language**, with its name in the language itself ("Deutsch"). There is no list you need to update: Gradle builds it from the `values-*` folders.
 

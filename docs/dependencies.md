@@ -168,7 +168,7 @@ All versions were looked up on Google Maven, Maven Central or the Gradle Plugin 
 - **What:** loads images (posters, backdrops) from the server, scales them and keeps a cache in memory and on disk.
 - **Why:** Kotlin- and Compose-first, lightweight, with caches you can cap; important on 2 GB of RAM. JellyCast uses one `ImageLoader` (memory cache 20% of the app heap without backdrops, disk cache 200 MB) with its own OkHttp client (OkHttp is already in the app via the Jellyfin SDK; the remote control WebSocket uses it too, because the SDK's WebSocket didn't reconnect after the app had been in the background), and asks for WebP via the `Accept` header.
 - **Alternatives:** Glide (older, View-oriented); loading images ourselves (no caching).
-- **Coordinate:** `io.coil-kt.coil3:coil-compose` + `io.coil-kt.coil3:coil-network-okhttp` (Coil 3 needs a separate network module) · version `3.6.3` · added 2026-10-09
+- **Coordinate:** `io.coil-kt.coil3:coil-compose` + `io.coil-kt.coil3:coil-network-okhttp` (Coil 3 needs a separate network module) · version `3.6.3` · added 2026-10-09. `:core` builds the `ImageLoader` and uses `io.coil-kt.coil3:coil` (Coil without Compose, same version, 2026-10-28); the apps add `coil-compose`.
 - **Docs:** https://coil-kt.github.io/coil/
 
 ### Composition tracing (only in the `profile` measurement build)
@@ -177,6 +177,20 @@ All versions were looked up on Google Maven, Maven Central or the Gradle Plugin 
 - **Alternatives:** Android Studio's profiler (does the same, but needs a cable session and can't be run from scripts); system traces only (no names).
 - **Coordinate:** `androidx.compose.runtime:runtime-tracing` · via the Compose BOM (1.12.1) · `androidx.tracing:tracing-perfetto-binary` · version `1.0.1` · added 2026-10-09
 - **Docs:** https://developer.android.com/develop/ui/compose/tooling/tracing
+
+### AndroidX Core KTX
+- **What:** Kotlin helpers on top of the Android framework, e.g. `contentValuesOf` for the Watch Next rows.
+- **Why:** `:core` used it already; before the module split it came in indirectly through other libraries. A library module has to name what it uses.
+- **Alternatives:** building `ContentValues` by hand (a few more lines, nothing gained).
+- **Coordinate:** `androidx.core:core-ktx` · version `1.19.1` · added 2026-10-28
+- **Docs:** https://developer.android.com/kotlin/ktx#core
+
+### Android Library plugin
+- **What:** the AGP variant that builds a library module (an `.aar`) instead of an app; used by `:core` and `:core-testing`.
+- **Why:** the TV and mobile apps share `:core`.
+- **Alternatives:** none; part of AGP.
+- **Coordinate:** `com.android.library` · same version as AGP · added 2026-10-28
+- **Docs:** https://developer.android.com/build/configure-library-module
 
 ## Planned
 

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Server genres (English, TMDb); mapped in core/common/GenreResources.kt. -->
+    <string name="genre_action">Acción</string>
+    <string name="genre_action_adventure">Acción y aventura</string>
+    <string name="genre_adventure">Aventura</string>
+    <string name="genre_animation">Animación</string>
+    <string name="genre_comedy">Comedia</string>
+    <string name="genre_crime">Crimen</string>
+    <string name="genre_documentary">Documental</string>
+    <string name="genre_drama">Drama</string>
+    <string name="genre_family">Familia</string>
+    <string name="genre_fantasy">Fantasía</string>
+    <string name="genre_history">Historia</string>
+    <string name="genre_horror">Terror</string>
+    <string name="genre_kids">Infantil</string>
+    <string name="genre_music">Música</string>
+    <string name="genre_mystery">Misterio</string>
+    <string name="genre_news">Noticias</string>
+    <string name="genre_reality">Reality</string>
+    <string name="genre_romance">Romance</string>
+    <string name="genre_scifi_fantasy">Ciencia ficción y fantasía</string>
+    <string name="genre_science_fiction">Ciencia ficción</string>
+    <string name="genre_soap">Telenovela</string>
+    <string name="genre_talk">Programa de entrevistas</string>
+    <string name="genre_thriller">Suspense</string>
+    <string name="genre_tv_movie">Película de TV</string>
+    <string name="genre_war">Bélica</string>
+    <string name="genre_war_politics">Bélica y política</string>
+    <string name="genre_western">Western</string>
+</resources>

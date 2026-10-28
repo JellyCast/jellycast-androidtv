@@ -11,24 +11,27 @@ The fixed folder and package tree of JellyCast, and where new code goes. Rules f
 ## Tree
 
 ```
-app/src/main/java/nl/jellycast/tv/
+core/src/main/java/nl/jellycast/core/   # :core, shared by both apps, no UI
+  model/                      # own models: Movie, Episode, Series, MediaRow, PlaybackPosition ... (plain Kotlin)
+  network/                    # Jellyfin SDK setup (createJellyfin, ApiClient), ImageUrlBuilder
+  common/                     # AppDispatchers, GenreResources (server genre → strings.xml) and other small helpers without Android UI
+  datastore/                  # SessionStore (server URL, token, user id), UiPreferencesStore
+  data/
+    repository/               # SessionRepository, LibraryRepository, PlaybackRepository, LanguageRepository (+ Default*)
+    ResourceGenreNames.kt     # genre names and A–Z order in the chosen language (for the shelves)
+    mapper/                   # *Mappers.kt: SDK DTO → core/model
+  playback/                   # DeviceProfileFactory, CodecCapabilities, PlayerFactory, PlaybackReporter, PlayMethod
+core/src/main/res/values*/strings.xml   # genre names (the only texts :core needs)
+core-testing/src/main/java/nl/jellycast/core/testing/   # Fake*Repository, MainDispatcherRule, test data builders
+
+tv/src/main/java/nl/jellycast/tv/       # :tv, this app
   JellyCastApp.kt                # Application: startKoin, Coil singleton
   MainActivity.kt               # the only Activity; host for JellyCastNavHost
-  di/                           # Koin modules: NetworkModule.kt, DataModule.kt, PlaybackModule.kt, FeatureModules.kt
+  di/                           # Koin modules
   navigation/
     Destinations.kt             # @Serializable NavKeys (Home, Detail(itemId), Player(itemId), ...)
     JellyCastNavHost.kt          # NavDisplay + entryProvider
   core/
-    model/                      # own models: Movie, Episode, Series, MediaRow, PlaybackPosition ... (plain Kotlin)
-    network/                    # Jellyfin SDK setup (createJellyfin, ApiClient), ImageUrlBuilder
-    common/                     # AppDispatchers, GenreResources (server genre → strings.xml) and other small helpers without Android UI
-    datastore/                  # SessionStore (server URL, token, user id), later SettingsStore
-    data/
-      repository/               # SessionRepository, LibraryRepository, PlaybackRepository, LanguageRepository (+ Default*)
-      ResourceGenreNames.kt     # genre names and A–Z order in the chosen language (for the shelves)
-      mapper/                   # *Mappers.kt: SDK DTO → core/model
-    domain/                     # only shared use cases, e.g. GetNextUpUseCase (empty until needed)
-    playback/                   # DeviceProfileFactory, CodecCapabilities, PlayerFactory, PlaybackReporter, PlayMethod
     designsystem/
       theme/                    # JellyCastTheme, colors, typography, spacing (tv-material)
       component/                # PosterCard, TvRow (row with focus behaviour), PillButton, Backdrop ...
@@ -45,25 +48,26 @@ app/src/main/java/nl/jellycast/tv/
     settings/
     player/                     # PlayerScreen.kt, PlayerViewModel.kt, overlay components
 
-app/src/test/java/nl/jellycast/tv/        # JVM tests; mirrors the main tree
-  testing/                               # Fake*Repository, TestDispatchers, test data builders
-app/src/androidTest/java/nl/jellycast/tv/ # Compose UI/focus tests on device/emulator
+core/src/test/java/nl/jellycast/core/     # JVM tests of :core
+tv/src/test/java/nl/jellycast/tv/         # JVM tests of :tv; mirrors the main tree
+tv/src/androidTest/java/nl/jellycast/tv/  # Compose UI/focus tests on device/emulator
 
-app/src/main/res/
+tv/src/main/res/
   values/strings.xml                     # all texts, English (default language, see resources.properties)
   values/donottranslate.xml              # texts that are the same in every language (4K, HDR10, OK …)
   values-xx/strings.xml                  # one file per language (es, fr, nl); the language list follows from these
   resources.properties                   # unqualifiedResLocale=en
   drawable-xhdpi/banner.png              # 320×180, with the app name in the image
   xml/network_security_config.xml        # cleartext for the LAN only
-```
 
+mobile/                                  # :mobile, phone and tablet app; see mobile/README section in README.md
+```
 ## File rules
 
 - One screen = `XxxScreen.kt` (stateful entry point + stateless `XxxContent`), `XxxViewModel.kt`, `XxxUiState.kt` in `feature/xxx/`.
 - A large screen is split into several files in its feature folder by responsibility, e.g. `XxxState.kt` (state holder), `XxxKeys.kt` (key and focus handling), `XxxLayout.kt` / per-part composables, and drawing code. Same limits as `code-language.md` (~400 lines per file).
 - A component used by two or more features moves to `core/designsystem/component/`. Until then it stays `private` or `internal` in the feature.
 - A feature never imports from another feature. Shared logic goes to `core/`.
-- `core/model` and `core/playback` (except `PlayerFactory`) don't import Compose.
-- New top-level folders under `nl/jellycast/tv/` only after consulting the user.
+- `:core` doesn't import Compose.
+- New top-level folders under `nl/jellycast/tv/` or `nl/jellycast/core/` only after consulting the user.
 - Keep the tree in this file up to date when a feature or core package is added.

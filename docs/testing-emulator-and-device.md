@@ -33,12 +33,12 @@ Controls: arrow keys = D-pad, Enter = OK, Esc = Back. The remote control is also
 
 ## Installing on the right device
 
-If the emulator and the Chromecast are both connected, `./gradlew installDebug` installs on both. Pick one with `ANDROID_SERIAL`:
+If the emulator and the Chromecast are both connected, `./gradlew :tv:installDebug` installs on both. Pick one with `ANDROID_SERIAL`:
 
 ```bash
 adb devices                                            # which devices are there?
-ANDROID_SERIAL=emulator-5554 ./gradlew installDebug    # only the emulator
-ANDROID_SERIAL=192.168.1.115:5555 ./gradlew installDebug   # only the Chromecast
+ANDROID_SERIAL=emulator-5554 ./gradlew :tv:installDebug    # only the emulator
+ANDROID_SERIAL=192.168.1.115:5555 ./gradlew :tv:installDebug   # only the Chromecast
 ```
 
 Starting the app and taking a screenshot (works on both; add `-s <serial>` if there are more devices):

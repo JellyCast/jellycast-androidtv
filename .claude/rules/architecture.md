@@ -4,9 +4,10 @@ Layers, data flow, state, DI and the module setup of JellyCast. Where code lives
 
 ## Module setup [A3] [A4]
 
-- Keep one Gradle module `:app`. Why: one developer, one device, a few thousand lines of code; you don't get the scaling and build-time gains of modules here, only the overhead.
-- Organise the packages like Now in Android organises its modules (`core/*`, `feature/*`). A later split into Gradle modules is then mechanical.
-- Add a module only with the user's approval. The only expected candidate: a `:baselineprofile` test module (see `gradle-build.md`).
+- Four Gradle modules: `:core` (models, network, data, datastore, playback engine, common; package `nl.jellycast.core.*`, no UI), `:tv` (this app, `nl.jellycast.tv`), `:mobile` (phone and tablet app, `nl.jellycast.mobile`) and `:core-testing` (fakes and test data). Why: both apps share everything except the UI.
+- `:tv` and `:mobile` depend on `:core`, never on each other. `:core` never imports an app package. Something both apps need moves to `:core`; UI stays per app (TV: `tv-material`, mobile: Material 3).
+- Inside each app, packages stay organised like Now in Android (`core/designsystem`, `core/ui`, `feature/*`).
+- Add a further module only with the user's approval. Expected candidate: a `:baselineprofile` test module (see `gradle-build.md`).
 
 ## Layers [A1] [A2]
 
@@ -20,7 +21,7 @@ Layers, data flow, state, DI and the module setup of JellyCast. Where code lives
 - Define each repository as an interface with one implementation (`DefaultLibraryRepository` etc.). Why: tests use a `Fake…` implementation.
 - Return one-off actions as `suspend fun`, changing data as `Flow`.
 - Make suspend functions main-safe: the repository does `withContext(ioDispatcher)` with an injected dispatcher. Never hardcode `Dispatchers.IO`. [A7]
-- Map SDK DTOs (`org.jellyfin.sdk.model.api.*`) in `core/data` to own models in `core/model`. Check: `grep -r "org.jellyfin.sdk" app/src/main/java/nl/jellycast/tv/feature` returns nothing.
+- Map SDK DTOs (`org.jellyfin.sdk.model.api.*`) in `core/data` to own models in `core/model`. Check: `grep -r "org.jellyfin.sdk" tv/src/main/java/nl/jellycast/tv/feature` returns nothing.
 - Mappers are pure top-level extension functions (`fun BaseItemDto.toMovie(): Movie`) in a `*Mappers.kt` file. No Android types in them, so they are JVM-testable.
 - Handle SDK errors in the repository: catch `ApiClientException`/`IOException` and pass on a `Result` or an error state. Never `catch (e: Exception)` and never swallow `CancellationException`. [A7]
 - Keep auth state (server URL, token, user id) in one place: `SessionRepository` on top of `SessionStore` (DataStore). The token never leaves `core/data`; the UI only sees `AuthState`. The device id comes from the SDK (`androidDevice()`). The `ApiClient` is updated via `api.update(baseUrl, accessToken)`, not recreated per screen.

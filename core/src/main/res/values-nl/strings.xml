@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Server genres (English, TMDb); mapped in core/common/GenreResources.kt. -->
+    <string name="genre_action">Actie</string>
+    <string name="genre_action_adventure">Actie &amp; avontuur</string>
+    <string name="genre_adventure">Avontuur</string>
+    <string name="genre_animation">Animatie</string>
+    <string name="genre_comedy">Komedie</string>
+    <string name="genre_crime">Misdaad</string>
+    <string name="genre_documentary">Documentaire</string>
+    <string name="genre_drama">Drama</string>
+    <string name="genre_family">Familie</string>
+    <string name="genre_fantasy">Fantasy</string>
+    <string name="genre_history">Geschiedenis</string>
+    <string name="genre_horror">Horror</string>
+    <string name="genre_kids">Kinderen</string>
+    <string name="genre_music">Muziek</string>
+    <string name="genre_mystery">Mysterie</string>
+    <string name="genre_news">Nieuws</string>
+    <string name="genre_reality">Reality</string>
+    <string name="genre_romance">Romantiek</string>
+    <string name="genre_scifi_fantasy">Sciencefiction &amp; fantasy</string>
+    <string name="genre_science_fiction">Sciencefiction</string>
+    <string name="genre_soap">Soap</string>
+    <string name="genre_talk">Talkshow</string>
+    <string name="genre_thriller">Thriller</string>
+    <string name="genre_tv_movie">Tv-film</string>
+    <string name="genre_war">Oorlog</string>
+    <string name="genre_war_politics">Oorlog &amp; politiek</string>
+    <string name="genre_western">Western</string>
+</resources>

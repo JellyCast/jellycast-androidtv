@@ -9,7 +9,8 @@ Build configuration, SDK levels, the version and dependency policy, signing, R8 
 
 ## Setup [E1] [E2]
 
-- One module `:app`. No `buildSrc`, no convention plugins. Why: with one module they only add indirection.
+- Modules `:core`, `:core-testing`, `:tv`, `:mobile` (see `architecture.md`). No `buildSrc`, no convention plugins. Why: four small build files don't need the indirection. `:core` exposes its libraries (Jellyfin SDK, Media3 engine, Coil, DataStore, coroutines) as `api`.
+- Run app tasks per module (`:tv:installDebug`, `:mobile:installDebug`); a bare `./gradlew installDebug` installs both apps.
 - All versions and coordinates live in `gradle/libs.versions.toml`. Never a version string in `build.gradle.kts`.
 - Compose artifacts via the Compose BOM, without their own versions. `androidx.tv:tv-material` and Media3 have their own version in the catalog; all `media3-*` artifacts share one `version.ref`.
 - Use the Kotlin Compose compiler plugin (`org.jetbrains.kotlin.plugin.compose`) with the same version as Kotlin.

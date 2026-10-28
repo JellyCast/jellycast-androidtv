@@ -75,7 +75,7 @@ adb devices                     # the Chromecast must be in this list
 
 ```bash
 adb connect <chromecast-ip>:5555          # once per session
-./gradlew installDebug                     # build + install
+./gradlew :tv:installDebug                     # build + install
 adb shell cmd package compile -m speed -f nl.jellycast.tv   # compile ahead of time
 adb shell am force-stop nl.jellycast.tv     # restart with the compiled code
 adb shell am start -n nl.jellycast.tv/.MainActivity   # open directly
@@ -100,8 +100,8 @@ Compile after every install: otherwise the app runs in the interpreter until ove
 2. Let Claude Code read the signing config from `keystore.properties` (which is in `.gitignore`). The debug build also uses this key, so you can later switch to release without uninstalling.
 3. Build and install:
    ```bash
-   ./gradlew assembleRelease
-   adb install -r app/build/outputs/apk/release/app-release.apk
+   ./gradlew :tv:assembleRelease
+   adb install -r tv/build/outputs/apk/release/tv-release.apk
    adb shell cmd package compile -m speed -f nl.jellycast.tv
    adb shell am force-stop nl.jellycast.tv
    ```

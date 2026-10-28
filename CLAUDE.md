@@ -38,7 +38,7 @@ Goal: simple, reliable and smooth browsing and playback, with maximum direct pla
 ## Working agreements
 
 - Everything in the repository is English: code, comments, docs, rules, commit messages (see `code-language.md`). Talk to the user in Dutch. User-facing text lives only in `strings.xml`.
-- Close each change with `./gradlew testDebugUnitTest ktlintCheck lintDebug installDebug` on the connected Chromecast, then the compile step (see "Commands"), and a short list of what the user should test. If the change touches UI or playback, also measure the performance budget from `product-principles.md` on a release build and record it in `NOTES.md`.
+- Close each change with `./gradlew testDebugUnitTest ktlintCheck lintDebug :tv:installDebug` on the connected Chromecast, then the compile step (see "Commands"), and a short list of what the user should test. If the change touches UI or playback, also measure the performance budget from `product-principles.md` on a release build and record it in `NOTES.md`.
 - Check UI yourself: `adb exec-out screencap -p > screen.png` and `adb shell input keyevent KEYCODE_DPAD_RIGHT` (etc.). Test D-pad, Back and focus restoration per screen.
 - Always test video on the real Chromecast; the emulator lacks its hardware codecs.
 - Dependencies: add only what really adds something, and then do it without asking. Record it in `docs/dependencies.md` (see `gradle-build.md`).
@@ -53,15 +53,15 @@ Goal: simple, reliable and smooth browsing and playback, with maximum direct pla
 
 ```bash
 adb connect <chromecast-ip>:5555
-./gradlew installDebug
+./gradlew :tv:installDebug
 adb shell cmd package compile -m speed -f nl.jellycast.tv   # after every adb install: otherwise Compose runs in the interpreter
 adb shell am force-stop nl.jellycast.tv                     # restart so the compiled code loads
 adb shell dumpsys package dexopt | grep -A3 nl.jellycast.tv # check: status=speed
 adb shell am start -n nl.jellycast.tv/.MainActivity
 adb logcat --pid=$(adb shell pidof nl.jellycast.tv)
 adb shell cat /sdcard/Android/data/nl.jellycast.tv/files/playback-starts.txt   # what happened in the last 10 starts
-./gradlew assembleRelease   # R8; judge performance only on this
-adb install -r app/build/outputs/apk/release/app-release.apk   # then the same compile step
+./gradlew :tv:assembleRelease   # R8; judge performance only on this
+adb install -r tv/build/outputs/apk/release/tv-release.apk   # then the same compile step
 scripts/perf/measure-scroll.sh left-right   # janky frames during 30 s key repeat (put the focus in place first)
 scripts/perf/measure-steady.sh <apk> rows    # same, but installs + compiles as after a night first (judge the budget on this)
 ```
@@ -70,7 +70,7 @@ Emulator (Google TV, API 34, 1080p) for quick UI and focus work; video and perfo
 
 ```bash
 emulator -avd Google_TV_1080p_API_34 &
-ANDROID_SERIAL=emulator-5554 ./gradlew installDebug   # picks the emulator when the Chromecast is also connected
+ANDROID_SERIAL=emulator-5554 ./gradlew :tv:installDebug   # picks the emulator when the Chromecast is also connected
 ```
 
 Android CLI (`android`, in `cmdline-tools/latest/bin`; replaces `sdkmanager`):
