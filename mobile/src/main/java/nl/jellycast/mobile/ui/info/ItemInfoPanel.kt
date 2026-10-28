@@ -155,7 +155,7 @@ private fun ColumnPanel(
     val anchor = remember { TabBarAnchor() }
     var viewportHeight by remember { mutableIntStateOf(0) }
     val density = LocalDensity.current
-    val clearance = tabBarClearance(header != null)
+    val clearance = tabBarClearance(header != null && !panel.inPlayer)
     val clearancePx = with(density) { clearance.roundToPx() }
     val tabMinHeight = with(density) { viewportHeight.toDp() } - TAB_BAR_SPACE - clearance
     Column(
@@ -211,7 +211,7 @@ private fun SplitPanel(
     leadingWidth: Dp,
 ) {
     val layout = LocalLayout.current
-    val clearance = tabBarClearance(header != null)
+    val clearance = tabBarClearance(header != null && !panel.inPlayer)
     Row(Modifier.fillMaxSize()) {
         Column(Modifier.width(leadingWidth).fillMaxHeight().verticalScroll(rememberScrollState())) {
             header?.invoke()
