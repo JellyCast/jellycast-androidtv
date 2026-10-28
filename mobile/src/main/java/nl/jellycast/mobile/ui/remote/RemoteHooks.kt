@@ -1,8 +1,11 @@
 package nl.jellycast.mobile.ui.remote
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import nl.jellycast.core.model.PlayableItem
 import nl.jellycast.core.model.StreamChoice
@@ -19,15 +22,20 @@ import org.koin.compose.viewmodel.koinViewModel
 /**
  * The bar above the tab bar while a TV plays something (TV bar wins over the download bar).
  * Draws nothing when no TV plays. Returns whether it drew; tap opens the now-playing screen.
- * It also keeps the sessions current while the app is in the foreground.
+ * It also keeps the sessions current while the app is in the foreground, and opens the
+ * now-playing screen when the app opens while a TV plays, unless [isPlayerOpen].
  */
 @Composable
-fun TvBar(modifier: Modifier = Modifier): Boolean = with(koinViewModel<TvBarViewModel>()) {
-    // Both draws and reports: the shell shows the download bar in its place otherwise.
-    val session = uiState.collectAsStateWithLifecycle().value ?: return@with false
-    TvBarContent(session, onOpen = { onOpen(session) }, modifier = modifier)
-    true
-}
+fun TvBar(isPlayerOpen: Boolean, modifier: Modifier = Modifier): Boolean =
+    with(koinViewModel<TvBarViewModel>()) {
+        // The activity handles configuration changes itself, so ON_START means opened.
+        LifecycleEventEffect(Lifecycle.Event.ON_START) { onAppOpened() }
+        SideEffect { onPlayerOpenChanged(isPlayerOpen) }
+        // Both draws and reports: the shell shows the download bar in its place otherwise.
+        val session = uiState.collectAsStateWithLifecycle().value ?: return@with false
+        TvBarContent(session, onOpen = { onOpen(session) }, modifier = modifier)
+        true
+    }
 
 /** The full-screen "playing on the TV" remote screen, shown over the app when opened. */
 @Composable

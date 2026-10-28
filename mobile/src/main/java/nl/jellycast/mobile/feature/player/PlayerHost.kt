@@ -50,6 +50,13 @@ fun PlayerHost(bottomInset: Dp) {
     if (state.item != null) NowPlaying(state, engine, viewModel, bottomInset)
 }
 
+/** Whether the app's own player shows, full screen or as the mini player. */
+@Composable
+fun isPlayerOpen(): Boolean {
+    val viewModel: NowPlayingViewModel = koinViewModel()
+    return viewModel.uiState.collectAsStateWithLifecycle().value.item != null
+}
+
 /** Sizes of the player in this window, in px. */
 private data class HostGeometry(
     val widthPx: Float,

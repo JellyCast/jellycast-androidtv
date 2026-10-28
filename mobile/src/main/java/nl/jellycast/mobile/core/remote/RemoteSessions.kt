@@ -38,6 +38,8 @@ data class RemoteState(
     val shownSessionId: String? = null,
     /** The TV behind [shownSessionId]: its next episode can come back under another session. */
     val shownDeviceId: String? = null,
+    /** When the server last answered a poll; tells a fresh answer from an older one. */
+    val refreshedAtMs: Long? = null,
 ) {
     /** The one the TV bar shows: the most recently reported. */
     val current: RemoteSession? get() = sessions.firstOrNull()
@@ -131,7 +133,9 @@ class RemoteSessions(
                 val address = serverDevices.firstOrNull { it.deviceId == tv.deviceId }?.address
                 if (address != null && address != tv.host) tv.copy(host = address) else tv
             }
-        _state.update { publish(it.copy(paired = moved)).followingShownDevice() }
+        _state.update {
+            publish(it.copy(paired = moved, refreshedAtMs = clock.nowMs())).followingShownDevice()
+        }
         if (moved != before) save()
     }
 

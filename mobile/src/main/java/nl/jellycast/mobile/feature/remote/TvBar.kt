@@ -35,6 +35,7 @@ import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import nl.jellycast.core.common.Clock
 import nl.jellycast.mobile.R
 import nl.jellycast.mobile.core.designsystem.component.pressable
 import nl.jellycast.mobile.core.designsystem.theme.JellyCastColors
@@ -42,8 +43,11 @@ import nl.jellycast.mobile.core.designsystem.theme.JellyCastText
 import nl.jellycast.mobile.core.remote.RemoteSession
 import nl.jellycast.mobile.core.remote.RemoteSessions
 
-/** Polls the server while the bar is on screen, which is whenever the app is in the foreground. */
-class TvBarViewModel(private val remote: RemoteSessions) : ViewModel() {
+/**
+ * Polls the server while the bar is on screen, which is whenever the app is in the foreground,
+ * and opens the now-playing screen when the app opens while a TV plays.
+ */
+class TvBarViewModel(private val remote: RemoteSessions, clock: Clock) : ViewModel() {
     val uiState: StateFlow<RemoteSession?> =
         channelFlow {
             launch { remote.poll() }
@@ -51,7 +55,24 @@ class TvBarViewModel(private val remote: RemoteSessions) : ViewModel() {
         }.distinctUntilChanged()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_AFTER_MS), null)
 
+    private val autoOpen = NowPlayingAutoOpen(clock)
+    private var isPlayerOpen = false
+
+    init {
+        viewModelScope.launch {
+            remote.state.collect { state ->
+                autoOpen.sessionToOpen(state, isPlayerOpen)?.let(remote::show)
+            }
+        }
+    }
+
     fun onOpen(session: RemoteSession) = remote.show(session)
+
+    fun onAppOpened() = autoOpen.onAppOpened()
+
+    fun onPlayerOpenChanged(isOpen: Boolean) {
+        isPlayerOpen = isOpen
+    }
 
     private companion object {
         const val STOP_AFTER_MS = 5_000L

@@ -58,7 +58,7 @@ class RemoteViewModelsTest {
     fun `the TV bar shows the most recent session and opens it`() = runTest {
         api.snapshot = RemoteSnapshot(listOf(testRemoteSession()), emptyList())
         val remote = remote()
-        val viewModel = TvBarViewModel(remote)
+        val viewModel = TvBarViewModel(remote, clock)
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.uiState.collect {}
         }
@@ -68,6 +68,35 @@ class RemoteViewModelsTest {
         viewModel.onOpen(session)
 
         assertEquals("session-1", remote.state.value.shownSessionId)
+    }
+
+    @Test
+    fun `opening the app while a TV plays opens the now-playing screen`() = runTest {
+        api.snapshot = RemoteSnapshot(listOf(testRemoteSession()), emptyList())
+        val remote = remote()
+        val viewModel = TvBarViewModel(remote, clock)
+        viewModel.onAppOpened()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.collect {}
+        }
+        runCurrent()
+
+        assertEquals("session-1", remote.state.value.shownSessionId)
+    }
+
+    @Test
+    fun `opening the app over its own player keeps the now-playing screen closed`() = runTest {
+        api.snapshot = RemoteSnapshot(listOf(testRemoteSession()), emptyList())
+        val remote = remote()
+        val viewModel = TvBarViewModel(remote, clock)
+        viewModel.onPlayerOpenChanged(isOpen = true)
+        viewModel.onAppOpened()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.collect {}
+        }
+        runCurrent()
+
+        assertNull(remote.state.value.shownSessionId)
     }
 
     @Test

@@ -52,6 +52,7 @@ import nl.jellycast.mobile.feature.lists.ListsScreen
 import nl.jellycast.mobile.feature.movie.MovieScreen
 import nl.jellycast.mobile.feature.person.PersonScreen
 import nl.jellycast.mobile.feature.player.PlayerHost
+import nl.jellycast.mobile.feature.player.isPlayerOpen
 import nl.jellycast.mobile.feature.series.SeriesScreen
 import nl.jellycast.mobile.feature.settings.SettingsHost
 import nl.jellycast.mobile.ui.downloads.DownloadAccessory
@@ -135,7 +136,7 @@ private fun TabContent(navigation: AppNavigation, modifier: Modifier = Modifier)
 /** The TV bar wins over the download bar; the download bar hides on the Downloads tab. */
 @Composable
 private fun AccessoryBar(navigation: AppNavigation) {
-    val tvShown = TvBar(Modifier.padding(horizontal = 12.dp, vertical = 6.dp))
+    val tvShown = TvBar(isPlayerOpen(), Modifier.padding(horizontal = 12.dp, vertical = 6.dp))
     if (!tvShown && navigation.tab != AppTab.Downloads) {
         DownloadAccessory(
             onOpenDownloads = { navigation.select(AppTab.Downloads) },
