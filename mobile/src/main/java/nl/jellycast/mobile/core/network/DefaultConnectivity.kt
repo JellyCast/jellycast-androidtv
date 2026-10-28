@@ -11,6 +11,7 @@ import android.os.Bundle
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -76,7 +77,10 @@ class DefaultConnectivity(
             session.authState
                 .map { it.serverUrl() }
                 .distinctUntilChanged()
-                .collect { serverUrl.value = it }
+                .collect { url ->
+                    serverUrl.value = url
+                    if (url != null) checkServerSoon()
+                }
         }
         scope.launch {
             combine(traits, serverUrl, linkChanges) { traits, url, _ -> traits to url }
@@ -101,10 +105,16 @@ class DefaultConnectivity(
         return reachable
     }
 
+    /** One failed check must not leave the app offline until the next network change. */
     @Synchronized
     private fun checkServerSoon() {
         checkJob?.cancel()
-        checkJob = scope.launch { checkServer() }
+        checkJob =
+            scope.launch {
+                while (!checkServer() && traits.value?.hasInternet == true) {
+                    delay(RECHECK_WHILE_UNREACHABLE_MS)
+                }
+            }
     }
 
     private inner class DefaultNetworkCallback : ConnectivityManager.NetworkCallback() {
@@ -160,3 +170,5 @@ private fun NetworkCapabilities.toTraits() = NetworkTraits(
     isCellular = hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR),
     isMetered = !hasCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED),
 )
+
+private const val RECHECK_WHILE_UNREACHABLE_MS = 15_000L

@@ -94,7 +94,8 @@ class DefaultServerStatusRepository(
     private var checkClient: ApiClient? = null
 
     override suspend fun isReachable(): Boolean = withContext(dispatchers.io) {
-        val baseUrl = api.baseUrl ?: return@withContext false
+        // Before the session has set the address there is nothing to check; that is not offline.
+        val baseUrl = api.baseUrl ?: return@withContext true
         val client = clientFor(baseUrl)
         try {
             client.systemApi.getPublicSystemInfo()
