@@ -33,8 +33,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -59,6 +57,7 @@ import nl.jellycast.mobile.core.designsystem.component.pressable
 import nl.jellycast.mobile.core.designsystem.theme.JellyCastColors
 import nl.jellycast.mobile.core.designsystem.theme.JellyCastText
 import nl.jellycast.mobile.core.designsystem.theme.LocalLayout
+import nl.jellycast.mobile.core.designsystem.theme.windowHeight
 
 private const val HERO_MAX_WINDOW_FRACTION = 0.55f
 private const val FRAME_WIDTH_FRACTION = 0.56f
@@ -148,9 +147,7 @@ private fun DetailHero(
     val layout = LocalLayout.current
     val logoSize = layout.heroLogoSize
     val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-    val windowHeight = with(LocalDensity.current) {
-        LocalWindowInfo.current.containerSize.height.toDp()
-    }
+    val windowHeight = windowHeight()
     BoxWithConstraints(modifier.fillMaxWidth().padding(bottom = logoSize.height / 2)) {
         val height = min(
             maxWidth / LANDSCAPE_RATIO + topInset,

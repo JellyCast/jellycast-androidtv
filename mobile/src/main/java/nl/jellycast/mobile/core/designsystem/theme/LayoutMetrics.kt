@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
@@ -62,3 +63,11 @@ fun ProvideLayoutMetrics(content: @Composable () -> Unit) {
         )
     }
 }
+
+/**
+ * The window's height. `LocalWindowInfo.containerSize` came back too small on Android 12 for a
+ * screen first composed in landscape (seen on a Tab 16); the configuration is right on every
+ * version.
+ */
+@Composable
+fun windowHeight(): Dp = LocalConfiguration.current.screenHeightDp.dp

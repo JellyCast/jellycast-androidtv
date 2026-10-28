@@ -36,7 +36,7 @@ import androidx.compose.ui.layout.boundsInWindow
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -72,7 +72,8 @@ fun LibrarySearchBar(
     val keyboard = LocalSoftwareKeyboardController.current
     val ime = WindowInsets.ime
     val density = LocalDensity.current
-    val windowHeight = LocalWindowInfo.current.containerSize.height
+    // The root view: LocalWindowInfo.containerSize was too small on Android 12 in landscape.
+    val windowHeight = LocalView.current.rootView.height
     var gapBelowPx by remember { mutableFloatStateOf(0f) }
     Row(
         modifier

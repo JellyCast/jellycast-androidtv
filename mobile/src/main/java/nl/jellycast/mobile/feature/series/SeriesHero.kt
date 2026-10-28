@@ -33,7 +33,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -50,6 +49,7 @@ import nl.jellycast.mobile.core.designsystem.theme.JellyCastColors
 import nl.jellycast.mobile.core.designsystem.theme.JellyCastText
 import nl.jellycast.mobile.core.designsystem.theme.LocalLayout
 import nl.jellycast.mobile.core.designsystem.theme.ProgressBrush
+import nl.jellycast.mobile.core.designsystem.theme.windowHeight
 
 private const val HERO_ASPECT_RATIO = 16f / 9f
 private const val HERO_MAX_WINDOW_FRACTION = 0.55f
@@ -84,7 +84,7 @@ internal fun SeriesHero(
 ) {
     val topInset = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     val windowHeight =
-        with(LocalDensity.current) { LocalWindowInfo.current.containerSize.height.toDp() }
+        windowHeight()
     val logoSize = LocalLayout.current.heroLogoSize
     BoxWithConstraints(modifier.fillMaxWidth()) {
         val heroHeight = min(

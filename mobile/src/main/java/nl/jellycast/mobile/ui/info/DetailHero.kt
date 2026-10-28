@@ -36,8 +36,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -54,6 +52,7 @@ import nl.jellycast.mobile.core.designsystem.theme.JellyCastColors
 import nl.jellycast.mobile.core.designsystem.theme.JellyCastText
 import nl.jellycast.mobile.core.designsystem.theme.LocalLayout
 import nl.jellycast.mobile.core.designsystem.theme.ProgressBrush
+import nl.jellycast.mobile.core.designsystem.theme.windowHeight
 
 /**
  * The top of a movie or series detail: the backdrop from the top edge of the screen, fading into
@@ -72,7 +71,7 @@ fun DetailHero(
     val logoSize = layout.heroLogoSize
     val statusBar = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     val windowHeight =
-        with(LocalDensity.current) { LocalWindowInfo.current.containerSize.height.toDp() }
+        windowHeight()
     BoxWithConstraints(modifier.fillMaxWidth()) {
         val heroHeight = min(maxWidth / HERO_ASPECT + statusBar, windowHeight * MAX_WINDOW_FRACTION)
         Column {

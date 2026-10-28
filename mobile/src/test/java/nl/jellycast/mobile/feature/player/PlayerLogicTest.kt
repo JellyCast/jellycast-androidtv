@@ -83,6 +83,18 @@ class BufferWatchTest {
     }
 
     @Test
+    fun `media3 draining its 50 s buffer between loads shows no hint`() {
+        val watch = BufferWatch()
+        // Media3 tops the buffer up to about 50 s, then lets it run down before loading again.
+        val fired = (0..300).any { second ->
+            val buffered = 50_000L - (second % 20) * 1_000L
+            watch.sample(second * 1_000L, buffered, remainingMs = 3_600_000)
+        }
+
+        assertFalse(fired)
+    }
+
+    @Test
     fun `near the end of the file the window resets`() {
         val watch = BufferWatch()
         val fired = (0..30).any {
