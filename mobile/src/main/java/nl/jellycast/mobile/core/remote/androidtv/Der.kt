@@ -9,7 +9,8 @@ import java.util.TimeZone
 /** Just enough DER to build a self-signed X.509 certificate; the platform has no API for it. */
 internal object Der {
     private val sha256WithRsa =
-        byteArrayOf(0x06, 0x09, 0x2A, 0x86.toByte(), 0x48, 0x86.toByte(), 0xF7.toByte(), 0x0D, 1, 1, 0x0B)
+        byteArrayOf(0x06, 0x09, 0x2A, 0x86.toByte(), 0x48, 0x86.toByte()) +
+            byteArrayOf(0xF7.toByte(), 0x0D, 0x01, 0x01, 0x0B)
     private val commonNameOid = byteArrayOf(0x06, 0x03, 0x55, 0x04, 0x03)
     private val nullValue = byteArrayOf(0x05, 0x00)
     private val serialNumber = byteArrayOf(0x10, 0x00)
@@ -34,7 +35,9 @@ internal object Der {
         validUntil: Date,
     ): ByteArray {
         val name =
-            sequence(set(sequence(commonNameOid + element(TAG_UTF8_STRING, commonName.toByteArray()))))
+            sequence(
+                set(sequence(commonNameOid + element(TAG_UTF8_STRING, commonName.toByteArray()))),
+            )
         return sequence(
             element(TAG_VERSION, integer(byteArrayOf(VERSION_3.toByte()))) +
                 integer(serialNumber) +

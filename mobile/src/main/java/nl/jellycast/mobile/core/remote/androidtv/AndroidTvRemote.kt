@@ -70,7 +70,8 @@ class AndroidTvRemote(
 
     /** A timeout is an [IOException] here, so callers don't mistake it for being cancelled. */
     private suspend fun withDeadline(block: suspend () -> Unit) {
-        withTimeoutOrNull(Deadline) { block() } ?: throw IOException("The TV did not answer in time")
+        withTimeoutOrNull(Deadline) { block() }
+            ?: throw IOException("The TV did not answer in time")
     }
 
     internal suspend fun <T> connect(host: String, block: suspend (TlsChannel) -> T): T =
@@ -84,7 +85,9 @@ class AndroidTvRemote(
     }
 
     private suspend fun waitUntilOn(channel: TlsChannel) {
-        while (respond(channel.receive(), channel) != true) Unit
+        while (true) {
+            if (respond(channel.receive(), channel) == true) return
+        }
     }
 
     /** The on/off state when the message carries it, otherwise `null` after answering it. */

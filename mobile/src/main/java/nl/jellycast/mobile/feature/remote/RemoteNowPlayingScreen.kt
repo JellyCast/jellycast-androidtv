@@ -45,10 +45,10 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.KeyEvent as ComposeKeyEvent
-import androidx.compose.ui.input.key.nativeKeyCode
+import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.nativeKeyCode
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.pointerInput
@@ -207,14 +207,22 @@ internal fun RemoteNowPlayingScreen(
         if (isSplit) {
             Row(Modifier.fillMaxSize()) {
                 header(Modifier.weight(SPLIT_LEADING_FRACTION))
-                InfoArea(state, session, Modifier.weight(1 - SPLIT_LEADING_FRACTION)) {
-                    showsPlayOn = true
-                }
+                InfoArea(
+                    state,
+                    session,
+                    onContinueOn = { showsPlayOn = true },
+                    modifier = Modifier.weight(1 - SPLIT_LEADING_FRACTION),
+                )
             }
         } else {
             Column(Modifier.fillMaxSize()) {
                 header(Modifier.fillMaxWidth())
-                InfoArea(state, session, Modifier.weight(1f)) { showsPlayOn = true }
+                InfoArea(
+                    state,
+                    session,
+                    onContinueOn = { showsPlayOn = true },
+                    modifier = Modifier.weight(1f),
+                )
             }
         }
     }
@@ -236,10 +244,7 @@ internal fun RemoteNowPlayingScreen(
 }
 
 /** Volume keys press the TV's while its remote connection is open; everything else passes. */
-private fun handleVolumeKey(
-    event: ComposeKeyEvent,
-    onVolumeKey: (TvKey) -> Unit,
-): Boolean {
+private fun handleVolumeKey(event: ComposeKeyEvent, onVolumeKey: (TvKey) -> Unit): Boolean {
     val key =
         when (event.key.nativeKeyCode) {
             KeyEvent.KEYCODE_VOLUME_UP -> TvKey.VolumeUp
@@ -255,8 +260,8 @@ private fun handleVolumeKey(
 private fun InfoArea(
     state: RemoteNowPlayingUiState,
     session: RemoteSession,
-    modifier: Modifier = Modifier,
     onContinueOn: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val subject = state.infoSubject
     if (subject == null) {

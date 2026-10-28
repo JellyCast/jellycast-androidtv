@@ -69,12 +69,16 @@ class ProtoMessage private constructor(
                 val field = (key ushr TAG_SHIFT).toInt()
                 when ((key and WIRE_TYPE_MASK).toInt()) {
                     WIRE_VARINT -> varints[field] = cursor.varint() ?: return null
+
                     WIRE_LENGTH_DELIMITED -> {
                         val length = cursor.varint() ?: return null
                         payloads[field] = cursor.take(length) ?: return null
                     }
+
                     WIRE_FIXED64 -> cursor.skip(FIXED64_BYTES) || return null
+
                     WIRE_FIXED32 -> cursor.skip(FIXED32_BYTES) || return null
+
                     else -> return null
                 }
             }

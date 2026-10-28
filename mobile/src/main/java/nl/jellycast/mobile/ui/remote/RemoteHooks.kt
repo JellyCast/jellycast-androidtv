@@ -10,7 +10,7 @@ import nl.jellycast.mobile.core.remote.RemoteSessions
 import nl.jellycast.mobile.feature.remote.PlayOnSheetHost
 import nl.jellycast.mobile.feature.remote.PlayOnTarget
 import nl.jellycast.mobile.feature.remote.RemoteNowPlayingOverlay
-import nl.jellycast.mobile.feature.remote.TvBarHost
+import nl.jellycast.mobile.feature.remote.TvBarContent
 import nl.jellycast.mobile.feature.remote.TvBarViewModel
 import nl.jellycast.mobile.navigation.LocalAppNavigation
 import org.koin.compose.koinInject
@@ -22,9 +22,11 @@ import org.koin.compose.viewmodel.koinViewModel
  * It also keeps the sessions current while the app is in the foreground.
  */
 @Composable
-fun TvBar(modifier: Modifier = Modifier): Boolean {
-    val viewModel: TvBarViewModel = koinViewModel()
-    return TvBarHost(viewModel, modifier)
+fun TvBar(modifier: Modifier = Modifier): Boolean = with(koinViewModel<TvBarViewModel>()) {
+    // Both draws and reports: the shell shows the download bar in its place otherwise.
+    val session = uiState.collectAsStateWithLifecycle().value ?: return@with false
+    TvBarContent(session, onOpen = { onOpen(session) }, modifier = modifier)
+    true
 }
 
 /** The full-screen "playing on the TV" remote screen, shown over the app when opened. */

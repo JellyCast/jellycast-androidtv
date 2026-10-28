@@ -51,7 +51,8 @@ class DefaultAndroidTvPairing(
             val server = channel.serverCertificate?.rsaComponents()
             val ownKey = client.certificate.rsaComponents()
             if (server == null || ownKey == null) throw PairingException.Refused()
-            val secret = pairingSecret(awaitCode(), ownKey, server) ?: throw PairingException.WrongCode()
+            val secret =
+                pairingSecret(awaitCode(), ownKey, server) ?: throw PairingException.WrongCode()
             channel.send(pairingMessage { message(PairingField.SECRET) { bytes(1, secret) } })
             channel.expect(PairingField.SECRET_ACK)
         }

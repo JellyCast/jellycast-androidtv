@@ -274,15 +274,17 @@ class RemoteViewModelsTest {
         assertNull(skippableSegment(listOf(intro), 10_000, skippedStartMs = 0))
     }
 
-    private fun nowPlaying(remote: RemoteSessions, control: FakeAndroidTvControl = FakeAndroidTvControl()) =
-        RemoteNowPlayingViewModel(
-            remote,
-            api,
-            FakeLibraryRepository(),
-            FakeLibraryStore(),
-            control,
-            clock,
-        )
+    private fun nowPlaying(
+        remote: RemoteSessions,
+        control: FakeAndroidTvControl = FakeAndroidTvControl(),
+    ) = RemoteNowPlayingViewModel(
+        remote,
+        api,
+        FakeLibraryRepository(),
+        FakeLibraryStore(),
+        control,
+        clock,
+    )
 
     private fun pairing(remote: RemoteSessions, fake: FakeAndroidTvPairing) =
         PairTvViewModel(fake, remote, RemoteClientInfo("Pixel", "Google", "JellyCast Pixel AB12"))

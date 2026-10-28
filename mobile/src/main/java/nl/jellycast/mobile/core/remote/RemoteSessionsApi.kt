@@ -42,39 +42,57 @@ class JellyfinRemoteSessionsApi(
             .toRemoteSnapshot(userId.toString(), api.deviceInfo.id, images)
     }
 
-    override suspend fun send(command: RemoteCommand, sessionId: String): Result<Unit> = request {
-        val sessions = api.sessionApi
-        when (command) {
-            RemoteCommand.Pause -> sessions.sendPlaystateCommand(sessionId, PlaystateCommand.PAUSE)
-            RemoteCommand.Unpause ->
-                sessions.sendPlaystateCommand(sessionId, PlaystateCommand.UNPAUSE)
-            RemoteCommand.PlayPause ->
-                sessions.sendPlaystateCommand(sessionId, PlaystateCommand.PLAY_PAUSE)
-            RemoteCommand.Stop -> sessions.sendPlaystateCommand(sessionId, PlaystateCommand.STOP)
-            RemoteCommand.NextEpisode ->
-                sessions.sendPlaystateCommand(sessionId, PlaystateCommand.NEXT_TRACK)
-            is RemoteCommand.Seek ->
-                sessions.sendPlaystateCommand(
+    override suspend fun send(command: RemoteCommand, sessionId: String): Result<Unit> =
+        request<Unit> {
+            val sessions = api.sessionApi
+            when (command) {
+                RemoteCommand.Pause -> sessions.sendPlaystateCommand(
                     sessionId,
-                    PlaystateCommand.SEEK,
-                    seekPositionTicks = command.positionMs.msToTicks(),
+                    PlaystateCommand.PAUSE,
                 )
-            is RemoteCommand.Play ->
-                sessions.play(
+
+                RemoteCommand.Unpause ->
+                    sessions.sendPlaystateCommand(sessionId, PlaystateCommand.UNPAUSE)
+
+                RemoteCommand.PlayPause ->
+                    sessions.sendPlaystateCommand(sessionId, PlaystateCommand.PLAY_PAUSE)
+
+                RemoteCommand.Stop -> sessions.sendPlaystateCommand(
                     sessionId,
-                    PlayCommand.PLAY_NOW,
-                    itemIds = listOf(command.itemId.toUUID()),
-                    startPositionTicks = command.startPositionMs.msToTicks(),
-                    audioStreamIndex = command.streams.audioStreamIndex,
-                    subtitleStreamIndex = command.streams.subtitleStreamIndex,
+                    PlaystateCommand.STOP,
                 )
-            is RemoteCommand.SetAudioStream ->
-                sendIndex(sessionId, GeneralCommandType.SET_AUDIO_STREAM_INDEX, command.index)
-            is RemoteCommand.SetSubtitleStream ->
-                sendIndex(sessionId, GeneralCommandType.SET_SUBTITLE_STREAM_INDEX, command.index)
+
+                RemoteCommand.NextEpisode ->
+                    sessions.sendPlaystateCommand(sessionId, PlaystateCommand.NEXT_TRACK)
+
+                is RemoteCommand.Seek ->
+                    sessions.sendPlaystateCommand(
+                        sessionId,
+                        PlaystateCommand.SEEK,
+                        seekPositionTicks = command.positionMs.msToTicks(),
+                    )
+
+                is RemoteCommand.Play ->
+                    sessions.play(
+                        sessionId,
+                        PlayCommand.PLAY_NOW,
+                        itemIds = listOf(command.itemId.toUUID()),
+                        startPositionTicks = command.startPositionMs.msToTicks(),
+                        audioStreamIndex = command.streams.audioStreamIndex,
+                        subtitleStreamIndex = command.streams.subtitleStreamIndex,
+                    )
+
+                is RemoteCommand.SetAudioStream ->
+                    sendIndex(sessionId, GeneralCommandType.SET_AUDIO_STREAM_INDEX, command.index)
+
+                is RemoteCommand.SetSubtitleStream ->
+                    sendIndex(
+                        sessionId,
+                        GeneralCommandType.SET_SUBTITLE_STREAM_INDEX,
+                        command.index,
+                    )
+            }
         }
-        Unit
-    }
 
     override suspend fun getTracks(itemId: String): Result<RemoteTracks> = request {
         api.userLibraryApi.getItem(itemId.toUUID(), userId()).content.toRemoteTracks()

@@ -137,7 +137,12 @@ class RemoteSessions(
 
     /** The server's lists with the names the user gave on this phone. */
     private fun publish(state: RemoteState): RemoteState = state.copy(
-        sessions = serverSessions.map { it.copy(deviceName = state.names[it.deviceId] ?: it.deviceName) },
+        sessions = serverSessions.map {
+            it.copy(
+                deviceName =
+                    state.names[it.deviceId] ?: it.deviceName,
+            )
+        },
         devices = serverDevices.map { it.copy(name = state.names[it.deviceId] ?: it.name) },
     )
 
@@ -233,7 +238,14 @@ class RemoteSessions(
     }
 
     suspend fun forget(deviceId: String) {
-        _state.update { state -> state.copy(paired = state.paired.filterNot { it.deviceId == deviceId }) }
+        _state.update { state ->
+            state.copy(
+                paired = state.paired.filterNot {
+                    it.deviceId ==
+                        deviceId
+                },
+            )
+        }
         save()
     }
 
@@ -242,7 +254,12 @@ class RemoteSessions(
         val trimmed = name.trim()
         _state.update { state ->
             val names =
-                if (trimmed.isEmpty()) state.names - deviceId else state.names + (deviceId to trimmed)
+                if (trimmed.isEmpty()) {
+                    state.names - deviceId
+                } else {
+                    state.names +
+                        (deviceId to trimmed)
+                }
             publish(state.copy(names = names))
         }
         save()

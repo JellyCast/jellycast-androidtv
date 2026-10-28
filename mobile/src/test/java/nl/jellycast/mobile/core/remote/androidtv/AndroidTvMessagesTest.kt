@@ -13,11 +13,17 @@ class AndroidTvMessagesTest {
 
     @Test
     fun `the phone answers configure with its features and device info`() {
-        val configure = ProtoMessage.parse(protoMessage { message(Field.CONFIGURE) { varint(1, 622) } }.toByteArray())
+        val configure = ProtoMessage.parse(
+            protoMessage {
+                message(Field.CONFIGURE) { varint(1, 622) }
+            }.toByteArray(),
+        )
 
         val reply = remoteReply(requireNotNull(configure), client, AndroidTvRemote.FEATURES)
 
-        val answer = ProtoMessage.parse(requireNotNull(reply).toByteArray())?.message(Field.CONFIGURE)
+        val answer = ProtoMessage.parse(
+            requireNotNull(reply).toByteArray(),
+        )?.message(Field.CONFIGURE)
         assertEquals(AndroidTvRemote.FEATURES, answer?.varint(1))
         val info = answer?.message(2)
         assertEquals("Pixel 9", info?.bytes(1)?.decodeToString())
@@ -27,7 +33,11 @@ class AndroidTvMessagesTest {
 
     @Test
     fun `a ping is answered with the same id`() {
-        val ping = ProtoMessage.parse(protoMessage { message(Field.PING_REQUEST) { varint(1, 42) } }.toByteArray())
+        val ping = ProtoMessage.parse(
+            protoMessage {
+                message(Field.PING_REQUEST) { varint(1, 42) }
+            }.toByteArray(),
+        )
 
         val reply = remoteReply(requireNotNull(ping), client, AndroidTvRemote.FEATURES)
 
@@ -37,7 +47,11 @@ class AndroidTvMessagesTest {
 
     @Test
     fun `a start message needs no answer`() {
-        val start = ProtoMessage.parse(protoMessage { message(Field.START) { varint(1, 1) } }.toByteArray())
+        val start = ProtoMessage.parse(
+            protoMessage {
+                message(Field.START) { varint(1, 1) }
+            }.toByteArray(),
+        )
 
         assertNull(remoteReply(requireNotNull(start), client, AndroidTvRemote.FEATURES))
     }
@@ -68,7 +82,13 @@ class AndroidTvMessagesTest {
 
     @Test
     fun `the volume message reads level, maximum and mute`() {
-        val volume = ProtoMessage.parse(protoMessage { varint(6, 100); varint(7, 35); varint(8, 1) }.toByteArray())
+        val volume = ProtoMessage.parse(
+            protoMessage {
+                varint(6, 100)
+                varint(7, 35)
+                varint(8, 1)
+            }.toByteArray(),
+        )
 
         assertEquals(TvVolume(level = 35, max = 100, isMuted = true), volume?.toTvVolume())
     }

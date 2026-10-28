@@ -1,8 +1,6 @@
 package nl.jellycast.mobile.feature.remote
 
-import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -22,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -49,8 +48,6 @@ import nl.jellycast.core.model.PlayMethod
 import nl.jellycast.core.model.RemoteCommand
 import nl.jellycast.core.model.skippableAt
 import nl.jellycast.mobile.R
-import nl.jellycast.mobile.core.designsystem.component.GlassBorder
-import nl.jellycast.mobile.core.designsystem.component.GlassFill
 import nl.jellycast.mobile.core.designsystem.component.pressable
 import nl.jellycast.mobile.core.designsystem.theme.JellyCastColors
 import nl.jellycast.mobile.core.designsystem.theme.JellyCastText
@@ -147,7 +144,11 @@ private fun TvVolumeLevel(volume: TvVolume) {
     ) {
         Icon(
             painterResource(
-                if (volume.isMuted) R.drawable.ic_remote_volume_off else R.drawable.ic_remote_volume_up,
+                if (volume.isMuted) {
+                    R.drawable.ic_remote_volume_off
+                } else {
+                    R.drawable.ic_remote_volume_up
+                },
             ),
             null,
             Modifier.size(16.dp),
@@ -316,7 +317,7 @@ private fun ScrubBar(
     onScrub: (Float) -> Unit,
     onRelease: () -> Unit,
 ) {
-    var widthPx by remember { mutableStateOf(1) }
+    var widthPx by remember { mutableIntStateOf(1) }
     val knobPx = with(LocalDensity.current) { KnobSize.toPx() }
     val label = stringResource(R.string.remote_position)
     Box(
@@ -389,17 +390,3 @@ internal fun skippableSegment(
     positionMs: Long,
     skippedStartMs: Long?,
 ): MediaSegment? = segments.skippableAt(positionMs)?.takeIf { it.startMs != skippedStartMs }
-
-@Composable
-internal fun RemoteCircleIcon(@DrawableRes icon: Int, modifier: Modifier = Modifier) {
-    Box(
-        modifier
-            .size(40.dp)
-            .clip(CircleShape)
-            .background(GlassFill)
-            .border(1.dp, GlassBorder, CircleShape),
-        contentAlignment = Alignment.Center,
-    ) {
-        Icon(painterResource(icon), null, Modifier.size(18.dp), JellyCastColors.Accent)
-    }
-}

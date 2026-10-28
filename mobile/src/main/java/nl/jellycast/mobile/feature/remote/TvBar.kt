@@ -58,14 +58,6 @@ class TvBarViewModel(private val remote: RemoteSessions) : ViewModel() {
     }
 }
 
-@Composable
-internal fun TvBarHost(viewModel: TvBarViewModel, modifier: Modifier = Modifier): Boolean {
-    val session by viewModel.uiState.collectAsStateWithLifecycle()
-    val shown = session ?: return false
-    TvBarContent(shown, onOpen = { viewModel.onOpen(shown) }, modifier = modifier)
-    return true
-}
-
 private val BarHeight = 56.dp
 private val StillWidth = 48.dp
 private val StillHeight = 32.dp

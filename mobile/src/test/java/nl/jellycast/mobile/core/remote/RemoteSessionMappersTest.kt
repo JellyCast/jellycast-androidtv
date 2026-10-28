@@ -10,6 +10,7 @@ import org.jellyfin.sdk.model.api.BaseItemKind
 import org.jellyfin.sdk.model.api.ImageType
 import org.jellyfin.sdk.model.api.MediaStream
 import org.jellyfin.sdk.model.api.MediaStreamType
+import org.jellyfin.sdk.model.api.PlayMethod as SdkPlayMethod
 import org.jellyfin.sdk.model.api.PlaybackOrder
 import org.jellyfin.sdk.model.api.PlayerStateInfo
 import org.jellyfin.sdk.model.api.RepeatMode
@@ -19,7 +20,6 @@ import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import org.jellyfin.sdk.model.api.PlayMethod as SdkPlayMethod
 
 class RemoteSessionMappersTest {
     private val images = ImageUrlBuilder { id, kind, tag, width -> "$id/$kind/$tag/$width" }
@@ -97,7 +97,10 @@ class RemoteSessionMappersTest {
 
     @Test
     fun `a webOS TV can't be woken and its address loses the IPv4 mapping`() {
-        val device = requireNotNull(session("a", deviceId = "webos-123", endPoint = "::ffff:10.0.0.5").toRemoteDevice())
+        val device =
+            requireNotNull(
+                session("a", deviceId = "webos-123", endPoint = "::ffff:10.0.0.5").toRemoteDevice(),
+            )
 
         assertFalse(device.isAndroidTv)
         assertEquals("10.0.0.5", device.address)

@@ -97,7 +97,12 @@ internal fun RemoteGlassButton(
             .pressable(onClick),
         contentAlignment = Alignment.Center,
     ) {
-        Icon(painterResource(icon), contentDescription, Modifier.size(iconSize), JellyCastColors.Text)
+        Icon(
+            painterResource(icon),
+            contentDescription,
+            Modifier.size(iconSize),
+            JellyCastColors.Text,
+        )
     }
 }
 

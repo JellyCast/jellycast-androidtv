@@ -28,6 +28,7 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -65,8 +66,9 @@ internal fun PairTvSheet(
         viewModel.onStart(device)
         onDispose { viewModel.onCancel() }
     }
+    val dismiss by rememberUpdatedState(onDismiss)
     LaunchedEffect(state.phase) {
-        if (state.phase == PairingPhase.Paired) onDismiss()
+        if (state.phase == PairingPhase.Paired) dismiss()
     }
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -95,6 +97,7 @@ internal fun PairTvSheet(
             DeviceCard(device)
             when (val phase = state.phase) {
                 PairingPhase.Connecting, PairingPhase.Paired -> Waiting()
+
                 PairingPhase.EnterCode, PairingPhase.Pairing ->
                     CodeEntry(
                         code = state.code,
@@ -102,6 +105,7 @@ internal fun PairTvSheet(
                         onCodeChange = viewModel::onCodeChange,
                         onPair = viewModel::onPair,
                     )
+
                 is PairingPhase.Failed -> {
                     Text(
                         stringResource(phase.reason.message()),
@@ -164,7 +168,12 @@ private fun DeviceCard(device: RemoteDevice) {
                 .background(JellyCastColors.Accent.copy(alpha = FAINT_ALPHA)),
             contentAlignment = Alignment.Center,
         ) {
-            Icon(painterResource(R.drawable.ic_tv), null, Modifier.size(18.dp), JellyCastColors.Accent)
+            Icon(
+                painterResource(R.drawable.ic_tv),
+                null,
+                Modifier.size(18.dp),
+                JellyCastColors.Accent,
+            )
         }
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(

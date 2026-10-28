@@ -148,8 +148,7 @@ private class ClientKeyManager(private val identity: ClientIdentity) : X509Exten
         engine: SSLEngine?,
     ): String = ALIAS
 
-    override fun getClientAliases(keyType: String?, issuers: Array<out Principal>?) =
-        arrayOf(ALIAS)
+    override fun getClientAliases(keyType: String?, issuers: Array<out Principal>?) = arrayOf(ALIAS)
 
     override fun getCertificateChain(alias: String?): Array<X509Certificate> =
         arrayOf(identity.certificate)

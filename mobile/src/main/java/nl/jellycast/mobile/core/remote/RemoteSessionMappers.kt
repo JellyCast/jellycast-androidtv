@@ -11,8 +11,8 @@ import org.jellyfin.sdk.model.api.BaseItemKind
 import org.jellyfin.sdk.model.api.ImageType
 import org.jellyfin.sdk.model.api.MediaStream
 import org.jellyfin.sdk.model.api.MediaStreamType
-import org.jellyfin.sdk.model.api.SessionInfoDto
 import org.jellyfin.sdk.model.api.PlayMethod as SdkPlayMethod
+import org.jellyfin.sdk.model.api.SessionInfoDto
 
 /**
  * The user's other devices: what they play, most recently reported first, and which take

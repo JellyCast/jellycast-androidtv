@@ -85,7 +85,9 @@ class PairTvViewModel(
 
     fun onCodeChange(text: String) {
         val cleaned =
-            text.uppercase().filter { it.isDigit() || it in 'A'..'F' }.take(PairTvUiState.CODE_LENGTH)
+            text.uppercase().filter {
+                it.isDigit() || it in 'A'..'F'
+            }.take(PairTvUiState.CODE_LENGTH)
         _uiState.update { it.copy(code = cleaned) }
     }
 

@@ -45,7 +45,10 @@ internal fun RemoteTrackSheet(
         ) {
             SheetTitle(stringResource(R.string.remote_audio_subtitles))
             if (tracks.audio.isNotEmpty()) {
-                ListSectionLabel(stringResource(R.string.remote_audio), Modifier.padding(top = 8.dp))
+                ListSectionLabel(
+                    stringResource(R.string.remote_audio),
+                    Modifier.padding(top = 8.dp),
+                )
                 tracks.audio.forEach { track ->
                     CheckedSheetRow(
                         title = track.title,
@@ -54,7 +57,10 @@ internal fun RemoteTrackSheet(
                     )
                 }
             }
-            ListSectionLabel(stringResource(R.string.remote_subtitles), Modifier.padding(top = 8.dp))
+            ListSectionLabel(
+                stringResource(R.string.remote_subtitles),
+                Modifier.padding(top = 8.dp),
+            )
             CheckedSheetRow(
                 title = stringResource(R.string.remote_off),
                 selected = subtitle == null,

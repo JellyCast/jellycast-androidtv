@@ -1,5 +1,6 @@
 package nl.jellycast.mobile.core.remote
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceTimeBy
@@ -19,6 +20,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class RemoteSessionsTest {
     private val api = FakeRemoteSessionsApi()
     private val deviceStore = FakeRemoteDeviceStore()
@@ -117,7 +119,8 @@ class RemoteSessionsTest {
 
     @Test
     fun `a paired TV moves with the address its session reports`() = runTest {
-        deviceStore.saved = SavedRemoteDevices(paired = listOf(PairedTv("device-1", "10.0.0.1", "TV")))
+        deviceStore.saved =
+            SavedRemoteDevices(paired = listOf(PairedTv("device-1", "10.0.0.1", "TV")))
         api.snapshot = RemoteSnapshot(emptyList(), listOf(testRemoteDevice(address = "10.0.0.9")))
         val remote = remote()
 
@@ -128,7 +131,8 @@ class RemoteSessionsTest {
 
     @Test
     fun `a sleeping paired TV can be woken once the probe reached it`() = runTest {
-        deviceStore.saved = SavedRemoteDevices(paired = listOf(PairedTv("device-1", "10.0.0.1", "TV")))
+        deviceStore.saved =
+            SavedRemoteDevices(paired = listOf(PairedTv("device-1", "10.0.0.1", "TV")))
         val remote = remote()
         remote.refresh()
         assertTrue(remote.state.value.wakeableTvs.isEmpty())
@@ -142,7 +146,8 @@ class RemoteSessionsTest {
 
     @Test
     fun `an unreachable paired TV is only mentioned, not offered`() = runTest {
-        deviceStore.saved = SavedRemoteDevices(paired = listOf(PairedTv("device-1", "10.0.0.1", "TV")))
+        deviceStore.saved =
+            SavedRemoteDevices(paired = listOf(PairedTv("device-1", "10.0.0.1", "TV")))
         api.snapshot = RemoteSnapshot(emptyList(), listOf(testRemoteDevice()))
         val remote = remote()
         remote.refresh()
@@ -175,7 +180,8 @@ class RemoteSessionsTest {
     @Test
     fun `playing on a paired TV wakes it with the play link instead of the server command`() =
         runTest {
-            deviceStore.saved = SavedRemoteDevices(paired = listOf(PairedTv("device-1", "10.0.0.1", "TV")))
+            deviceStore.saved =
+                SavedRemoteDevices(paired = listOf(PairedTv("device-1", "10.0.0.1", "TV")))
             val remote = remote()
             remote.refresh()
 
@@ -217,7 +223,8 @@ class RemoteSessionsTest {
 
     @Test
     fun `handing back stops the TV and turns a paired Chromecast off`() = runTest {
-        deviceStore.saved = SavedRemoteDevices(paired = listOf(PairedTv("device-1", "10.0.0.1", "TV")))
+        deviceStore.saved =
+            SavedRemoteDevices(paired = listOf(PairedTv("device-1", "10.0.0.1", "TV")))
         val remote = remote()
         remote.refresh()
 
@@ -245,7 +252,8 @@ class RemoteSessionsTest {
 
     @Test
     fun `forgetting a pairing removes it`() = runTest {
-        deviceStore.saved = SavedRemoteDevices(paired = listOf(PairedTv("device-1", "10.0.0.1", "TV")))
+        deviceStore.saved =
+            SavedRemoteDevices(paired = listOf(PairedTv("device-1", "10.0.0.1", "TV")))
         val remote = remote()
         remote.refresh()
 

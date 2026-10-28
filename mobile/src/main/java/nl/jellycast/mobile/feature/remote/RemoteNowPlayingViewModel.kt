@@ -28,9 +28,9 @@ import nl.jellycast.mobile.core.library.LibrarySnapshot
 import nl.jellycast.mobile.core.library.LibraryStore
 import nl.jellycast.mobile.core.remote.RemoteSession
 import nl.jellycast.mobile.core.remote.RemoteSessions
+import nl.jellycast.mobile.core.remote.RemoteSessionsApi
 import nl.jellycast.mobile.core.remote.RemoteState
 import nl.jellycast.mobile.core.remote.RemoteTracks
-import nl.jellycast.mobile.core.remote.RemoteSessionsApi
 import nl.jellycast.mobile.core.remote.androidtv.AndroidTvControl
 import nl.jellycast.mobile.core.remote.androidtv.TvKey
 import nl.jellycast.mobile.core.remote.androidtv.TvVolume
@@ -62,8 +62,10 @@ data class RemoteNowPlayingUiState(
     val infoSubject: InfoSubject?
         get() = when (val item = playable) {
             is PlayableItem.MovieItem -> InfoSubject.MovieInfo(item.movie.id)
+
             is PlayableItem.EpisodeItem ->
                 InfoSubject.EpisodeInfo(item.episode.id, item.episode.seriesId)
+
             null -> null
         }
 }
@@ -106,7 +108,11 @@ class RemoteNowPlayingViewModel(
         volume: TvVolumeState,
     ): RemoteNowPlayingUiState {
         val live = state.session(state.shownSessionId)
-        if (state.shownSessionId == null) lastSeen = null else if (live != null) lastSeen = live
+        if (state.shownSessionId == null) {
+            lastSeen = null
+        } else if (live != null) {
+            lastSeen = live
+        }
         val session = live ?: lastSeen
         return RemoteNowPlayingUiState(
             isOpen = state.shownSessionId != null && session != null,
@@ -125,12 +131,11 @@ class RemoteNowPlayingViewModel(
         remote.state.map { it.session(it.shownSessionId)?.item?.id }.distinctUntilChanged()
 
     /** A paired Chromecast that takes commands: its volume can be set over the remote. */
-    private fun pairedHosts() =
-        remote.state.map { state ->
-            state.session(state.shownSessionId)
-                ?.takeIf { it.canControl }
-                ?.let { state.pairedTv(it.deviceId)?.host }
-        }.distinctUntilChanged()
+    private fun pairedHosts() = remote.state.map { state ->
+        state.session(state.shownSessionId)
+            ?.takeIf { it.canControl }
+            ?.let { state.pairedTv(it.deviceId)?.host }
+    }.distinctUntilChanged()
 
     private suspend fun loadDetails(itemId: String?) {
         if (itemId == null || itemId == details.value.itemId) return

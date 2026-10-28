@@ -180,26 +180,33 @@ internal fun PlayOnSheetHost(
 }
 
 @Composable
-private fun SheetNotes(state: PlayOnUiState, isEmpty: Boolean, onPair: (RemoteDevice) -> Unit) {
-    if (state.hasUnreachablePairedTv) {
-        Note(stringResource(R.string.remote_home_network_only))
-    }
-    if (isEmpty) {
-        Text(
-            stringResource(R.string.remote_no_tv),
-            style = JellyCastText.Subheadline,
-            color = JellyCastColors.Text,
-            modifier = Modifier.padding(horizontal = 4.dp),
-        )
-    }
-    Note(stringResource(R.string.remote_tv_missing))
-    state.pairableTv?.let { device ->
-        TextButton(onClick = { onPair(device) }) {
+private fun SheetNotes(
+    state: PlayOnUiState,
+    isEmpty: Boolean,
+    onPair: (RemoteDevice) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(14.dp)) {
+        if (state.hasUnreachablePairedTv) {
+            Note(stringResource(R.string.remote_home_network_only))
+        }
+        if (isEmpty) {
             Text(
-                stringResource(R.string.remote_pair_chromecast),
-                style = JellyCastText.Subheadline.copy(fontWeight = FontWeight.SemiBold),
-                color = JellyCastColors.Accent,
+                stringResource(R.string.remote_no_tv),
+                style = JellyCastText.Subheadline,
+                color = JellyCastColors.Text,
+                modifier = Modifier.padding(horizontal = 4.dp),
             )
+        }
+        Note(stringResource(R.string.remote_tv_missing))
+        state.pairableTv?.let { device ->
+            TextButton(onClick = { onPair(device) }) {
+                Text(
+                    stringResource(R.string.remote_pair_chromecast),
+                    style = JellyCastText.Subheadline.copy(fontWeight = FontWeight.SemiBold),
+                    color = JellyCastColors.Accent,
+                )
+            }
         }
     }
 }
