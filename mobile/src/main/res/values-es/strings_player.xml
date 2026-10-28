@@ -1,4 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Owner: the player worker. Every key in all four languages. -->
 <resources>
+    <string name="player_pip">Imagen en imagen</string>
+    <string name="player_continue_on">Continuar en…</string>
+    <string name="player_tracks">Audio y subtítulos</string>
+    <string name="player_quality">Calidad</string>
+    <string name="player_full_screen">Pantalla completa</string>
+    <string name="player_exit_full_screen">Salir de pantalla completa</string>
+    <string name="player_play_pause">Reproducir o pausar</string>
+    <string name="player_close">Cerrar</string>
+    <string name="player_position">Posición</string>
+    <string name="player_video">Vídeo</string>
+    <string name="player_back_10">Atrás 10 segundos</string>
+    <string name="player_forward_10">Adelante 10 segundos</string>
+    <string name="player_seconds">%1$d s</string>
+    <string name="player_auto_level">Auto · %1$s</string>
+    <string name="player_buffered">· %1$s en búfer</string>
+    <string name="player_waiting">Esperando la conexión</string>
+    <string name="player_skip_intro">Saltar intro</string>
+    <string name="player_skip_recap">Saltar resumen</string>
+    <string name="player_skip_preview">Saltar avance</string>
+    <string name="player_next_episode_code">Siguiente episodio · %1$s</string>
+    <string name="player_next_list_episode">Siguiente · %1$s %2$s</string>
+    <string name="player_next_list">Siguiente · %1$s</string>
+    <string name="player_slow_lower">Conexión lenta · %1$s en el engranaje va más fluido</string>
+    <string name="player_slow">La conexión no da abasto con este archivo</string>
+    <string name="player_try_again">Reintentar</string>
+    <string name="player_via_server">Reproducir a través del servidor · %1$s</string>
+    <string name="player_error_no_source">Este elemento no tiene ningún archivo que el servidor pueda reproducir.</string>
+    <string name="player_error_does_not_play">Este archivo no se reproduce en este teléfono.</string>
+    <string name="player_error_stopped">La reproducción se detuvo por un error en el archivo o la conexión.</string>
+    <string name="player_error_no_answer">El servidor no respondió. Comprueba la conexión e inténtalo de nuevo.</string>
+    <string name="player_mini_error">Este elemento no se reproduce</string>
+    <string name="player_audio">Audio</string>
+    <string name="player_subtitles">Subtítulos</string>
+    <string name="player_off">Desactivados</string>
+    <string name="player_forced">Forzados</string>
+    <string name="player_sdh">SDH</string>
+    <string name="player_image">Imagen</string>
+    <string name="player_track">Pista %1$d</string>
+    <string name="player_channels">%1$dch</string>
+    <string name="player_auto">Auto</string>
+    <string name="player_original">Original</string>
+    <string name="player_original_bitrate">Original · %1$s Mbit/s</string>
+    <string name="player_level">%1$s Mbit/s · %2$s</string>
+    <string name="player_episode_code">T%1$d · E%2$d</string>
 </resources>

@@ -1,4 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Owner: the player worker. Every key in all four languages. -->
 <resources>
+    <string name="player_pip">Beeld-in-beeld</string>
+    <string name="player_continue_on">Verder op…</string>
+    <string name="player_tracks">Audio en ondertitels</string>
+    <string name="player_quality">Kwaliteit</string>
+    <string name="player_full_screen">Volledig scherm</string>
+    <string name="player_exit_full_screen">Volledig scherm sluiten</string>
+    <string name="player_play_pause">Afspelen of pauzeren</string>
+    <string name="player_close">Sluiten</string>
+    <string name="player_position">Positie</string>
+    <string name="player_video">Video</string>
+    <string name="player_back_10">10 seconden terug</string>
+    <string name="player_forward_10">10 seconden vooruit</string>
+    <string name="player_seconds">%1$d s</string>
+    <string name="player_auto_level">Auto · %1$s</string>
+    <string name="player_buffered">· %1$s gebufferd</string>
+    <string name="player_waiting">Wachten op de verbinding</string>
+    <string name="player_skip_intro">Intro overslaan</string>
+    <string name="player_skip_recap">Samenvatting overslaan</string>
+    <string name="player_skip_preview">Voorproefje overslaan</string>
+    <string name="player_next_episode_code">Volgende aflevering · %1$s</string>
+    <string name="player_next_list_episode">Volgende · %1$s %2$s</string>
+    <string name="player_next_list">Volgende · %1$s</string>
+    <string name="player_slow_lower">Trage verbinding · %1$s onder het tandwiel speelt soepeler</string>
+    <string name="player_slow">De verbinding kan dit bestand niet bijhouden</string>
+    <string name="player_try_again">Opnieuw proberen</string>
+    <string name="player_via_server">Via de server afspelen · %1$s</string>
+    <string name="player_error_no_source">Dit item heeft geen bestand dat de server kan afspelen.</string>
+    <string name="player_error_does_not_play">Dit bestand speelt niet af op deze telefoon.</string>
+    <string name="player_error_stopped">Het afspelen is gestopt door een fout in het bestand of de verbinding.</string>
+    <string name="player_error_no_answer">De server reageerde niet. Controleer de verbinding en probeer het opnieuw.</string>
+    <string name="player_mini_error">Dit item speelt niet af</string>
+    <string name="player_audio">Audio</string>
+    <string name="player_subtitles">Ondertitels</string>
+    <string name="player_off">Uit</string>
+    <string name="player_forced">Geforceerd</string>
+    <string name="player_sdh">SDH</string>
+    <string name="player_image">Beeld</string>
+    <string name="player_track">Spoor %1$d</string>
+    <string name="player_channels">%1$dch</string>
+    <string name="player_auto">Auto</string>
+    <string name="player_original">Origineel</string>
+    <string name="player_original_bitrate">Origineel · %1$s Mbit/s</string>
+    <string name="player_level">%1$s Mbit/s · %2$s</string>
+    <string name="player_episode_code">S%1$d · A%2$d</string>
 </resources>
