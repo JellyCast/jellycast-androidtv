@@ -98,4 +98,8 @@
         <item quantity="one">%1$d result · %2$s</item>
         <item quantity="other">%1$d results · %2$s</item>
     </plurals>
+    <string name="settings_downloads">Downloads</string>
+    <string name="settings_downloads_remove_watched">Remove watched downloads</string>
+    <string name="settings_downloads_keep_ahead">Keep series ahead</string>
+    <string name="settings_downloads_footer">Watched downloads go a day after you watched them. A series you downloaded with Download next keeps its next %1$d episodes on this device: at home, the next one downloads once you watch one.</string>
 </resources>

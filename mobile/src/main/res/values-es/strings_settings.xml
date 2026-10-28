@@ -97,4 +97,8 @@
         <item quantity="many">%1$d resultados · %2$s</item>
         <item quantity="other">%1$d resultados · %2$s</item>
     </plurals>
+    <string name="settings_downloads">Descargas</string>
+    <string name="settings_downloads_remove_watched">Eliminar descargas vistas</string>
+    <string name="settings_downloads_keep_ahead">Mantener series al día</string>
+    <string name="settings_downloads_footer">Las descargas vistas se eliminan un día después de verlas. Una serie descargada con Descargar siguientes conserva sus próximos %1$d episodios en este dispositivo: en casa, el siguiente se descarga en cuanto ves uno.</string>
 </resources>

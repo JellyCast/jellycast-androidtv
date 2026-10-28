@@ -97,4 +97,8 @@
         <item quantity="many">%1$d résultats · %2$s</item>
         <item quantity="other">%1$d résultats · %2$s</item>
     </plurals>
+    <string name="settings_downloads">Téléchargements</string>
+    <string name="settings_downloads_remove_watched">Supprimer les téléchargements vus</string>
+    <string name="settings_downloads_keep_ahead">Garder les séries à jour</string>
+    <string name="settings_downloads_footer">Les téléchargements vus disparaissent un jour après les avoir regardés. Une série téléchargée avec Télécharger les suivants garde ses %1$d prochains épisodes sur cet appareil : à la maison, le suivant se télécharge dès que vous en regardez un.</string>
 </resources>

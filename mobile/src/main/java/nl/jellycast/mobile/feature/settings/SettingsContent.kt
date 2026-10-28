@@ -55,6 +55,7 @@ fun SettingsContent(
     onSignOut: () -> Unit,
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
+    downloadsSection: @Composable () -> Unit = {},
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -80,6 +81,7 @@ fun SettingsContent(
             ServerSection(uiState)
             LibrarySection(uiState, onRefreshLibrary)
             QualitySection(uiState, onQualityChange)
+            downloadsSection()
             RatingSection(uiState.ratingSource, onRatingSourceChange)
             SettingsSection {
                 SettingsRow(

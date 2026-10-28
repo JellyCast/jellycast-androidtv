@@ -54,6 +54,7 @@ private fun SettingsScreen(
             viewModel.onSignOut()
         },
         onClose = onClose,
+        downloadsSection = { DownloadsSettingsSection() },
     )
 }
 

@@ -95,4 +95,8 @@
         <item quantity="one">%1$d resultaat · %2$s</item>
         <item quantity="other">%1$d resultaten · %2$s</item>
     </plurals>
+    <string name="settings_downloads">Downloads</string>
+    <string name="settings_downloads_remove_watched">Gekeken downloads verwijderen</string>
+    <string name="settings_downloads_keep_ahead">Series bijhouden</string>
+    <string name="settings_downloads_footer">Gekeken downloads verdwijnen een dag nadat je ze keek. Een serie die je met Download volgende hebt gedownload, houdt de volgende %1$d afleveringen op dit apparaat: thuis wordt de volgende gedownload zodra je er een kijkt.</string>
 </resources>
