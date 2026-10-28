@@ -86,18 +86,25 @@ internal fun HomeTile.meta(): String = when (this) {
 private fun movieMeta(movie: Movie): String =
     joined(stringResource(R.string.home_movie), movie.year?.toString())
 
-/** Time left while in progress, otherwise the runtime; a series nobody started: its episodes. */
+/**
+ * Time left while in progress, otherwise the runtime; a series nobody started: its episodes.
+ * Phones show it only on Continue tiles.
+ */
 @Composable
-internal fun HomeTile.timeBadge(): String? = when (this) {
-    is HomeTile.Continue -> timeLabel(item)
+internal fun HomeTile.timeBadge(isRegular: Boolean): String? = when {
+    this is HomeTile.Continue -> timeLabel(item)
 
-    is HomeTile.New -> when (item) {
+    !isRegular -> null
+
+    this is HomeTile.New -> when (item) {
         is NewItem.NewMovie -> item.movie.runtimeMs?.let { durationText(it) }
         is NewItem.NewSeries -> item.firstAdded.runtimeMs?.let { durationText(it) }
     }
 
-    is HomeTile.NotStarted ->
+    this is HomeTile.NotStarted ->
         pluralStringResource(R.plurals.home_episode_count, episodeCount, episodeCount)
+
+    else -> null
 }
 
 @Composable

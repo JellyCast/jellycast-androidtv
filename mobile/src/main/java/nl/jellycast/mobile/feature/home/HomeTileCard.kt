@@ -176,7 +176,7 @@ private fun TileImage(
                 Modifier.align(Alignment.TopStart).padding(style.badgeInset),
             )
         }
-        tile.timeBadge()?.let { text ->
+        tile.timeBadge(style.isRegular)?.let { text ->
             TimeBadge(text, style, Modifier.align(Alignment.BottomEnd).padding(style.badgeInset))
         }
         tile.progress?.let { progress ->
