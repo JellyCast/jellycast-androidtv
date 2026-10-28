@@ -137,6 +137,7 @@ fun BaseItemDto.toEpisode(images: ImageUrlBuilder): Episode {
         lastPlayedAt = userData?.lastPlayedDate?.toEpochMs(),
         addedAt = dateCreated?.toEpochMs(),
         stillUrl = image(images, ImageType.PRIMARY, ImageWidths.LANDSCAPE),
+        seasonThumbUrl = seriesThumb?.takeIf { seasonId != null && parentThumbItemId == seasonId },
         communityRating = communityRating,
         externalIds = externalIds(),
     )

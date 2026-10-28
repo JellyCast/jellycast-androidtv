@@ -127,19 +127,23 @@ internal val HomeTile.progress: Float?
         }
     }
 
-/** The 16:9 art: a movie's backdrop, or the series' backdrop (never an episode still). */
+/** The 16:9 art: a movie's backdrop, else the season's thumb or the series' backdrop; never a still. */
 internal val HomeTile.imageUrl: String?
     get() = when (this) {
         is HomeTile.Continue -> when (item) {
             is PlayableItem.MovieItem ->
                 item.movie.artwork.backdrop ?: item.movie.artwork.poster
 
-            is PlayableItem.EpisodeItem -> item.episode.artwork.run { backdrop ?: poster }
+            is PlayableItem.EpisodeItem ->
+                item.episode.seasonThumbUrl ?: item.episode.artwork.run { backdrop ?: poster }
         }
 
         is HomeTile.New -> when (item) {
             is NewItem.NewMovie -> item.movie.artwork.run { backdrop ?: landscape ?: poster }
-            is NewItem.NewSeries -> item.series.artwork.run { backdrop ?: landscape ?: poster }
+
+            is NewItem.NewSeries ->
+                item.firstAdded.seasonThumbUrl
+                    ?: item.series.artwork.run { backdrop ?: landscape ?: poster }
         }
 
         is HomeTile.NotStarted -> series.artwork.run { backdrop ?: landscape ?: poster }

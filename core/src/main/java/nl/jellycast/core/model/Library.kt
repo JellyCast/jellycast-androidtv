@@ -95,6 +95,8 @@ data class Episode(
     val artwork: Artwork,
     val isPlayed: Boolean = false,
     val stillUrl: String? = null,
+    /** The season's own landscape thumb, when the server has one. */
+    val seasonThumbUrl: String? = null,
     val seasonId: String? = null,
     val lastPlayedAt: Long? = null,
     val addedAt: Long? = null,

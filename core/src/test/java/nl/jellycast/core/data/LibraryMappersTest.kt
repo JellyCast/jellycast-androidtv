@@ -195,6 +195,23 @@ class LibraryMappersTest {
         assertEquals(3, episode.seasonNumber)
         assertEquals(4, episode.episodeNumber)
         assertEquals("1f2e3d4c5b6a7980a1b2c3d4e5f60718", episode.seasonId)
+        assertNull(episode.seasonThumbUrl)
+    }
+
+    @Test
+    fun `a parent thumb from the season becomes the season thumb`() {
+        val seasonId = UUID.fromString("1f2e3d4c-5b6a-7980-a1b2-c3d4e5f60718")
+        val episode =
+            BaseItemDto(
+                id = movieId,
+                type = BaseItemKind.EPISODE,
+                seriesId = UUID.fromString("88ad1464-e02c-fe27-a50f-490bfe3d13b0"),
+                seasonId = seasonId,
+                parentThumbItemId = seasonId,
+                parentThumbImageTag = "s",
+            ).toEpisode(images)
+
+        assertEquals("img/1f2e3d4c5b6a7980a1b2c3d4e5f60718/Thumb/s/392", episode.seasonThumbUrl)
     }
 
     @Test
