@@ -39,7 +39,9 @@ class TapSeekTracker {
         }
         val previous = lastTap
         lastTap = side to nowMs
-        if (previous != null && previous.first == side && nowMs - previous.second <= DOUBLE_TAP_WINDOW_MS) {
+        if (previous != null && previous.first == side &&
+            nowMs - previous.second <= DOUBLE_TAP_WINDOW_MS
+        ) {
             run = SeekRun(side, taps = 1, startPositionMs = positionMs)
             return TapOutcome(toggleControls = true, run = run)
         }

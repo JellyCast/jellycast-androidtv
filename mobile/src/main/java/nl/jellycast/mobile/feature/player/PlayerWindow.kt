@@ -3,6 +3,7 @@ package nl.jellycast.mobile.feature.player
 import android.app.PictureInPictureParams
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
+import android.graphics.Rect as AndroidRect
 import android.util.Rational
 import android.view.OrientationEventListener
 import android.view.WindowInsets
@@ -19,7 +20,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.core.app.PictureInPictureModeChangedInfo
 import androidx.core.util.Consumer
-import android.graphics.Rect as AndroidRect
 
 private val VideoAspect = Rational(16, 9)
 
@@ -30,7 +30,8 @@ class PictureInPictureState(private val activity: ComponentActivity?) {
         internal set
 
     val isSupported: Boolean =
-        activity?.packageManager?.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE) == true
+        activity?.packageManager?.hasSystemFeature(PackageManager.FEATURE_PICTURE_IN_PICTURE) ==
+            true
 
     internal var sourceRect: AndroidRect? = null
 
@@ -81,7 +82,8 @@ fun SystemBarsHidden(hidden: Boolean) {
     DisposableEffect(activity, hidden) {
         val controller = activity.window.insetsController
         if (hidden) {
-            controller?.systemBarsBehavior = WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            controller?.systemBarsBehavior =
+                WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
             controller?.hide(WindowInsets.Type.systemBars())
         }
         onDispose { if (hidden) controller?.show(WindowInsets.Type.systemBars()) }

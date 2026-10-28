@@ -53,7 +53,7 @@ private val TextShadow = Shadow(IconShadow, blurRadius = 8f)
 data class PlayerTitle(val title: String, val subtitle: String?)
 
 /** Which top-row buttons show; the others are hidden, not disabled. */
-data class ControlButtons(val pip: Boolean, val continueOn: Boolean)
+data class ControlButtons(val pip: Boolean, val continueOn: Boolean, val quality: Boolean)
 
 class ControlActions(
     val onPip: () -> Unit,
@@ -129,7 +129,11 @@ fun PlayerControlsOverlay(
                             },
                         contentDescription =
                             stringResource(
-                                if (isFullScreen) R.string.player_exit_full_screen else R.string.player_full_screen,
+                                if (isFullScreen) {
+                                    R.string.player_exit_full_screen
+                                } else {
+                                    R.string.player_full_screen
+                                },
                             ),
                         onClick = actions.onToggleFullScreen,
                         iconSize = 22.dp,
@@ -143,9 +147,15 @@ fun PlayerControlsOverlay(
 private fun controlsPadding(isFullScreen: Boolean, safe: PaddingValues): PaddingValues =
     if (isFullScreen) {
         PaddingValues(
-            start = maxOf(safe.calculateLeftPadding(androidx.compose.ui.unit.LayoutDirection.Ltr), 20.dp),
+            start = maxOf(
+                safe.calculateLeftPadding(androidx.compose.ui.unit.LayoutDirection.Ltr),
+                20.dp,
+            ),
             top = maxOf(safe.calculateTopPadding(), 12.dp),
-            end = maxOf(safe.calculateRightPadding(androidx.compose.ui.unit.LayoutDirection.Ltr), 20.dp),
+            end = maxOf(
+                safe.calculateRightPadding(androidx.compose.ui.unit.LayoutDirection.Ltr),
+                20.dp,
+            ),
             bottom = maxOf(safe.calculateBottomPadding(), 8.dp),
         )
     } else {
@@ -174,11 +184,13 @@ private fun TopButtons(buttons: ControlButtons, actions: ControlActions) {
             stringResource(R.string.player_tracks),
             actions.onTracks,
         )
-        PlayerIconButton(
-            R.drawable.ic_settings,
-            stringResource(R.string.player_quality),
-            actions.onQuality,
-        )
+        if (buttons.quality) {
+            PlayerIconButton(
+                R.drawable.ic_settings,
+                stringResource(R.string.player_quality),
+                actions.onQuality,
+            )
+        }
     }
 }
 
@@ -205,7 +217,11 @@ private fun TitleBlock(title: PlayerTitle, modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun CentreButton(engine: PlayerEngineState, onPlayPause: () -> Unit, modifier: Modifier = Modifier) {
+private fun CentreButton(
+    engine: PlayerEngineState,
+    onPlayPause: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     Box(
         modifier
             .size(64.dp)
@@ -232,7 +248,11 @@ private fun CentreButton(engine: PlayerEngineState, onPlayPause: () -> Unit, mod
 }
 
 @Composable
-private fun TimeLabel(engine: PlayerEngineState, scrubFraction: Float?, modifier: Modifier = Modifier) {
+private fun TimeLabel(
+    engine: PlayerEngineState,
+    scrubFraction: Float?,
+    modifier: Modifier = Modifier,
+) {
     val duration = engine.durationMs
     val position = scrubFraction?.let { (it * duration).toLong() } ?: engine.positionMs
     val ahead = (engine.bufferedMs - engine.positionMs).coerceAtLeast(0)
@@ -281,7 +301,12 @@ fun PlayerIconButton(
 }
 
 @Composable
-fun ShadowedIcon(@DrawableRes icon: Int, contentDescription: String?, size: Dp, modifier: Modifier = Modifier) {
+fun ShadowedIcon(
+    @DrawableRes icon: Int,
+    contentDescription: String?,
+    size: Dp,
+    modifier: Modifier = Modifier,
+) {
     Box(modifier) {
         Icon(
             painterResource(icon),

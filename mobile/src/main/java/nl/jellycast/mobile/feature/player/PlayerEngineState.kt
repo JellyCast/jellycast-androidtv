@@ -105,7 +105,7 @@ class PlayerEngineState {
 @Composable
 fun rememberPlayerEngine(
     load: PlaybackLoad?,
-    viewModel: NowPlayingViewModel,
+    callbacks: EngineCallbacks,
     playerFactory: PlayerFactory,
 ): PlayerEngineState {
     val state = remember { PlayerEngineState() }
@@ -123,7 +123,7 @@ fun rememberPlayerEngine(
         fun fail(failure: PlaybackFailure) {
             if (failed) return
             failed = true
-            viewModel.onPlaybackError(
+            callbacks.onPlaybackError(
                 load,
                 failure,
                 exoPlayer.currentPosition,
@@ -150,7 +150,7 @@ fun rememberPlayerEngine(
                 override fun onIsPlayingChanged(isPlaying: Boolean) {
                     state.isPlaying = isPlaying
                     view.keepScreenOn = isPlaying
-                    viewModel.onProgress(
+                    callbacks.onProgress(
                         load,
                         exoPlayer.currentPosition,
                         isPaused = !isPlaying,
@@ -168,7 +168,7 @@ fun rememberPlayerEngine(
 
                 override fun onPlaybackStateChanged(playbackState: Int) {
                     state.isBuffering = playbackState == Player.STATE_BUFFERING
-                    if (playbackState == Player.STATE_ENDED) viewModel.onEnded(load)
+                    if (playbackState == Player.STATE_ENDED) callbacks.onEnded(load)
                 }
 
                 override fun onPositionDiscontinuity(
@@ -178,7 +178,7 @@ fun rememberPlayerEngine(
                 ) {
                     if (reason != Player.DISCONTINUITY_REASON_SEEK) return
                     state.seekCount++
-                    viewModel.onProgress(
+                    callbacks.onProgress(
                         load,
                         newPosition.positionMs,
                         isPaused = !exoPlayer.isPlaying,
@@ -206,11 +206,11 @@ fun rememberPlayerEngine(
         // Direct play starts once the app has chosen the audio and subtitle tracks.
         exoPlayer.playWhenReady = !holdUntilChosen
         state.player = exoPlayer
-        viewModel.onEngineStarted(load)
+        callbacks.onEngineStarted(load)
 
         onDispose {
             val duration = exoPlayer.duration.takeIf { it != C.TIME_UNSET } ?: 0L
-            viewModel.onEngineStopped(
+            callbacks.onEngineStopped(
                 load,
                 positionMs = exoPlayer.currentPosition,
                 durationMs = duration,
@@ -225,13 +225,17 @@ fun rememberPlayerEngine(
         }
     }
 
-    EngineLoops(state, load, viewModel)
+    EngineLoops(state, load, callbacks)
     LifecycleEventEffect(Lifecycle.Event.ON_STOP) { state.player?.pause() }
     return state
 }
 
 @Composable
-private fun EngineLoops(state: PlayerEngineState, load: PlaybackLoad?, viewModel: NowPlayingViewModel) {
+private fun EngineLoops(
+    state: PlayerEngineState,
+    load: PlaybackLoad?,
+    callbacks: EngineCallbacks,
+) {
     val player = state.player
     LaunchedEffect(player) {
         val active = player ?: return@LaunchedEffect
@@ -247,7 +251,7 @@ private fun EngineLoops(state: PlayerEngineState, load: PlaybackLoad?, viewModel
         val current = load ?: return@LaunchedEffect
         while (isActive) {
             delay(ProgressInterval)
-            viewModel.onProgress(
+            callbacks.onProgress(
                 current,
                 active.currentPosition,
                 isPaused = !active.isPlaying,
@@ -258,7 +262,7 @@ private fun EngineLoops(state: PlayerEngineState, load: PlaybackLoad?, viewModel
     LaunchedEffect(player, state.isPlaying) {
         if (player != null && state.isPlaying) {
             delay(StablePlaybackDuration)
-            viewModel.onPlaybackStable()
+            callbacks.onPlaybackStable()
         }
     }
 }

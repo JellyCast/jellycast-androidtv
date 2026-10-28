@@ -7,6 +7,7 @@ import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
@@ -56,21 +57,13 @@ private val ScrubBelow = 13.dp
  */
 @Composable
 fun FullPlayerChrome(
-    state: NowPlayingUiState,
+    item: PlayableItem,
     chrome: PlayerChromeState,
     fullScreen: Boolean,
     headerMode: Boolean,
     heightPx: Float,
+    modifier: Modifier = Modifier,
 ) {
-    val item = state.item ?: return
-    Box(
-        Modifier
-            .fillMaxSize()
-            .graphicsLayer { alpha = 1f - SwipeTransform(chrome.swipeOffset.value, heightPx).progress }
-            .background(Color.Black)
-            .blockTouches(),
-    )
-    if (fullScreen) return
     val swipeLayer =
         Modifier.graphicsLayer {
             val swipe = SwipeTransform(chrome.swipeOffset.value, heightPx)
@@ -81,7 +74,7 @@ fun FullPlayerChrome(
         }
     val showsContinueOn = hasRemoteTargets()
     val continueLabel = stringResource(R.string.player_continue_on)
-    val actions: @Composable androidx.compose.foundation.layout.RowScope.() -> Unit = {
+    val panelActions: @Composable RowScope.() -> Unit = {
         if (showsContinueOn) {
             RailCircleButton(
                 R.drawable.ic_player_cast,
@@ -91,41 +84,59 @@ fun FullPlayerChrome(
             )
         }
     }
-    if (headerMode) {
-        ItemInfoPanel(
-            subject = item.infoSubject(),
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .then(swipeLayer)
-                    .background(JellyCastColors.Background)
-                    .statusBarsPadding(),
-            playingItemId = item.id,
-            header = {
-                Box(
-                    Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(VIDEO_ASPECT)
-                        .onGloballyPositioned { chrome.headerRect = it.boundsInRoot() },
-                )
-            },
-            actions = actions,
+    Box(modifier.fillMaxSize()) {
+        Box(
+            Modifier
+                .fillMaxSize()
+                .graphicsLayer {
+                    alpha = 1f - SwipeTransform(chrome.swipeOffset.value, heightPx).progress
+                }.background(Color.Black)
+                .blockTouches(),
         )
-    } else {
-        Column(Modifier.fillMaxSize().then(swipeLayer)) {
-            Spacer(
-                Modifier
-                    .fillMaxWidth()
-                    .windowInsetsTopHeight(WindowInsets.statusBars)
-                    .background(Color.Black),
-            )
-            Spacer(Modifier.fillMaxWidth().aspectRatio(VIDEO_ASPECT))
-            ItemInfoPanel(
-                subject = item.infoSubject(),
-                modifier = Modifier.weight(1f).fillMaxWidth().background(JellyCastColors.Background),
-                playingItemId = item.id,
-                actions = actions,
-            )
+        when {
+            fullScreen -> Unit
+
+            headerMode ->
+                ItemInfoPanel(
+                    subject = item.infoSubject(),
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .then(swipeLayer)
+                            .background(JellyCastColors.Background)
+                            .statusBarsPadding(),
+                    playingItemId = item.id,
+                    header = {
+                        Box(
+                            Modifier
+                                .fillMaxWidth()
+                                .aspectRatio(VIDEO_ASPECT)
+                                .onGloballyPositioned { chrome.headerRect = it.boundsInRoot() },
+                        )
+                    },
+                    actions = panelActions,
+                )
+
+            else ->
+                Column(Modifier.fillMaxSize().then(swipeLayer)) {
+                    Spacer(
+                        Modifier
+                            .fillMaxWidth()
+                            .windowInsetsTopHeight(WindowInsets.statusBars)
+                            .background(Color.Black),
+                    )
+                    Spacer(Modifier.fillMaxWidth().aspectRatio(VIDEO_ASPECT))
+                    ItemInfoPanel(
+                        subject = item.infoSubject(),
+                        modifier =
+                            Modifier
+                                .weight(1f)
+                                .fillMaxWidth()
+                                .background(JellyCastColors.Background),
+                        playingItemId = item.id,
+                        actions = panelActions,
+                    )
+                }
         }
     }
 }
@@ -146,12 +157,13 @@ fun FullPlayer(
     state: NowPlayingUiState,
     engine: PlayerEngineState,
     chrome: PlayerChromeState,
-    viewModel: NowPlayingViewModel,
+    actions: PlayerActions,
     fullScreen: Boolean,
     regular: Boolean,
     pip: PictureInPictureState,
     heightPx: Float,
     videoRect: () -> Rect,
+    modifier: Modifier = Modifier,
 ) {
     val item = state.item ?: return
     val orientation = rememberOrientationLock()
@@ -160,14 +172,16 @@ fun FullPlayer(
 
     ControlsAutoHide(chrome, engine.isPlaying)
     LaunchedEffect(engine.hasFirstFrame) { if (engine.hasFirstFrame) chrome.showControls() }
-    LaunchedEffect(engine.isPlaying) { if (engine.isPlaying && chrome.controlsVisible) chrome.interact() }
+    LaunchedEffect(engine.isPlaying) {
+        if (engine.isPlaying && chrome.controlsVisible) chrome.interact()
+    }
     SlowConnectionWatch(engine, chrome, state.quality)
-    MinimizeOnBack(chrome, heightPx, viewModel::onMinimize)
+    MinimizeOnBack(chrome, heightPx, actions::onMinimize)
 
     val seekBy: (Long) -> Unit = { deltaMs ->
         engine.player?.let { it.seekTo((it.currentPosition + deltaMs).coerceAtLeast(0)) }
     }
-    val actions =
+    val overlayActions =
         FullPlayerActions(
             controls = controlActions(engine, chrome, regular, fullScreen, orientation, pip),
             onTap = { side, time ->
@@ -179,8 +193,10 @@ fun FullPlayer(
             onSwipe = chrome::dragTo,
             onSwipeEnd = { velocity ->
                 val offset = chrome.swipeOffset.value
-                if (offset > closeDistancePx || offset + velocity * SWIPE_PREDICTION_S > heightPx / 2) {
-                    chrome.animateClose(heightPx, viewModel::onMinimize)
+                if (offset > closeDistancePx ||
+                    offset + velocity * SWIPE_PREDICTION_S > heightPx / 2
+                ) {
+                    chrome.animateClose(heightPx, actions::onMinimize)
                 } else {
                     chrome.springBack()
                 }
@@ -189,50 +205,58 @@ fun FullPlayer(
                 when (pill) {
                     is SegmentPill.SlowConnection -> chrome.slowHint = null
                     is SegmentPill.Skip -> engine.player?.seekTo(pill.endMs)
-                    is SegmentPill.Next -> viewModel.onPlayNext()
+                    is SegmentPill.Next -> actions.onPlayNext()
                 }
             },
-            onRetry = viewModel::onRetry,
-            onPlayViaServer = viewModel::onPlayViaServer,
+            onRetry = actions::onRetry,
+            onPlayViaServer = actions::onPlayViaServer,
         )
     val failed = state.phase as? PlayerPhase.Failed
-    FullPlayerOverlay(
-        state = state,
-        engine = engine,
-        chrome = chrome,
-        isFullScreen = fullScreen,
-        title = playerTitle(item),
-        autoLabel =
-            state.quality
-                ?.takeIf { it.isAuto }
-                ?.let { stringResource(R.string.player_auto_level, levelShortName(it.level)) },
-        buttons = ControlButtons(pip = pip.isSupported, continueOn = hasRemoteTargets()),
-        errorMessage = failed?.let { stringResource(it.error.messageRes()) },
-        viaServerLabel =
-            failed?.viaServer?.let { stringResource(R.string.player_via_server, it.shortName) },
-        actions = actions,
-        safePadding = safeDrawingPadding(),
-        modifier = Modifier.placeAt(videoRect),
-    )
-    if (!fullScreen && started) {
-        val above = with(LocalDensity.current) { ScrubAbove.toPx() }
-        val below = with(LocalDensity.current) { ScrubBelow.toPx() }
-        ScrubBar(
-            played = { chrome.scrubFraction ?: engine.playedFraction() },
-            buffered = { engine.bufferedFraction() },
-            interactive = chrome.controlsVisible,
-            label = stringResource(R.string.player_position),
-            onScrub = actions.controls.onScrub,
-            onScrubEnd = actions.controls.onScrubEnd,
-            lineHeight = 3.dp,
-            modifier =
-                Modifier.placeAt {
-                    val video = videoRect()
-                    Rect(video.left, video.bottom - above, video.right, video.bottom + below)
-                },
+    val density = LocalDensity.current
+    Box(modifier.fillMaxSize()) {
+        FullPlayerOverlay(
+            state = state,
+            engine = engine,
+            chrome = chrome,
+            isFullScreen = fullScreen,
+            title = playerTitle(item),
+            autoLabel =
+                state.quality
+                    ?.takeIf { it.isAuto }
+                    ?.let { stringResource(R.string.player_auto_level, levelShortName(it.level)) },
+            buttons =
+                ControlButtons(
+                    pip = pip.isSupported,
+                    continueOn = hasRemoteTargets(),
+                    quality = state.load?.isLocal != true,
+                ),
+            errorMessage = failed?.let { stringResource(it.error.messageRes()) },
+            viaServerLabel =
+                failed?.viaServer?.let { stringResource(R.string.player_via_server, it.shortName) },
+            actions = overlayActions,
+            safePadding = safeDrawingPadding(),
+            modifier = Modifier.placeAt(videoRect),
         )
+        if (!fullScreen && started) {
+            val above = with(density) { ScrubAbove.toPx() }
+            val below = with(density) { ScrubBelow.toPx() }
+            ScrubBar(
+                played = { chrome.scrubFraction ?: engine.playedFraction() },
+                buffered = { engine.bufferedFraction() },
+                interactive = chrome.controlsVisible,
+                label = stringResource(R.string.player_position),
+                onScrub = overlayActions.controls.onScrub,
+                onScrubEnd = overlayActions.controls.onScrubEnd,
+                lineHeight = 3.dp,
+                modifier =
+                    Modifier.placeAt {
+                        val video = videoRect()
+                        Rect(video.left, video.bottom - above, video.right, video.bottom + below)
+                    },
+            )
+        }
+        PlayerSheets(state, engine, chrome, actions, item)
     }
-    PlayerSheets(state, engine, chrome, viewModel, item)
 }
 
 @Composable
@@ -257,7 +281,13 @@ private fun controlActions(
     },
     onToggleFullScreen = {
         chrome.interact()
-        if (regular) chrome.videoOnly = !chrome.videoOnly else orientation.force(landscape = !fullScreen)
+        if (regular) {
+            chrome.videoOnly = !chrome.videoOnly
+        } else {
+            orientation.force(
+                landscape = !fullScreen,
+            )
+        }
     },
     onScrub = { fraction ->
         chrome.scrubFraction = fraction
@@ -276,7 +306,7 @@ private fun PlayerSheets(
     state: NowPlayingUiState,
     engine: PlayerEngineState,
     chrome: PlayerChromeState,
-    viewModel: NowPlayingViewModel,
+    actions: PlayerActions,
     item: PlayableItem,
 ) {
     val plan = state.load?.plan
@@ -287,7 +317,7 @@ private fun PlayerSheets(
                 TrackSheet(
                     plan = plan,
                     engine = engine,
-                    onTranscodeStreams = { viewModel.onTranscodeStreamsChosen(it, position()) },
+                    onTranscodeStreams = { actions.onTranscodeStreamsChosen(it, position()) },
                     onDismiss = chrome::closeSheet,
                 )
             }
@@ -298,7 +328,7 @@ private fun PlayerSheets(
                     quality = quality,
                     onChoose = { choice ->
                         chrome.closeSheet()
-                        viewModel.onQualityChosen(choice, position(), plan?.let(engine::streams))
+                        actions.onQualityChosen(choice, position(), plan?.let(engine::streams))
                     },
                     onDismiss = chrome::closeSheet,
                 )
@@ -308,7 +338,7 @@ private fun PlayerSheets(
             PlayOnSheet(
                 request = PlayOnRequest(item, position(), plan?.let(engine::streams)),
                 onDismiss = chrome::closeSheet,
-                onSend = viewModel::onClose,
+                onSend = actions::onClose,
             )
 
         null -> Unit
@@ -330,7 +360,11 @@ private fun MinimizeOnBack(chrome: PlayerChromeState, heightPx: Float, onMinimiz
 }
 
 @Composable
-private fun SlowConnectionWatch(engine: PlayerEngineState, chrome: PlayerChromeState, quality: QualityState?) {
+private fun SlowConnectionWatch(
+    engine: PlayerEngineState,
+    chrome: PlayerChromeState,
+    quality: QualityState?,
+) {
     val watch = remember { BufferWatch() }
     val player = engine.player
     LaunchedEffect(player, quality) {

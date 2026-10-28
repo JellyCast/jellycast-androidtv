@@ -7,8 +7,11 @@ import nl.jellycast.mobile.core.settings.QualityLevel
 import nl.jellycast.mobile.core.settings.QualityPreference
 import nl.jellycast.mobile.navigation.PlayQueue
 
-/** One plan given to the engine; [id] differs per load, so a retry of an equal plan restarts. */
-data class PlaybackLoad(val id: Int, val plan: PlaybackPlan)
+/**
+ * One plan given to the engine; [id] differs per load, so a retry of an equal plan restarts.
+ * [isLocal]: a download, played without the server.
+ */
+data class PlaybackLoad(val id: Int, val plan: PlaybackPlan, val isLocal: Boolean = false)
 
 enum class PlayerError {
     /** The item has no media source. */

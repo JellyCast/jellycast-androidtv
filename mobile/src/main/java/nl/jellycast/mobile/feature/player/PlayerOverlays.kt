@@ -110,14 +110,14 @@ fun StallIndicator(modifier: Modifier = Modifier) {
 
 /** The half-moon on the tapped side with the seconds of the run. */
 @Composable
-fun BoxScope.SeekBubble(run: SeekRun?, lastSide: TapSide) {
+fun BoxScope.SeekBubble(run: SeekRun?, lastSide: TapSide, modifier: Modifier = Modifier) {
     val side = run?.side ?: lastSide
     AnimatedVisibility(
         visible = run != null,
         enter = fadeIn(tween(BUBBLE_FADE_MS)),
         exit = fadeOut(tween(BUBBLE_FADE_MS)),
         modifier =
-            Modifier
+            modifier
                 .align(if (side == TapSide.Back) Alignment.CenterStart else Alignment.CenterEnd)
                 .fillMaxWidth(BUBBLE_WIDTH_FRACTION)
                 .fillMaxHeight(),
@@ -140,7 +140,13 @@ fun BoxScope.SeekBubble(run: SeekRun?, lastSide: TapSide) {
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 ShadowedIcon(
-                    if (side == TapSide.Back) R.drawable.ic_player_fast_rewind else R.drawable.ic_player_fast_forward,
+                    if (side ==
+                        TapSide.Back
+                    ) {
+                        R.drawable.ic_player_fast_rewind
+                    } else {
+                        R.drawable.ic_player_fast_forward
+                    },
                     null,
                     20.dp,
                 )

@@ -46,8 +46,9 @@ fun Modifier.videoGestures(
         while (true) {
             val event = awaitPointerEvent()
             val change = event.changes.firstOrNull { it.id == down.id } ?: break
-            if (!change.pressed) break
+            // A control above the video took this touch (its press or its release).
             if (change.isConsumed) return@awaitEachGesture
+            if (!change.pressed) break
             val delta = change.positionChange()
             dx += delta.x
             dy += delta.y
@@ -144,7 +145,12 @@ fun FullPlayerOverlay(
         }
         when {
             errorMessage != null ->
-                PlayerErrorView(errorMessage, viaServerLabel, actions.onRetry, actions.onPlayViaServer)
+                PlayerErrorView(
+                    errorMessage,
+                    viaServerLabel,
+                    actions.onRetry,
+                    actions.onPlayViaServer,
+                )
 
             !started -> StartOverlay()
         }
@@ -192,6 +198,9 @@ fun playerTitle(item: PlayableItem): PlayerTitle = when (item) {
     is PlayableItem.EpisodeItem ->
         PlayerTitle(
             item.episode.seriesTitle,
-            "${episodeCode(item.episode.seasonNumber, item.episode.episodeNumber)} · ${item.episode.title}",
+            "${episodeCode(
+                item.episode.seasonNumber,
+                item.episode.episodeNumber,
+            )} · ${item.episode.title}",
         )
 }

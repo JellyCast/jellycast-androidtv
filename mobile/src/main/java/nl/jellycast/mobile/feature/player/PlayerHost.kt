@@ -1,5 +1,6 @@
 package nl.jellycast.mobile.feature.player
 
+import android.graphics.Rect as AndroidRect
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.BoxWithConstraintsScope
@@ -23,7 +24,6 @@ import nl.jellycast.mobile.core.designsystem.theme.LocalLayout
 import nl.jellycast.mobile.navigation.LocalAppNavigation
 import org.koin.compose.koinInject
 import org.koin.compose.viewmodel.koinViewModel
-import android.graphics.Rect as AndroidRect
 
 /**
  * Takes `AppNavigation.playRequest`, owns the one play of the app and shows it full screen or
@@ -62,9 +62,10 @@ private data class HostGeometry(
 private fun NowPlaying(
     state: NowPlayingUiState,
     engine: PlayerEngineState,
-    viewModel: NowPlayingViewModel,
+    actions: PlayerActions,
     bottomInset: Dp,
 ) {
+    val item = state.item ?: return
     val chrome = rememberPlayerChromeState()
     val regular = LocalLayout.current.isRegular
     BoxWithConstraints(Modifier.fillMaxSize()) {
@@ -98,13 +99,16 @@ private fun NowPlaying(
 
                 headerMode -> chrome.headerRect
 
-                else -> swipe.apply(pinnedVideoRect(geometry.widthPx, geometry.statusTopPx), geometry.widthPx)
+                else -> swipe.apply(
+                    pinnedVideoRect(geometry.widthPx, geometry.statusTopPx),
+                    geometry.widthPx,
+                )
             }
         }
 
         if (expanded) {
             FullPlayerChrome(
-                state = state,
+                item = item,
                 chrome = chrome,
                 fullScreen = fullScreen,
                 headerMode = headerMode,
@@ -124,7 +128,7 @@ private fun NowPlaying(
                     state = state,
                     engine = engine,
                     chrome = chrome,
-                    viewModel = viewModel,
+                    actions = actions,
                     fullScreen = fullScreen,
                     regular = regular,
                     pip = pip,
@@ -137,12 +141,12 @@ private fun NowPlaying(
                     large = state.isMiniPlayerLarge,
                     engine = engine,
                     phase = state.phase,
-                    onExpand = viewModel::onExpand,
-                    onClose = viewModel::onClose,
+                    onExpand = actions::onExpand,
+                    onClose = actions::onClose,
                     onPinch = { chrome.pinchScale = it.coerceIn(MIN_PINCH, MAX_PINCH) },
                     onPinchEnd = {
                         chrome.pinchScale = 1f
-                        viewModel.onMiniPlayerSizeChange(pinchResult(state.isMiniPlayerLarge, it))
+                        actions.onMiniPlayerSizeChange(pinchResult(state.isMiniPlayerLarge, it))
                     },
                     modifier = Modifier.placeAt(videoRect),
                 )

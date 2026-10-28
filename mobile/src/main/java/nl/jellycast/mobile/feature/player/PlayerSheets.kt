@@ -41,9 +41,14 @@ import nl.jellycast.mobile.core.settings.QualityPreference
 
 @kotlin.OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun PlayerSheet(onDismiss: () -> Unit, content: @Composable () -> Unit) {
+private fun PlayerSheet(
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
+    content: @Composable () -> Unit,
+) {
     ModalBottomSheet(
         onDismissRequest = onDismiss,
+        modifier = modifier,
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false),
         containerColor = JellyCastColors.Surface,
     ) {
@@ -66,10 +71,11 @@ fun TrackSheet(
     engine: PlayerEngineState,
     onTranscodeStreams: (StreamChoice) -> Unit,
     onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val locale = LocalConfiguration.current.locales[0]
     val player = engine.player
-    PlayerSheet(onDismiss) {
+    PlayerSheet(onDismiss, modifier) {
         SheetTitle(stringResource(R.string.player_tracks))
         ListSectionLabel(stringResource(R.string.player_audio), Modifier.padding(start = 4.dp))
         if (plan.playMethod == PlayMethod.DirectPlay) {
@@ -93,7 +99,10 @@ fun TrackSheet(
                 )
             }
         }
-        ListSectionLabel(stringResource(R.string.player_subtitles), Modifier.padding(start = 4.dp, top = 8.dp))
+        ListSectionLabel(
+            stringResource(R.string.player_subtitles),
+            Modifier.padding(start = 4.dp, top = 8.dp),
+        )
         SubtitleRows(plan, engine, player, locale, onTranscodeStreams)
     }
 }
@@ -155,7 +164,12 @@ private fun SubtitleTrack.toOption(selected: Boolean) = TrackOption(
 
 private fun serverSubtitleCodec(codec: String): String = when {
     codec.contains("pgs", ignoreCase = true) -> "PGS"
-    codec.contains("dvd", ignoreCase = true) || codec.contains("vobsub", ignoreCase = true) -> "VobSub"
+
+    codec.contains(
+        "dvd",
+        ignoreCase = true,
+    ) || codec.contains("vobsub", ignoreCase = true) -> "VobSub"
+
     else -> codec.uppercase(Locale.ROOT)
 }
 
@@ -189,8 +203,13 @@ private fun subtitleDetail(entry: SubtitleEntry): String? = listOfNotNull(
 
 /** Auto, then each level that really shrinks the file, highest first. Closes on a choice. */
 @Composable
-fun QualitySheet(quality: QualityState, onChoose: (QualityChoice) -> Unit, onDismiss: () -> Unit) {
-    PlayerSheet(onDismiss) {
+fun QualitySheet(
+    quality: QualityState,
+    onChoose: (QualityChoice) -> Unit,
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    PlayerSheet(onDismiss, modifier) {
         SheetTitle(stringResource(R.string.player_quality))
         CheckedSheetRow(
             title =
@@ -213,8 +232,13 @@ fun QualitySheet(quality: QualityState, onChoose: (QualityChoice) -> Unit, onDis
 }
 
 @Composable
-fun levelShortName(level: QualityLevel): String =
-    if (level == QualityLevel.Original) stringResource(R.string.player_original) else level.shortName
+fun levelShortName(level: QualityLevel): String = if (level ==
+    QualityLevel.Original
+) {
+    stringResource(R.string.player_original)
+} else {
+    level.shortName
+}
 
 @Composable
 fun levelLabel(level: QualityLevel, sourceBitrate: Long?): String {

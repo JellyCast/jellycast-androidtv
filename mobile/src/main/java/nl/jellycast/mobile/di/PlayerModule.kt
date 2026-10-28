@@ -10,7 +10,7 @@ import nl.jellycast.mobile.feature.player.ServerPlaybackReports
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.factoryOf
 import org.koin.core.module.dsl.singleOf
-import org.koin.core.module.dsl.viewModelOf
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 /** Owner: the player worker. */
@@ -19,5 +19,20 @@ val playerModule =
         singleOf(::DefaultMediaSourceRepository) { bind<MediaSourceRepository>() }
         factoryOf(::TranscodePreparer) { bind<TranscodePlanner>() }
         singleOf(::ServerPlaybackReports) { bind<PlaybackReports>() }
-        viewModelOf(::NowPlayingViewModel)
+        viewModel {
+            NowPlayingViewModel(
+                planner = get(),
+                transcoder = get(),
+                sources = get(),
+                settingsStore = get(),
+                library = get(),
+                store = get(),
+                preferences = get(),
+                connectivity = get(),
+                reports = get(),
+                // Bound by the downloads area; the player streams when they are absent.
+                localDownloads = getOrNull(),
+                offlinePositions = getOrNull(),
+            )
+        }
     }

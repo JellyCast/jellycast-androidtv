@@ -2,6 +2,7 @@ package nl.jellycast.mobile.feature.player
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import java.io.File
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,6 +13,7 @@ import nl.jellycast.core.data.repository.LibraryRepository
 import nl.jellycast.core.data.repository.MediaSourceRepository
 import nl.jellycast.core.data.repository.MediaSourceSummary
 import nl.jellycast.core.model.MediaSegment
+import nl.jellycast.core.model.PlayMethod
 import nl.jellycast.core.model.PlayableItem
 import nl.jellycast.core.model.PlaybackPlan
 import nl.jellycast.core.model.StreamChoice
@@ -35,6 +37,8 @@ import nl.jellycast.mobile.core.settings.forNetwork
 import nl.jellycast.mobile.core.settings.pick
 import nl.jellycast.mobile.navigation.PlayQueue
 import nl.jellycast.mobile.navigation.PlayRequest
+import nl.jellycast.mobile.ui.downloads.LocalDownloads
+import nl.jellycast.mobile.ui.downloads.OfflinePositions
 import org.jellyfin.sdk.api.client.exception.ApiClientException
 import timber.log.Timber
 
@@ -60,7 +64,11 @@ class NowPlayingViewModel(
     private val preferences: AppPreferences,
     private val connectivity: Connectivity,
     private val reports: PlaybackReports,
-) : ViewModel() {
+    private val localDownloads: LocalDownloads? = null,
+    private val offlinePositions: OfflinePositions? = null,
+) : ViewModel(),
+    EngineCallbacks,
+    PlayerActions {
     private val _uiState = MutableStateFlow(NowPlayingUiState())
     val uiState: StateFlow<NowPlayingUiState> = _uiState.asStateFlow()
 
@@ -104,15 +112,15 @@ class NowPlayingViewModel(
         play(request.item, startMs, request.streams)
     }
 
-    fun onMinimize() = _uiState.update { it.copy(isExpanded = false) }
+    override fun onMinimize() = _uiState.update { it.copy(isExpanded = false) }
 
-    fun onExpand() = _uiState.update { it.copy(isExpanded = true) }
+    override fun onExpand() = _uiState.update { it.copy(isExpanded = true) }
 
-    fun onMiniPlayerSizeChange(large: Boolean) = _uiState.update {
+    override fun onMiniPlayerSizeChange(large: Boolean) = _uiState.update {
         it.copy(isMiniPlayerLarge = large)
     }
 
-    fun onClose() {
+    override fun onClose() {
         prepareJob?.cancel()
         infoJob?.cancel()
         pickedPreference = null
@@ -120,7 +128,7 @@ class NowPlayingViewModel(
         _uiState.update { NowPlayingUiState(isMiniPlayerLarge = it.isMiniPlayerLarge) }
     }
 
-    fun onPlayNext() {
+    override fun onPlayNext() {
         val state = _uiState.value
         val next = state.nextItem ?: return
         val queue = state.queue?.let { queue ->
@@ -130,18 +138,26 @@ class NowPlayingViewModel(
         play(next, next.resumeStartMs(), streams = null)
     }
 
-    fun onEngineStarted(load: PlaybackLoad) {
-        reports.start(load.plan, load.plan.startPositionMs)
+    override fun onEngineStarted(load: PlaybackLoad) {
+        if (!load.isLocal) reports.start(load.plan, load.plan.startPositionMs)
     }
 
-    fun onProgress(load: PlaybackLoad, positionMs: Long, isPaused: Boolean, streams: StreamChoice?) {
+    override fun onProgress(
+        load: PlaybackLoad,
+        positionMs: Long,
+        isPaused: Boolean,
+        streams: StreamChoice?,
+    ) {
         if (load != _uiState.value.load) return
         lastPositionMs = positionMs
-        reports.progress(load.plan, positionMs, isPaused, streams)
+        if (load.isLocal) {
+            offlinePositions?.record(load.plan.itemId, positionMs, finished = false)
+        } else {
+            reports.progress(load.plan, positionMs, isPaused, streams)
+        }
     }
 
-    /** Called once per load when its engine is released, whatever the reason. */
-    fun onEngineStopped(
+    override fun onEngineStopped(
         load: PlaybackLoad,
         positionMs: Long,
         durationMs: Long,
@@ -151,21 +167,24 @@ class NowPlayingViewModel(
         val plan = load.plan
         val segments = segmentsByItem[plan.itemId].orEmpty()
         val finished = !failed && (ended || segments.isFinishedAt(positionMs, durationMs))
-        reports.stop(plan, positionMs, failed = failed, finished = finished)
+        if (load.isLocal) {
+            offlinePositions?.record(plan.itemId, positionMs, finished)
+        } else {
+            reports.stop(plan, positionMs, failed = failed, finished = finished)
+        }
         store.recordPlayback(plan.itemId, positionMs, finished)
     }
 
-    fun onEnded(load: PlaybackLoad) {
+    override fun onEnded(load: PlaybackLoad) {
         if (load != _uiState.value.load) return
         if (_uiState.value.nextItem != null) onPlayNext() else onClose()
     }
 
-    fun onPlaybackStable() {
+    override fun onPlaybackStable() {
         retryUsed = false
     }
 
-    /** [beforeFirstFrame]: the file never showed a picture, so it "doesn't play here". */
-    fun onPlaybackError(
+    override fun onPlaybackError(
         load: PlaybackLoad,
         failure: PlaybackFailure,
         positionMs: Long,
@@ -182,8 +201,11 @@ class NowPlayingViewModel(
 
             PlaybackRecovery.GiveUp -> {
                 val quality = _uiState.value.quality
-                val viaServer = quality?.lowerLevel?.takeIf { quality.level == QualityLevel.Original }
-                val error = if (beforeFirstFrame) PlayerError.DoesNotPlay else PlayerError.StoppedMidPlay
+                val viaServer = quality?.lowerLevel?.takeIf {
+                    quality.level == QualityLevel.Original
+                }
+                val error =
+                    if (beforeFirstFrame) PlayerError.DoesNotPlay else PlayerError.StoppedMidPlay
                 _uiState.update { it.copy(phase = PlayerPhase.Failed(error, viaServer)) }
                 return
             }
@@ -191,18 +213,18 @@ class NowPlayingViewModel(
         prepare(positionMs)
     }
 
-    fun onRetry() {
+    override fun onRetry() {
         retryUsed = false
         prepare(lastPositionMs)
     }
 
-    fun onPlayViaServer() {
+    override fun onPlayViaServer() {
         val level = (_uiState.value.phase as? PlayerPhase.Failed)?.viaServer ?: return
         pickedPreference = QualityPreference.Fixed(level)
         prepare(lastPositionMs)
     }
 
-    fun onQualityChosen(choice: QualityChoice, positionMs: Long, streams: StreamChoice?) {
+    override fun onQualityChosen(choice: QualityChoice, positionMs: Long, streams: StreamChoice?) {
         val preference =
             when (choice) {
                 QualityChoice.Auto ->
@@ -218,7 +240,7 @@ class NowPlayingViewModel(
     }
 
     /** While transcoding, another track means a new transcode from the same position. */
-    fun onTranscodeStreamsChosen(streams: StreamChoice, positionMs: Long) {
+    override fun onTranscodeStreamsChosen(streams: StreamChoice, positionMs: Long) {
         requestedStreams = streams
         prepare(positionMs)
     }
@@ -250,7 +272,13 @@ class NowPlayingViewModel(
                     _uiState.value.nextItem
                         ?: nextFromServer(item).takeIf { _uiState.value.queue == null }
                 _uiState.update {
-                    if (it.item?.id != item.id) it else it.copy(segments = segments, nextItem = next)
+                    if (it.item?.id !=
+                        item.id
+                    ) {
+                        it
+                    } else {
+                        it.copy(segments = segments, nextItem = next)
+                    }
                 }
             }
     }
@@ -266,6 +294,16 @@ class NowPlayingViewModel(
         prepareJob?.cancel()
         lastPositionMs = startMs
         _uiState.update { it.copy(phase = PlayerPhase.Preparing) }
+        val localFile = localDownloads?.localFile(item.id)
+        if (localFile != null) {
+            val plan = localPlan(item, localFile, startMs)
+            _uiState.update {
+                it.copy(
+                    phase = PlayerPhase.Playing(PlaybackLoad(++lastLoadId, plan, isLocal = true)),
+                )
+            }
+            return
+        }
         prepareJob =
             viewModelScope.launch {
                 val summary = source ?: sources.getSourceSummary(item.id).also { source = it }
@@ -322,7 +360,10 @@ class NowPlayingViewModel(
         val width = summary?.width
         return QualityState(
             preference = preference,
-            level = preference.pick(measuredBitsPerSecond = null, bitrate).resolvedFor(bitrate, width),
+            level = preference.pick(
+                measuredBitsPerSecond = null,
+                bitrate,
+            ).resolvedFor(bitrate, width),
             offered = QualityLevel.offered(bitrate, width),
             sourceBitrate = bitrate,
         )
@@ -339,6 +380,24 @@ class NowPlayingViewModel(
         return nextEpisodeAfter(episode, episodes)?.let(PlayableItem::EpisodeItem)
     }
 }
+
+/** A download plays as is: the player picks its own tracks, `.m3u8` is played as HLS. */
+private fun localPlan(item: PlayableItem, file: File, startMs: Long) = PlaybackPlan(
+    itemId = item.id,
+    title = file.name,
+    mediaSourceId = item.id,
+    playSessionId = null,
+    streamUrl = file.toURI().toString(),
+    playMethod = PlayMethod.DirectPlay,
+    transcodeReasons = emptyList(),
+    container = file.extension,
+    video = null,
+    audioTracks = emptyList(),
+    subtitleTracks = emptyList(),
+    audioStreamIndex = null,
+    subtitleStreamIndex = null,
+    startPositionMs = startMs,
+)
 
 /** In progress resumes; watched or not started plays from the start. */
 internal fun PlayableItem.resumeStartMs(): Long = when (this) {
