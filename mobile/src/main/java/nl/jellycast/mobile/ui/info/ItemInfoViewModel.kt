@@ -6,6 +6,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
@@ -102,8 +103,17 @@ class ItemInfoViewModel(
             buildState(snapshot, source, extras)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ItemInfoUiState(subject))
 
+    private val chosen = MutableStateFlow<InfoTab?>(null)
+
+    /** Kept here, not in the panel, so it outlives the panel when the player turns. */
+    val chosenTab: StateFlow<InfoTab?> = chosen.asStateFlow()
+
     init {
         load()
+    }
+
+    fun onTabChosen(tab: InfoTab) {
+        chosen.value = tab
     }
 
     fun onRetryCast() {

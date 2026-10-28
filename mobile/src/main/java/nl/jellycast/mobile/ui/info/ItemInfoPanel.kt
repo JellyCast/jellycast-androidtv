@@ -85,13 +85,13 @@ fun ItemInfoPanel(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val chatTab = if (isChatAvailable()) listOf(InfoTab.Chat) else emptyList()
     val tabs = state.tabs + chatTab
-    var chosenTab by rememberSaveable(subject) { mutableStateOf<InfoTab?>(null) }
+    val chosenTab by viewModel.chosenTab.collectAsStateWithLifecycle()
     val panel =
         PanelState(
             state = state,
             tabs = tabs,
             currentTab = chosenTab?.takeIf { it in tabs } ?: tabs.first(),
-            onTab = { chosenTab = it },
+            onTab = viewModel::onTabChosen,
             playingItemId = playingItemId,
             playingOn = playingOn,
             inPlayer = header == null || playingItemId != null,
@@ -191,7 +191,6 @@ private fun ColumnPanel(
                 modifier =
                     Modifier
                         .padding(top = 6.dp)
-                        .widthIn(max = layout.textMaxWidth)
                         .onGloballyPositioned { anchor.bar = it },
             )
             InfoTabContent(

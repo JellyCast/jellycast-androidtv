@@ -37,7 +37,6 @@ internal fun InfoTabContent(
 ) {
     val state = panel.state
     val navigation = LocalAppNavigation.current
-    val textWidth = Modifier.widthIn(max = LocalLayout.current.textMaxWidth)
     var drawerTarget by remember { mutableStateOf<ActionTarget?>(null) }
     Box(modifier.fillMaxWidth(), contentAlignment = Alignment.TopStart) {
         when (panel.currentTab) {
@@ -52,7 +51,6 @@ internal fun InfoTabContent(
                     source = state.ratingSource,
                     isEpisode = state.subject is InfoSubject.EpisodeInfo,
                     onRetry = panel.onRetryCast,
-                    modifier = textWidth,
                 )
 
             InfoTab.Related ->
@@ -63,7 +61,7 @@ internal fun InfoTabContent(
                     onSelect = { movie -> openRelated(movie, panel.inPlayer, navigation) },
                 )
 
-            InfoTab.Chat -> ChatTab(state.subject, textWidth)
+            InfoTab.Chat -> ChatTab(state.subject)
         }
     }
     MediaActionDrawer(drawerTarget, onDismiss = { drawerTarget = null }, allowsNavigation = false)
