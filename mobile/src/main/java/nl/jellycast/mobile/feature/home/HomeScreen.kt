@@ -46,7 +46,6 @@ import nl.jellycast.mobile.ui.actions.ActionTarget
 import nl.jellycast.mobile.ui.actions.MediaActionDrawer
 import org.koin.androidx.compose.koinViewModel
 
-private val TopBarHeight = 56.dp
 private val FeaturedButtonInset = 6.dp
 
 /** Home: what to watch now. Built from the cached library, so it shows without the server. */
@@ -106,18 +105,13 @@ internal fun HomeContent(
                         },
                         onTileLongPress = { onShowActions(it.actionTarget) },
                         featuredOverlay = {
-                            if (!isRegular) {
-                                SettingsButton(
-                                    onOpenSettings,
-                                    Modifier.padding(FeaturedButtonInset),
-                                )
-                            }
+                            SettingsButton(onOpenSettings, Modifier.padding(FeaturedButtonInset))
                         },
                     )
                 }
         }
         StatusBarScrim()
-        HomeTopBar(uiState.syncProblem, isRegular, onOpenSettings, onRetry)
+        SyncProblemBar(uiState.syncProblem, onRetry)
     }
 }
 
@@ -180,26 +174,11 @@ private fun RefreshableGrid(
     }
 }
 
-/** On tablets the settings button at the top end; under it the sync problem when there is one. */
 @Composable
-private fun HomeTopBar(
-    problem: SyncProblem?,
-    showsSettings: Boolean,
-    onOpenSettings: () -> Unit,
-    onRetry: () -> Unit,
-) {
+private fun SyncProblemBar(problem: SyncProblem?, onRetry: () -> Unit) {
     var shownProblem by remember { mutableStateOf(problem) }
     if (problem != null) shownProblem = problem
     Column(Modifier.fillMaxWidth().statusBarsPadding()) {
-        if (showsSettings) {
-            Row(
-                Modifier.fillMaxWidth().height(TopBarHeight).padding(horizontal = 8.dp),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                SettingsButton(onOpenSettings)
-            }
-        }
         AnimatedVisibility(
             visible = problem != null,
             enter = slideInVertically { -it } + fadeIn(),
