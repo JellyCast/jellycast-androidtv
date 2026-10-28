@@ -25,3 +25,6 @@ captures/
 
 # Temporary
 screen.png
+
+# Claude Code worktrees of parallel workers
+.claude/worktrees/

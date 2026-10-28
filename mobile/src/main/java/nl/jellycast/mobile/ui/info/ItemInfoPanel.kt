@@ -110,7 +110,7 @@ fun ItemInfoPanel(
 }
 
 @Composable
-private fun rememberItemInfoViewModel(subject: InfoSubject): ItemInfoViewModel {
+internal fun rememberItemInfoViewModel(subject: InfoSubject): ItemInfoViewModel {
     val store: LibraryStore = koinInject()
     val details: DetailRepository = koinInject()
     val preferences: AppPreferences = koinInject()

@@ -30,6 +30,7 @@ import nl.jellycast.mobile.R
 import nl.jellycast.mobile.core.designsystem.component.pressable
 import nl.jellycast.mobile.core.designsystem.theme.JellyCastColors
 import nl.jellycast.mobile.core.designsystem.theme.JellyCastText
+import nl.jellycast.mobile.ui.info.SeriesCast
 
 internal enum class SeriesTab(@StringRes val title: Int) {
     Episodes(R.string.series_tab_episodes),
@@ -102,7 +103,5 @@ internal fun SeriesTabBar(
  */
 @Composable
 internal fun SeriesCastTab(seriesId: String, modifier: Modifier = Modifier) {
-    Box(modifier.fillMaxWidth().heightIn(min = CastPlaceholderHeight))
+    SeriesCast(seriesId, modifier)
 }
-
-private val CastPlaceholderHeight = 120.dp
