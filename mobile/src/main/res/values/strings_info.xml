@@ -1,4 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Owner: the info worker. Every key in all four languages. -->
 <resources>
+    <string name="info_movie_missing">This movie is no longer in the library.</string>
+    <string name="info_tab_episodes">Episodes</string>
+    <string name="info_tab_cast">Cast</string>
+    <string name="info_tab_related">Related</string>
+    <string name="info_tab_chat">Chat</string>
+    <string name="info_cast_failed">The cast couldn\'t be loaded.</string>
+    <string name="info_all_actors">All %1$d actors</string>
+    <string name="info_all_actors_and_guests">All %1$d actors and %2$d guest stars</string>
+    <string name="info_guest_stars">Guest stars</string>
+    <string name="info_makers">Makers</string>
+    <string name="info_directed_by">Directed by</string>
+    <string name="info_written_by">Written by</string>
+    <string name="info_produced_by">Produced by</string>
+    <string name="info_directed_by_episode">Directed by · this episode</string>
+    <string name="info_written_by_episode">Written by · this episode</string>
+    <string name="info_produced_by_series">Produced by · series</string>
+    <string name="info_as_role">as %1$s</string>
+    <string name="info_same_collection">From the same collection</string>
+    <string name="info_nothing_related">Nothing related in the library.</string>
+    <string name="info_playing_now">Playing now</string>
+    <string name="info_playing_on">Playing on %1$s</string>
+    <string name="info_watched">Watched</string>
+    <string name="info_specials">Specials</string>
+    <string name="info_season">Season %1$d</string>
+    <string name="info_season_short">S%1$d</string>
+    <string name="info_mark_watched">Mark as watched</string>
+    <string name="info_mark_not_watched">Mark as not watched</string>
+    <string name="info_add_to_list">Add to list…</string>
+    <string name="info_play">Play</string>
+    <string name="info_continue">Continue</string>
+    <string name="info_nothing_here">Nothing here</string>
+    <string name="info_play_on">Play on…</string>
+    <plurals name="info_seasons">
+        <item quantity="one">%1$d season</item>
+        <item quantity="other">%1$d seasons</item>
+    </plurals>
+    <plurals name="info_age_years">
+        <item quantity="one">%1$d year</item>
+        <item quantity="other">%1$d years</item>
+    </plurals>
 </resources>

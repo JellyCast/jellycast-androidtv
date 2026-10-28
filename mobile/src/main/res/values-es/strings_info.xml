@@ -1,4 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Owner: the info worker. Every key in all four languages. -->
 <resources>
+    <string name="info_movie_missing">Esta película ya no está en la biblioteca.</string>
+    <string name="info_tab_episodes">Episodios</string>
+    <string name="info_tab_cast">Reparto</string>
+    <string name="info_tab_related">Relacionadas</string>
+    <string name="info_tab_chat">Chat</string>
+    <string name="info_cast_failed">No se pudo cargar el reparto.</string>
+    <string name="info_all_actors">Los %1$d actores</string>
+    <string name="info_all_actors_and_guests">Los %1$d actores y %2$d estrellas invitadas</string>
+    <string name="info_guest_stars">Estrellas invitadas</string>
+    <string name="info_makers">Equipo</string>
+    <string name="info_directed_by">Dirección</string>
+    <string name="info_written_by">Guion</string>
+    <string name="info_produced_by">Producción</string>
+    <string name="info_directed_by_episode">Dirección · este episodio</string>
+    <string name="info_written_by_episode">Guion · este episodio</string>
+    <string name="info_produced_by_series">Producción · serie</string>
+    <string name="info_as_role">como %1$s</string>
+    <string name="info_same_collection">De la misma colección</string>
+    <string name="info_nothing_related">Nada relacionado en la biblioteca.</string>
+    <string name="info_playing_now">Reproduciendo</string>
+    <string name="info_playing_on">Reproduciendo en %1$s</string>
+    <string name="info_watched">Visto</string>
+    <string name="info_specials">Especiales</string>
+    <string name="info_season">Temporada %1$d</string>
+    <string name="info_season_short">T%1$d</string>
+    <string name="info_mark_watched">Marcar como visto</string>
+    <string name="info_mark_not_watched">Marcar como no visto</string>
+    <string name="info_add_to_list">Añadir a una lista…</string>
+    <string name="info_play">Reproducir</string>
+    <string name="info_continue">Continuar</string>
+    <string name="info_nothing_here">No hay nada aquí</string>
+    <string name="info_play_on">Reproducir en…</string>
+    <plurals name="info_seasons">
+        <item quantity="one">%1$d temporada</item>
+        <item quantity="many">%1$d temporadas</item>
+        <item quantity="other">%1$d temporadas</item>
+    </plurals>
+    <plurals name="info_age_years">
+        <item quantity="one">%1$d año</item>
+        <item quantity="many">%1$d años</item>
+        <item quantity="other">%1$d años</item>
+    </plurals>
 </resources>
