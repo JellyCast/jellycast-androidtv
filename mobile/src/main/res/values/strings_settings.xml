@@ -1,4 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Owner: the settings worker. Every key in all four languages. -->
 <resources>
+    <string name="settings_brand_first" translatable="false">Jelly</string>
+    <string name="settings_brand_second" translatable="false">Cast</string>
+    <string name="settings_signin_address_placeholder" translatable="false">192.168.1.4:8096</string>
+    <string name="settings_title">Settings</string>
+    <string name="settings_done">Done</string>
+    <string name="settings_back">Back</string>
+    <string name="settings_cancel">Cancel</string>
+    <string name="settings_server">Server</string>
+    <string name="settings_address">Address</string>
+    <string name="settings_signed_in_as">Signed in as</string>
+    <string name="settings_library">Library</string>
+    <string name="settings_movies">Movies</string>
+    <string name="settings_series">Series</string>
+    <string name="settings_episodes">Episodes</string>
+    <string name="settings_updated">Updated</string>
+    <string name="settings_refresh_library">Refresh library</string>
+    <string name="settings_streaming_quality">Streaming quality</string>
+    <string name="settings_network_local">Local network</string>
+    <string name="settings_network_wifi">Wi-Fi</string>
+    <string name="settings_network_cellular">Mobile data</string>
+    <string name="settings_network_none">No network</string>
+    <string name="settings_now_on">Now on</string>
+    <string name="settings_quality_auto">Auto</string>
+    <string name="settings_quality_auto_up_to">Auto, up to %1$s</string>
+    <string name="settings_quality_original">Original</string>
+    <string name="settings_quality_level">%1$s Mbit/s · %2$s</string>
+    <string name="settings_quality_footer">Local network is when the server is on the same network as this phone. Auto measures the connection when playback starts and picks the highest quality that keeps up. Below Original the server converts the video, in SDR.</string>
+    <string name="settings_ratings">Ratings</string>
+    <string name="settings_rating_and_links">Rating and links</string>
+    <string name="settings_ratings_footer_imdb">The IMDb rating of movies and series, with links to IMDb. Descriptions come from IMDb.</string>
+    <string name="settings_ratings_footer_rotten_tomatoes">The Rotten Tomatoes critics’ score, which the server has for movies only. Links search Rotten Tomatoes. Descriptions come from IMDb.</string>
+    <string name="settings_ratings_footer_tmdb">Links to TMDB. The server keeps a TMDB rating for episodes only. Descriptions come from IMDb.</string>
+    <string name="settings_ai_chat">AI chat</string>
+    <string name="settings_off">Off</string>
+    <string name="settings_sign_out">Sign out</string>
+    <string name="settings_version">JellyCast %1$s (%2$d)</string>
+    <string name="settings_chat_service">Service</string>
+    <string name="settings_chat_api_key">API key</string>
+    <string name="settings_chat_key_footer">The key is stored encrypted on this device only. Without a key there is no Chat tab.</string>
+    <string name="settings_chat_change">Change</string>
+    <string name="settings_chat_save_key">Save key</string>
+    <string name="settings_chat_test_key">Test key</string>
+    <string name="settings_chat_remove_key">Remove key</string>
+    <string name="settings_chat_not_accepted">Not accepted</string>
+    <string name="settings_chat_search_web">Search the web</string>
+    <string name="settings_chat_search_web_footer">The model can look things up, such as real events behind the story or news about the cast, and shows its sources. Searches cost a little extra on your API account.</string>
+    <string name="settings_chat_no_spoilers">No spoilers</string>
+    <string name="settings_chat_no_spoilers_footer">The model is told what you have watched so far and instructed not to reveal anything after it.</string>
+    <string name="settings_chat_who_is_who">Who is who?</string>
+    <string name="settings_chat_real_events">Is this based on real events?</string>
+    <string name="settings_chat_previous_episode">What happened in the previous episode?</string>
+    <string name="settings_chat_know_before">What should I know before watching?</string>
+    <string name="settings_chat_spoilers_allowed">Spoilers allowed</string>
+    <string name="settings_chat_no_spoilers_after">No spoilers after %1$s</string>
+    <string name="settings_chat_new_conversation">New conversation</string>
+    <string name="settings_chat_source_note">Answers by %1$s, with the series or movie info from your server. Can be wrong.</string>
+    <string name="settings_chat_thinking">Thinking…</string>
+    <string name="settings_chat_searching">Searching “%1$s”</string>
+    <string name="settings_chat_sites_more">%1$s and %2$d more</string>
+    <string name="settings_chat_reading">Reading %1$s</string>
+    <string name="settings_chat_filtering">Picking out what matters</string>
+    <string name="settings_chat_ask">Ask something about %1$s…</string>
+    <string name="settings_chat_send">Send</string>
+    <string name="settings_chat_try_again">Try again</string>
+    <string name="settings_chat_error_invalid_key">The API key isn’t accepted. Check it under Settings → AI chat.</string>
+    <string name="settings_chat_error_refused">The model won’t answer this question.</string>
+    <string name="settings_chat_error_rate_limited">Too many questions at once. Try again in a moment.</string>
+    <string name="settings_chat_error_unavailable">The service didn’t answer (%1$d). Try again.</string>
+    <string name="settings_chat_error_empty">The answer was empty. Try again.</string>
+    <string name="settings_signin_servers_on_network">Servers on your network</string>
+    <string name="settings_signin_searching">Looking for servers on your network…</string>
+    <string name="settings_signin_none_found">No Jellyfin server found on your network. Enter its address yourself, or search again.</string>
+    <string name="settings_signin_search_again">Search again</string>
+    <string name="settings_signin_current">Current</string>
+    <string name="settings_signin_server_version">%1$s · Jellyfin %2$s</string>
+    <string name="settings_signin_not_responding">%1$s · not responding</string>
+    <string name="settings_signin_server_address">Server address</string>
+    <string name="settings_signin_or_enter_address">Or enter the address</string>
+    <string name="settings_signin_connect">Connect</string>
+    <string name="settings_signin_sign_in_to">Sign in to %1$s</string>
+    <string name="settings_signin_quick_connect_hint">In Jellyfin, open your profile, choose Quick Connect and enter this code.</string>
+    <string name="settings_signin_cancel">Cancel</string>
+    <string name="settings_signin_error_invalid">This is not a valid address.</string>
+    <string name="settings_signin_error_not_jellyfin">No Jellyfin server answers at this address.</string>
+    <string name="settings_signin_error_unreachable">The server can’t be reached right now.</string>
+    <string name="settings_signin_error_offline">You’re offline.</string>
+    <string name="settings_signin_error_version">This server runs Jellyfin %1$s; JellyCast needs 10.11 or newer.</string>
+    <string name="settings_signin_error_qc_disabled">Quick Connect is off on this server. Turn it on in the Jellyfin dashboard.</string>
+    <string name="settings_signin_error_qc_failed">Signing in didn’t work. Try again for a new code.</string>
+    <plurals name="settings_chat_searched">
+        <item quantity="one">Searched the web once</item>
+        <item quantity="other">Searched the web %1$d times</item>
+    </plurals>
+    <plurals name="settings_chat_results">
+        <item quantity="one">%1$d result · %2$s</item>
+        <item quantity="other">%1$d results · %2$s</item>
+    </plurals>
 </resources>
