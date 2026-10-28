@@ -24,6 +24,13 @@ data class MediaTech(
     val hasAtmos: Boolean = false,
 )
 
+/** The ids other sites know the item by; [tmdbCollection] groups the films of one collection. */
+data class ExternalIds(
+    val imdb: String? = null,
+    val tmdb: String? = null,
+    val tmdbCollection: String? = null,
+)
+
 /** Dutch Kijkwijzer age as a number, otherwise the server's code (e.g. "R"). */
 data class AgeRating(val label: String)
 
@@ -52,6 +59,9 @@ data class Movie(
     val spine: Spine,
     val tech: MediaTech,
     val communityRating: Float? = null,
+    /** Rotten Tomatoes score, 0–100. */
+    val criticRating: Float? = null,
+    val externalIds: ExternalIds = ExternalIds(),
 )
 
 data class Series(
@@ -68,6 +78,7 @@ data class Series(
     // In-progress episodes do not count.
     val hasPlayedEpisodes: Boolean = false,
     val communityRating: Float? = null,
+    val externalIds: ExternalIds = ExternalIds(),
 )
 
 data class Episode(
@@ -90,6 +101,8 @@ data class Episode(
     // Continue watching only: when the series was last touched. For a next-up episode that is
     // the previous episode's time.
     val touchedAt: Long? = null,
+    val communityRating: Float? = null,
+    val externalIds: ExternalIds = ExternalIds(),
 )
 
 /** Merely opened (position 0) does not count as started. */

@@ -1,20 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="back">Retour</string>
-    <string name="detail_from_start">Depuis le début</string>
-    <string name="detail_mark_watched">Marquer comme vu</string>
-    <string name="detail_play">Lecture</string>
-    <string name="detail_resume">Reprendre</string>
-    <string name="detail_resume_left">Reprendre · %1$s</string>
-    <string name="detail_watched">Vu</string>
     <string name="duration_hours">%1$d h</string>
     <string name="duration_hours_minutes">%1$d h %2$d min</string>
     <string name="duration_minutes">%1$d min</string>
     <string name="episode_code">S%1$d · É%2$d</string>
     <string name="episode_number">É%1$d</string>
-    <string name="episode_watched">Vu</string>
-    <string name="home_empty">Rien en cours ni de nouveau. Cherche quelque chose dans Films ou Séries.</string>
-    <string name="load_error">Impossible de charger ta bibliothèque. Vérifie la connexion au serveur.</string>
     <string name="login_busy">Connexion…</string>
     <string name="login_change_server">Autre serveur</string>
     <string name="login_connected">Connecté à %1$s · %2$s</string>
@@ -39,14 +30,6 @@
     <string name="player_next_episode">Épisode suivant</string>
     <string name="remaining">encore %1$s</string>
     <string name="retry">Réessayer</string>
-    <string name="row_continue_watching">Reprendre</string>
-    <string name="row_new_movies">Nouveaux films</string>
-    <string name="row_next_up">Épisodes suivants</string>
-    <string name="search_hint">Rechercher un titre</string>
-    <string name="season_number">Saison %1$d</string>
-    <string name="season_specials">Épisodes spéciaux</string>
-    <string name="series_continue">Continuer · %1$s</string>
-    <string name="series_play_first">Lire · %1$s</string>
     <string name="server_address_label">Adresse du serveur</string>
     <string name="server_checking">Connexion…</string>
     <string name="server_connect">Se connecter</string>
@@ -61,13 +44,7 @@
     <string name="server_manual_example">Par exemple 192.168.1.4:8096</string>
     <string name="server_subtitle">Saisissez l\'adresse de votre serveur Jellyfin, par exemple 192.168.1.4 ou http://192.168.1.4:8096.</string>
     <string name="server_title">Connexion à votre serveur</string>
-    <string name="settings_account">Compte</string>
-    <string name="settings_account_on">%1$s sur %2$s</string>
-    <string name="settings_other_server">Autre serveur</string>
-    <string name="settings_sign_out">Se déconnecter</string>
-    <string name="settings_title">Paramètres</string>
-    <string name="settings_version">JellyCast %1$s (%2$d)</string>
     <string name="tab_home">Accueil</string>
-    <string name="tab_movies">Films</string>
-    <string name="tab_series">Séries</string>
+    <string name="tab_library">Bibliothèque</string>
+    <string name="tab_downloads">Téléchargements</string>
 </resources>

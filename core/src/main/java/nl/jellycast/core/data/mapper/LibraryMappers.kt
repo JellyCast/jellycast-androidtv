@@ -5,6 +5,7 @@ import nl.jellycast.core.model.AgeRating
 import nl.jellycast.core.model.Artwork
 import nl.jellycast.core.model.DynamicRange
 import nl.jellycast.core.model.Episode
+import nl.jellycast.core.model.ExternalIds
 import nl.jellycast.core.model.MediaTech
 import nl.jellycast.core.model.Movie
 import nl.jellycast.core.model.Resolution
@@ -68,6 +69,8 @@ fun BaseItemDto.toMovie(images: ImageUrlBuilder, passthroughAudio: Set<String>):
                 hasAtmos = mediaStreams.orEmpty().any { it.isPlayableAtmos(passthroughAudio) },
             ),
         communityRating = communityRating,
+        criticRating = criticRating,
+        externalIds = externalIds(),
     )
 }
 
@@ -84,6 +87,7 @@ fun BaseItemDto.toSeries(images: ImageUrlBuilder): Series = Series(
     isPlayed = userData?.played == true,
     hasPlayedEpisodes = userData?.played == true || (userData?.playedPercentage ?: 0.0) > 0,
     communityRating = communityRating,
+    externalIds = externalIds(),
 )
 
 fun BaseItemDto.toEpisode(images: ImageUrlBuilder): Episode {
@@ -126,6 +130,8 @@ fun BaseItemDto.toEpisode(images: ImageUrlBuilder): Episode {
         lastPlayedAt = userData?.lastPlayedDate?.toEpochMs(),
         addedAt = dateCreated?.toEpochMs(),
         stillUrl = image(images, ImageType.PRIMARY, ImageWidths.LANDSCAPE),
+        communityRating = communityRating,
+        externalIds = externalIds(),
     )
 }
 
@@ -207,3 +213,9 @@ private fun MediaStream.isPlayableAtmos(passthroughAudio: Set<String>): Boolean 
     type == MediaStreamType.AUDIO &&
         audioSpatialFormat == AudioSpatialFormat.DOLBY_ATMOS &&
         codec?.lowercase() in passthroughAudio
+
+internal fun BaseItemDto.externalIds(): ExternalIds = ExternalIds(
+    imdb = providerIds?.get("Imdb")?.takeIf { it.isNotBlank() },
+    tmdb = providerIds?.get("Tmdb")?.takeIf { it.isNotBlank() },
+    tmdbCollection = providerIds?.get("TmdbCollection")?.takeIf { it.isNotBlank() },
+)

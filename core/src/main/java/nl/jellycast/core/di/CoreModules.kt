@@ -132,4 +132,5 @@ private fun playbackModule(devTools: Boolean) = module {
     single { PlayerFactory(androidContext(), get(), enableEventLogging = devTools) }
 }
 
-private const val APP_SCOPE = "appScope"
+/** The app-wide coroutine scope, for work that must outlive a screen. */
+const val APP_SCOPE = "appScope"

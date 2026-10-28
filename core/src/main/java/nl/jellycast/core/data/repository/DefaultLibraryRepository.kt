@@ -507,6 +507,7 @@ private val MovieFields =
         ItemFields.GENRES,
         ItemFields.DATE_CREATED,
         ItemFields.MEDIA_STREAMS,
+        ItemFields.PROVIDER_IDS,
     )
 
 private val SeriesFields =
@@ -517,4 +518,5 @@ private val SeriesFields =
         ItemFields.CHILD_COUNT,
         // Without it the server returns no played percentage per series.
         ItemFields.RECURSIVE_ITEM_COUNT,
+        ItemFields.PROVIDER_IDS,
     )

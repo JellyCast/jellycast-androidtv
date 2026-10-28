@@ -3,20 +3,11 @@
     <!-- Default language (English; see res/resources.properties). Texts shared with the TV app
          keep its wording and translations. See docs/translating.md. -->
     <string name="back">Back</string>
-    <string name="detail_from_start">From the start</string>
-    <string name="detail_mark_watched">Mark as watched</string>
-    <string name="detail_play">Play</string>
-    <string name="detail_resume">Resume</string>
-    <string name="detail_resume_left">Resume · %1$s</string>
-    <string name="detail_watched">Watched</string>
     <string name="duration_hours">%1$d h</string>
     <string name="duration_hours_minutes">%1$d h %2$d min</string>
     <string name="duration_minutes">%1$d min</string>
     <string name="episode_code">S%1$d · E%2$d</string>
     <string name="episode_number">E%1$d</string>
-    <string name="episode_watched">Watched</string>
-    <string name="home_empty">Nothing in progress and nothing new. Find something under Movies or Series.</string>
-    <string name="load_error">Couldn\'t load your library. Check the connection to the server.</string>
     <string name="login_busy">Signing in…</string>
     <string name="login_change_server">Other server</string>
     <string name="login_connected">Connected to %1$s · %2$s</string>
@@ -41,14 +32,6 @@
     <string name="player_next_episode">Next episode</string>
     <string name="remaining">%1$s left</string>
     <string name="retry">Try again</string>
-    <string name="row_continue_watching">Continue watching</string>
-    <string name="row_new_movies">New movies</string>
-    <string name="row_next_up">Next episodes</string>
-    <string name="search_hint">Search for a title</string>
-    <string name="season_number">Season %1$d</string>
-    <string name="season_specials">Specials</string>
-    <string name="series_continue">Continue · %1$s</string>
-    <string name="series_play_first">Play · %1$s</string>
     <string name="server_address_label">Server address</string>
     <string name="server_checking">Connecting…</string>
     <string name="server_connect">Connect</string>
@@ -63,13 +46,7 @@
     <string name="server_manual_example">For example 192.168.1.4:8096</string>
     <string name="server_subtitle">Enter the address of your Jellyfin server, for example 192.168.1.4 or http://192.168.1.4:8096.</string>
     <string name="server_title">Connect to your server</string>
-    <string name="settings_account">Account</string>
-    <string name="settings_account_on">%1$s on %2$s</string>
-    <string name="settings_other_server">Other server</string>
-    <string name="settings_sign_out">Sign out</string>
-    <string name="settings_title">Settings</string>
-    <string name="settings_version">JellyCast %1$s (%2$d)</string>
     <string name="tab_home">Home</string>
-    <string name="tab_movies">Movies</string>
-    <string name="tab_series">Series</string>
+    <string name="tab_library">Library</string>
+    <string name="tab_downloads">Downloads</string>
 </resources>
