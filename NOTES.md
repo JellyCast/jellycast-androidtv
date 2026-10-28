@@ -4,21 +4,16 @@ Decisions, known issues and codec findings. Newest first in each section.
 
 ## Mobile app (2026-10-28)
 
-The project now has three modules: `:core` (everything without UI, shared), `:tv` and `:mobile` (package `nl.jellycast.mobile`, its own app id, so it installs next to the TV app). The mobile app is a first version in Material 3, with the TV app's colors:
+`:mobile` (package `nl.jellycast.mobile`) is a port of the iOS app (`../jellycast-ios`): the same pages, layout and features, with Material 3 instead of iOS controls. Specs of the iOS screens: `mobile/docs/ios-spec-browsing.md` and `mobile/docs/ios-spec-player.md`. Built 2026-10-28 by nine parallel workers on a shared foundation (shell, navigation, design tokens, `LibraryStore`/`LibraryIndex`, stubs per area), then merged.
 
-- Server (discovery + address), sign in with password or Quick Connect code, Home (Continue watching, Next episodes, New movies), Movies and Series (grid with search), movie detail (play, resume, from the start, mark as watched), series page (seasons as chips, episodes as a list), settings (account, other server, sign out).
-- Player: Media3 `PlayerView` with its own touch controls, landscape and full screen, the same plans, fallback chain and reporting as the TV (`PlaybackPreparer`, `recoverFrom`, `PlaybackReporter`), but without display mode switching, tunneling, stall detection or skip/next pills. Next episode is a button in the top bar and starts by itself at the end.
-- Phone: navigation bar at the bottom; from 600 dp wide (tablet, landscape) a navigation rail.
-- Language follows the phone (the TV app defaults to English).
+- Tabs Home, Library, Downloads (each its own back stack); bottom bar on phones, navigation rail on tablets; settings as a full-screen dialog from Home.
+- Library: cached snapshot first, then a full sync of movies, series and episodes; Home rows, Library sections, Continue watching and series progress are computed in the app, as on iOS.
+- Home (hero, Up next, New, Not started), Library (filters, search incl. people, lists), movie and series pages, person page, the shared info panel (Episodes, Cast, Related, Chat), the long-press action drawer, lists (Jellyfin playlists).
+- Player: YouTube-style in portrait with the info panel below, full screen in landscape, double-tap seek, swipe down to the mini player, audio/subtitle and quality sheets, skip and next pills, system PiP. Downloads (Compact and Original, foreground service, offline progress), remote play with the TV apps (TV bar, Play on…, now playing, Android TV remote protocol to wake the Chromecast), AI chat (Claude/ChatGPT, key in the Android Keystore), Quick Connect sign-in with discovery, splash.
 
-Tested 2026-10-28 in the emulator (Pixel API 37), over the VPN (server at `10.8.0.1:8096`, test user "claude", Quick Connect approved with the API key):
+Checked 2026-10-28 in the emulator over the VPN (`adb reverse` to a local proxy, because the emulator NAT drops VPN connections): Home, Library, movie and series pages, the player layout and the mini player, Downloads, Settings. Fixed there: the app stayed offline after one failed server check at launch.
 
-- Works: server address, Quick Connect sign in, sign out, Home (Continue watching with progress, New movies), Movies grid, search ("oppen" → Oppenheimer), movie detail (backdrop, logo, metadata, buttons, description), starting playback: full screen landscape, plan requested (direct play for H.264, transcode for 4K HDR10 because the emulator has no 10-bit HEVC), fallback chain (retry → transcode → error screen), stop reports at the right position.
-- Not tested: actual video frames. The emulator's decoders (`c2.goldfish.h264/hevc`) fail on every stream (`ERROR_CODE_DECODING_FAILED`, also H.264 720p direct play), so playback needs a real device. Also untested: series page, settings screen, tablet layout with content.
-- The emulator's network over the Mac's VPN drops connections (raw `nc`: 1 of 3 identical requests answered), so Home sometimes kept loading for minutes. Seen in the app, not on the Mac (0.03 s). Because of it, Home now loads each part on its own: the rows show as soon as their small requests are back, Movies and Series have their own loading state.
-- Fixed: the player's top bar showed the file name; it now shows the title ("Friends · S9 · E1 · …").
-
-Open for the mobile app: images come in the TV sizes (posters 240 px wide, a bit soft on a phone grid); no skeletons yet (spinner); no picture-in-picture, background audio, downloads or casting; no remote control of the TV from the phone.
+Not checked yet: video frames (the emulator's decoders fail on every stream; needs a real device), downloads end to end, PiP, pairing and waking the Chromecast, the AI chat with a real key, tablet layouts with content.
 
 ## Status (2026-10-25)
 

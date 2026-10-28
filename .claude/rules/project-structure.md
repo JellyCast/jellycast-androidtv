@@ -60,9 +60,15 @@ tv/src/main/res/
   drawable-xhdpi/banner.png              # 320×180, with the app name in the image
   xml/network_security_config.xml        # cleartext for the LAN only
 
-mobile/src/main/java/nl/jellycast/mobile/   # :mobile, phone and tablet app (Material 3), same tree as :tv
-  di/ navigation/ core/designsystem/ core/ui/
-  feature/ server/ login/ home/ (Home, Movies, Series tabs) detail/ series/ player/ settings/
+mobile/src/main/java/nl/jellycast/mobile/   # :mobile, phone and tablet app (Material 3), a port of the iOS app
+  navigation/                 # AppNavigation (tabs, back stacks, play/add-to-list requests), MainShell, routes
+  di/                         # one Koin module per area
+  core/designsystem/          # iOS tokens (JellyCastColors, JellyCastText), LayoutMetrics, shared components
+  core/library/               # LibraryStore (cache + sync), LibraryIndex (derived lists)
+  core/network/ core/settings/ core/downloads/ core/remote/ core/chat/
+  ui/                         # pieces several screens share: info panel, action drawer, downloads, remote, chat
+  feature/                    # home, library, lists, movie, person, series, player, downloads, remote, settings, signin, splash
+mobile/docs/                  # specs of the iOS screens the port follows
 ```
 ## File rules
 
