@@ -198,6 +198,46 @@ class LibraryMappersTest {
     }
 
     @Test
+    fun `critic rating and external ids are mapped, blank ids are dropped`() {
+        val movie =
+            BaseItemDto(
+                id = movieId,
+                type = BaseItemKind.MOVIE,
+                criticRating = 91f,
+                communityRating = 7.8f,
+                providerIds =
+                    mapOf("Imdb" to "tt0816692", "Tmdb" to "157336", "TmdbCollection" to " "),
+            ).toMovie(images, chromecastPassthrough)
+
+        assertEquals(91f, movie.criticRating)
+        assertEquals(7.8f, movie.communityRating)
+        assertEquals("tt0816692", movie.externalIds.imdb)
+        assertEquals("157336", movie.externalIds.tmdb)
+        assertNull(movie.externalIds.tmdbCollection)
+    }
+
+    @Test
+    fun `an episode carries its series poster`() {
+        val seriesId = UUID.fromString("88ad1464-e02c-fe27-a50f-490bfe3d13b0")
+        val episode =
+            BaseItemDto(
+                id = movieId,
+                type = BaseItemKind.EPISODE,
+                seriesId = seriesId,
+                seriesPrimaryImageTag = "sp",
+            ).toEpisode(images)
+
+        assertEquals("img/88ad1464e02cfe27a50f490bfe3d13b0/Primary/sp/240", episode.artwork.poster)
+    }
+
+    @Test
+    fun `an episode without a series poster tag has no poster`() {
+        val episode = BaseItemDto(id = movieId, type = BaseItemKind.EPISODE).toEpisode(images)
+
+        assertNull(episode.artwork.poster)
+    }
+
+    @Test
     fun `an episode without a series thumb uses the still`() {
         val episode =
             BaseItemDto(
