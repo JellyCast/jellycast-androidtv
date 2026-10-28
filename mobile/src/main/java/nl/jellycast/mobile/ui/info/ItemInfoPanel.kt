@@ -93,7 +93,7 @@ fun ItemInfoPanel(
             onTab = { chosenTab = it },
             playingItemId = playingItemId,
             playingOn = playingOn,
-            inPlayer = header == null,
+            inPlayer = header == null || playingItemId != null,
             onRetryCast = viewModel::onRetryCast,
         )
     val layout = LocalLayout.current
@@ -175,7 +175,7 @@ private fun ColumnPanel(
         ) {
             InfoSummary(
                 panel.state,
-                showsTitle = header == null,
+                showsTitle = panel.inPlayer,
                 actions = actions,
                 modifier = Modifier.widthIn(max = layout.textMaxWidth),
             )
@@ -217,7 +217,7 @@ private fun SplitPanel(
             header?.invoke()
             InfoSummary(
                 panel.state,
-                showsTitle = header == null,
+                showsTitle = panel.inPlayer,
                 actions = actions,
                 modifier =
                     Modifier
