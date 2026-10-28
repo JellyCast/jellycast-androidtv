@@ -38,6 +38,9 @@ dependencies {
     api(libs.coil)
     api(libs.coil.network.okhttp)
 
+    api(platform(libs.koin.bom))
+    api(libs.koin.android)
+
     api(libs.timber)
     // The Jellyfin SDK logs via SLF4J and crashes on Android without an implementation.
     implementation(libs.slf4j.timber)
@@ -45,4 +48,6 @@ dependencies {
     testImplementation(project(":core-testing"))
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.koin.test)
+    testImplementation(libs.koin.test.junit4)
 }
