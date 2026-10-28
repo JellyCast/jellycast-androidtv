@@ -10,18 +10,15 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.NavigationBarItemDefaults
-import androidx.compose.material3.NavigationRail
-import androidx.compose.material3.NavigationRailItem
+import androidx.compose.material3.NavigationItemIconPosition
+import androidx.compose.material3.ShortNavigationBar
+import androidx.compose.material3.ShortNavigationBarArrangement
+import androidx.compose.material3.ShortNavigationBarItem
+import androidx.compose.material3.ShortNavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -43,6 +40,7 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import nl.jellycast.mobile.R
 import nl.jellycast.mobile.core.designsystem.theme.JellyCastColors
+import nl.jellycast.mobile.core.designsystem.theme.LocalLayout
 import nl.jellycast.mobile.core.library.LibraryStore
 import nl.jellycast.mobile.feature.downloads.DownloadedSeriesScreen
 import nl.jellycast.mobile.feature.downloads.DownloadsScreen
@@ -157,30 +155,37 @@ private val TabItems =
 
 @Composable
 private fun TabBar(navigation: AppNavigation) {
-    NavigationBar(containerColor = JellyCastColors.Surface) {
-        // On a tablet the three tabs stay together in the middle instead of spreading out.
-        Row(
-            Modifier.fillMaxWidth().wrapContentWidth().widthIn(max = TabBarMaxWidth),
-        ) {
-            TabItems.forEach { item ->
-                NavigationBarItem(
-                    selected = navigation.tab == item.tab,
-                    onClick = { navigation.select(item.tab) },
-                    icon = { Icon(painterResource(item.icon), contentDescription = null) },
-                    label = { Text(stringResource(item.label)) },
-                    colors =
-                        NavigationBarItemDefaults.colors(
-                            selectedIconColor = JellyCastColors.Accent,
-                            selectedTextColor = JellyCastColors.Accent,
-                            indicatorColor = JellyCastColors.Rail,
-                        ),
-                )
-            }
+    // On a tablet the three tabs stay together in the middle, icon beside the label.
+    val wide = LocalLayout.current.isRegular
+    val arrangement =
+        if (wide) {
+            ShortNavigationBarArrangement.Centered
+        } else {
+            ShortNavigationBarArrangement.EqualWeight
+        }
+    val iconPosition =
+        if (wide) NavigationItemIconPosition.Start else NavigationItemIconPosition.Top
+    ShortNavigationBar(
+        containerColor = JellyCastColors.Surface,
+        arrangement = arrangement,
+    ) {
+        TabItems.forEach { item ->
+            ShortNavigationBarItem(
+                selected = navigation.tab == item.tab,
+                onClick = { navigation.select(item.tab) },
+                icon = { Icon(painterResource(item.icon), contentDescription = null) },
+                label = { Text(stringResource(item.label)) },
+                iconPosition = iconPosition,
+                colors =
+                    ShortNavigationBarItemDefaults.colors(
+                        selectedIconColor = JellyCastColors.Accent,
+                        selectedTextColor = JellyCastColors.Accent,
+                        selectedIndicatorColor = JellyCastColors.Rail,
+                    ),
+            )
         }
     }
 }
-
-private val TabBarMaxWidth = 520.dp
 
 private const val SCREEN_FADE_MS = 200
 
