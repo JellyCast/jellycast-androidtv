@@ -25,6 +25,7 @@ import nl.jellycast.mobile.R
 import nl.jellycast.mobile.core.designsystem.component.ContentErrorView
 import nl.jellycast.mobile.core.designsystem.component.GlassCircleButton
 import nl.jellycast.mobile.core.designsystem.component.RailCircleButton
+import nl.jellycast.mobile.core.designsystem.theme.DetailBackButtonTop
 import nl.jellycast.mobile.core.designsystem.theme.JellyCastColors
 import nl.jellycast.mobile.core.designsystem.theme.JellyCastTheme
 import nl.jellycast.mobile.navigation.LocalAppNavigation
@@ -95,7 +96,10 @@ private fun MovieContent(
             icon = R.drawable.ic_arrow_back,
             contentDescription = stringResource(R.string.back),
             onClick = onBack,
-            modifier = Modifier.statusBarsPadding().padding(start = 12.dp, top = 8.dp),
+            modifier = Modifier.statusBarsPadding().padding(
+                start = 12.dp,
+                top = DetailBackButtonTop,
+            ),
         )
     }
 }

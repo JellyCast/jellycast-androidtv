@@ -26,6 +26,7 @@ import nl.jellycast.core.model.Series
 import nl.jellycast.mobile.R
 import nl.jellycast.mobile.core.designsystem.component.ContentErrorView
 import nl.jellycast.mobile.core.designsystem.component.GlassCircleButton
+import nl.jellycast.mobile.core.designsystem.theme.DetailBackButtonTop
 import nl.jellycast.mobile.core.designsystem.theme.JellyCastColors
 import nl.jellycast.mobile.core.designsystem.theme.JellyCastTheme
 import nl.jellycast.mobile.core.designsystem.theme.LocalLayout
@@ -149,7 +150,10 @@ internal fun SeriesContent(
             icon = R.drawable.ic_arrow_back,
             contentDescription = stringResource(R.string.back),
             onClick = actions.onBack,
-            modifier = Modifier.statusBarsPadding().padding(start = 12.dp, top = 6.dp),
+            modifier = Modifier.statusBarsPadding().padding(
+                start = 12.dp,
+                top = DetailBackButtonTop,
+            ),
         )
     }
 }

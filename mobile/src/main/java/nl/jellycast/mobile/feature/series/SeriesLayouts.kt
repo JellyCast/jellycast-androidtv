@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import nl.jellycast.core.model.progress
 import nl.jellycast.mobile.R
+import nl.jellycast.mobile.core.designsystem.theme.DetailTabBarTop
 import nl.jellycast.mobile.core.designsystem.theme.LocalLayout
 import nl.jellycast.mobile.core.ui.episodeCode
 import nl.jellycast.mobile.ui.chat.ChatTab
@@ -146,7 +147,7 @@ internal fun SeriesSplitLayout(
                 modifier =
                     Modifier
                         .padding(horizontal = SplitPadding)
-                        .padding(top = SummaryTop + topInset, bottom = 8.dp),
+                        .padding(top = DetailTabBarTop + topInset, bottom = 8.dp),
             )
             LazyColumn(
                 Modifier.weight(1f),

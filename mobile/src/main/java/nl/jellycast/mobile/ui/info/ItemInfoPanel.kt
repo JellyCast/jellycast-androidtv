@@ -41,6 +41,7 @@ import kotlin.math.roundToInt
 import kotlinx.coroutines.launch
 import nl.jellycast.core.data.repository.DetailRepository
 import nl.jellycast.core.model.GenreNames
+import nl.jellycast.mobile.core.designsystem.theme.DetailTabBarTop
 import nl.jellycast.mobile.core.designsystem.theme.LocalLayout
 import nl.jellycast.mobile.core.library.LibraryStore
 import nl.jellycast.mobile.core.settings.AppPreferences
@@ -211,12 +212,12 @@ private fun SplitPanel(
     leadingWidth: Dp,
 ) {
     val layout = LocalLayout.current
-    // The Back button floats over the header only, so the tabs beside it need just the status bar.
-    val clearance =
+    // On a detail page the tabs line up with the Back button floating over the header.
+    val tabBarTop =
         if (header != null && !panel.inPlayer) {
-            WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+            WindowInsets.statusBars.asPaddingValues().calculateTopPadding() + DetailTabBarTop
         } else {
-            0.dp
+            18.dp
         }
     Row(Modifier.fillMaxSize()) {
         Column(Modifier.width(leadingWidth).fillMaxHeight().verticalScroll(rememberScrollState())) {
@@ -239,7 +240,7 @@ private fun SplitPanel(
                 modifier =
                     Modifier
                         .padding(horizontal = SPLIT_TRAILING_PADDING)
-                        .padding(top = 18.dp + clearance, bottom = 8.dp),
+                        .padding(top = tabBarTop, bottom = 8.dp),
             )
             val scroll = rememberScrollState()
             Column(

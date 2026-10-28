@@ -71,3 +71,9 @@ fun ProvideLayoutMetrics(content: @Composable () -> Unit) {
  */
 @Composable
 fun windowHeight(): Dp = LocalConfiguration.current.screenHeightDp.dp
+
+/** The floating Back button on detail pages sits this far below the status bar. */
+val DetailBackButtonTop = 8.dp
+
+/** A 40 dp tab bar beside the 44 dp Back button, centred on the same line. */
+val DetailTabBarTop = DetailBackButtonTop + 2.dp
