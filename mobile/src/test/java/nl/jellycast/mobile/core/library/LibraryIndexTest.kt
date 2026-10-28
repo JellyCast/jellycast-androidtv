@@ -139,7 +139,7 @@ class LibraryIndexTest {
     }
 
     @Test
-    fun `continue watching puts the most recent first and counts a newer episode by when it came`() {
+    fun `continue watching is most recent first, a newer episode counts from when it came`() {
         val index =
             index(
                 movies =
