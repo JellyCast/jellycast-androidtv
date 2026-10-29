@@ -1,5 +1,6 @@
 package nl.jellycast.mobile.core.remote
 
+import javax.net.ssl.SSLHandshakeException
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
@@ -219,6 +220,44 @@ class RemoteSessionsTest {
         remote.wakeAndPlay(PairedTv("device-1", "10.0.0.1", "TV"), "abc", 0, null)
 
         assertTrue(remote.state.value.commandFailed)
+    }
+
+    @Test
+    fun `a paired TV that refuses this phone plays through the server and asks to pair again`() =
+        runTest {
+            deviceStore.saved =
+                SavedRemoteDevices(paired = listOf(PairedTv("device-1", "10.0.0.1", "TV")))
+            link.failWake = true
+            link.wakeError = SSLHandshakeException("certificate unknown")
+            val remote = remote()
+            remote.refresh()
+
+            remote.launchPlay(testRemoteDevice(), "abc", 5_000, null)
+            advanceTimeBy(BACKGROUND_WORK_MS)
+            runCurrent()
+
+            assertEquals(
+                RemoteCommand.Play("abc", 5_000, StreamChoice(null, null)) to "session-1",
+                api.sent.first(),
+            )
+            assertTrue(remote.state.value.paired.single().needsPairing)
+            assertNull(remote.state.value.wakeableTv("device-1"))
+            assertFalse(remote.state.value.commandFailed)
+        }
+
+    @Test
+    fun `a TV to pair again is offered while its JellyCast is closed, not woken`() = runTest {
+        deviceStore.saved =
+            SavedRemoteDevices(
+                paired = listOf(PairedTv("device-1", "10.0.0.1", "TV", needsPairing = true)),
+            )
+        link.reachableHosts += "10.0.0.1"
+        val remote = remote()
+        remote.refresh()
+        remote.checkReachability()
+
+        assertTrue(remote.state.value.wakeableTvs.isEmpty())
+        assertEquals(listOf("device-1"), remote.state.value.tvsToPairAgain.map { it.deviceId })
     }
 
     @Test

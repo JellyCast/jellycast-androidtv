@@ -11,6 +11,7 @@ import java.security.KeyFactory
 import java.security.KeyPairGenerator
 import java.security.KeyStore
 import java.security.PrivateKey
+import java.security.SecureRandom
 import java.security.Signature
 import java.security.cert.CertificateFactory
 import java.security.cert.X509Certificate
@@ -31,6 +32,9 @@ class ClientIdentity(val privateKey: PrivateKey, val certificate: X509Certificat
 
 fun interface ClientIdentitySource {
     suspend fun load(): ClientIdentity
+
+    /** Replaces a certificate other devices share before pairing again; its pairings end. */
+    suspend fun renewIfShared() {}
 }
 
 /** Seals the private key at rest; on the phone with a key that never leaves the Keystore. */
@@ -55,6 +59,15 @@ class FileClientIdentitySource(
 
     override suspend fun load(): ClientIdentity = mutex.withLock {
         cached ?: withContext(dispatchers.io) { stored() ?: create() }.also { cached = it }
+    }
+
+    override suspend fun renewIfShared() = mutex.withLock {
+        withContext(dispatchers.io) {
+            val current = cached ?: stored()
+            if (current?.certificate?.subjectX500Principal?.name == "CN=$SHARED_COMMON_NAME") {
+                cached = create()
+            }
+        }
     }
 
     private fun stored(): ClientIdentity? {
@@ -89,10 +102,22 @@ class FileClientIdentitySource(
     }
 }
 
-fun generateClientIdentity(now: Date): ClientIdentity {
+/** A name and serial number of its own: the Chromecast kept only the last device with the same. */
+fun generateClientIdentity(now: Date, random: SecureRandom = SecureRandom()): ClientIdentity {
     val keys = KeyPairGenerator.getInstance(RSA).apply { initialize(KEY_BITS) }.generateKeyPair()
     val validUntil = Date(now.time + VALIDITY_MS)
-    val tbs = Der.tbsCertificate(COMMON_NAME, keys.public.encoded, now, validUntil)
+    val serialNumber = ByteArray(SERIAL_NUMBER_BYTES).also(random::nextBytes)
+    serialNumber[0] = (serialNumber[0].toInt() and POSITIVE_MASK or NONZERO_BIT).toByte()
+    val suffix = ByteArray(NAME_SUFFIX_BYTES).also(random::nextBytes)
+        .joinToString("") { "%02X".format(it) }
+    val tbs =
+        Der.tbsCertificate(
+            "$SHARED_COMMON_NAME $suffix",
+            serialNumber,
+            keys.public.encoded,
+            now,
+            validUntil,
+        )
     val signature =
         Signature.getInstance("SHA256withRSA").run {
             initSign(keys.private)
@@ -161,5 +186,11 @@ class AndroidKeystoreSealer : KeySealer {
 
 private const val RSA = "RSA"
 private const val KEY_BITS = 2048
-private const val COMMON_NAME = "JellyCast"
+
+// Every device used to get this name and the same serial number.
+private const val SHARED_COMMON_NAME = "JellyCast"
+private const val SERIAL_NUMBER_BYTES = 16
+private const val NAME_SUFFIX_BYTES = 4
+private const val POSITIVE_MASK = 0x7F
+private const val NONZERO_BIT = 0x40
 private const val VALIDITY_MS = 10L * 365 * 24 * 60 * 60 * 1000

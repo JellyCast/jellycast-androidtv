@@ -26,6 +26,7 @@ import nl.jellycast.mobile.core.remote.SavedRemoteDevices
 import nl.jellycast.mobile.core.remote.androidtv.PairingException
 import nl.jellycast.mobile.core.remote.androidtv.RemoteClientInfo
 import nl.jellycast.mobile.core.remote.androidtv.TvKey
+import nl.jellycast.mobile.core.remote.pairingTarget
 import nl.jellycast.mobile.testing.FakeAndroidTvControl
 import nl.jellycast.mobile.testing.FakeAndroidTvLink
 import nl.jellycast.mobile.testing.FakeAndroidTvPairing
@@ -243,7 +244,7 @@ class RemoteViewModelsTest {
         val remote = remote()
         val viewModel = pairing(remote, fake)
 
-        viewModel.onStart(testRemoteDevice())
+        viewModel.onStart(requireNotNull(testRemoteDevice().pairingTarget()))
         runCurrent()
         assertEquals(PairingPhase.EnterCode, viewModel.uiState.value.phase)
         viewModel.onCodeChange("ABC123")
@@ -260,7 +261,7 @@ class RemoteViewModelsTest {
         val fake = FakeAndroidTvPairing().apply { failWith = PairingException.WrongCode() }
         val viewModel = pairing(remote(), fake)
 
-        viewModel.onStart(testRemoteDevice())
+        viewModel.onStart(requireNotNull(testRemoteDevice().pairingTarget()))
         runCurrent()
         viewModel.onCodeChange("ABC123")
         viewModel.onPair()
@@ -274,7 +275,7 @@ class RemoteViewModelsTest {
         val fake = FakeAndroidTvPairing().apply { failBeforeCode = java.io.IOException("refused") }
         val viewModel = pairing(remote(), fake)
 
-        viewModel.onStart(testRemoteDevice())
+        viewModel.onStart(requireNotNull(testRemoteDevice().pairingTarget()))
         runCurrent()
 
         assertEquals(PairingPhase.Failed(PairingFailure.NoAnswer), viewModel.uiState.value.phase)
@@ -284,7 +285,7 @@ class RemoteViewModelsTest {
     fun `pairing can't start before the code is complete`() = runTest {
         val fake = FakeAndroidTvPairing()
         val viewModel = pairing(remote(), fake)
-        viewModel.onStart(testRemoteDevice())
+        viewModel.onStart(requireNotNull(testRemoteDevice().pairingTarget()))
         runCurrent()
 
         viewModel.onCodeChange("ABC")

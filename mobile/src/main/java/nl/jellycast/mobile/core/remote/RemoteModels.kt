@@ -87,7 +87,18 @@ data class PairedTv(
     val deviceId: String,
     val host: String,
     val name: String,
+    /** The TV no longer accepts this phone's certificate: pair again before it can be woken. */
+    val needsPairing: Boolean = false,
 )
+
+/** A Chromecast to pair: one with JellyCast open, or one paired before whose address is known. */
+data class PairingTarget(val deviceId: String, val host: String, val name: String)
+
+fun RemoteDevice.pairingTarget(): PairingTarget? = address?.let {
+    PairingTarget(deviceId, it, name)
+}
+
+fun PairedTv.pairingTarget(): PairingTarget = PairingTarget(deviceId, host, name)
 
 data class RemoteTrack(val index: Int, val title: String)
 

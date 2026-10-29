@@ -39,6 +39,7 @@ class DefaultAndroidTvPairing(
         onCodeShown: () -> Unit,
         awaitCode: suspend () -> String,
     ) {
+        identity.renewIfShared()
         val client = identity.load()
         TlsChannel.connect(host, PORT, client, dispatchers.io) { channel ->
             channel.send(pairingRequest(clientName))

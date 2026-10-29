@@ -6,6 +6,7 @@ import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class AndroidTvMessagesTest {
@@ -126,11 +127,21 @@ class AndroidTvMessagesTest {
         val identity = generateClientIdentity(Date(0))
 
         identity.certificate.verify(identity.certificate.publicKey)
-        assertEquals("CN=JellyCast", identity.certificate.subjectX500Principal.name)
+        assertTrue(identity.certificate.subjectX500Principal.name.startsWith("CN=JellyCast "))
         val (modulus, exponent) = requireNotNull(identity.certificate.rsaComponents())
         assertEquals(256, modulus.size)
         assertNotEquals(0.toByte(), modulus[0])
         assertArrayEquals(bytes(0x01, 0x00, 0x01), exponent)
+    }
+
+    @Test
+    fun `every client certificate has a name and serial number of its own`() {
+        val first = generateClientIdentity(Date(0)).certificate
+        val second = generateClientIdentity(Date(0)).certificate
+
+        assertNotEquals(first.subjectX500Principal, second.subjectX500Principal)
+        assertNotEquals(first.serialNumber, second.serialNumber)
+        assertTrue(first.serialNumber.signum() > 0)
     }
 
     @Test

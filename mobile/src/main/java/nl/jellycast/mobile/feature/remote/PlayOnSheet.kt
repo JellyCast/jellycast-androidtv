@@ -49,7 +49,9 @@ import nl.jellycast.mobile.core.designsystem.component.SheetTitle
 import nl.jellycast.mobile.core.designsystem.component.pressable
 import nl.jellycast.mobile.core.designsystem.theme.JellyCastColors
 import nl.jellycast.mobile.core.designsystem.theme.JellyCastText
+import nl.jellycast.mobile.core.remote.PairingTarget
 import nl.jellycast.mobile.core.remote.RemoteDevice
+import nl.jellycast.mobile.core.remote.pairingTarget
 import org.koin.compose.viewmodel.koinViewModel
 
 /** What the sheet plays and, for a hand-over, from where. */
@@ -76,13 +78,14 @@ internal fun PlayOnSheetHost(
     viewModel: PlayOnViewModel = koinViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    var pairing by remember { mutableStateOf<RemoteDevice?>(null) }
+    var pairing by remember { mutableStateOf<PairingTarget?>(null) }
     var renaming by remember { mutableStateOf<Pair<String, String>?>(null) }
     LaunchedEffect(Unit) { viewModel.onOpen() }
     val startMs = target.handOffPositionMs ?: target.item.resumeMs()
     val streams = target.handOffStreams
     val devices = state.devices.filter { it.deviceId != target.excludedDeviceId }
     val wakeable = state.wakeableTvs.filter { it.deviceId != target.excludedDeviceId }
+    val toPairAgain = state.tvsToPairAgain.filter { it.deviceId != target.excludedDeviceId }
 
     ModalBottomSheet(onDismissRequest = onDismiss, containerColor = JellyCastColors.Surface) {
         Column(
@@ -119,13 +122,14 @@ internal fun PlayOnSheetHost(
                             },
                         ),
                     icon = R.drawable.ic_tv,
-                    isPaired = device.deviceId in state.pairedDeviceIds,
+                    isPaired = device.deviceId in state.paired,
                     onClick = {
                         onDismiss()
                         onHandOff()
                         viewModel.onPlay(device, target.item.id, startMs, streams)
                     },
                     onRename = { renaming = device.deviceId to device.name },
+                    onPairAgain = { pairing = state.paired[device.deviceId]?.pairingTarget() },
                     onForget = { viewModel.onForget(device.deviceId) },
                 )
             }
@@ -141,6 +145,19 @@ internal fun PlayOnSheetHost(
                         viewModel.onWake(tv, target.item.id, startMs, streams)
                     },
                     onRename = { renaming = tv.deviceId to tv.name },
+                    onPairAgain = { pairing = tv.pairingTarget() },
+                    onForget = { viewModel.onForget(tv.deviceId) },
+                )
+            }
+            toPairAgain.forEach { tv ->
+                DeviceMenuRow(
+                    title = tv.name,
+                    detail = stringResource(R.string.remote_pair_again_detail),
+                    icon = R.drawable.ic_tv,
+                    isPaired = true,
+                    onClick = { pairing = tv.pairingTarget() },
+                    onRename = { renaming = tv.deviceId to tv.name },
+                    onPairAgain = { pairing = tv.pairingTarget() },
                     onForget = { viewModel.onForget(tv.deviceId) },
                 )
             }
@@ -158,7 +175,7 @@ internal fun PlayOnSheetHost(
             }
             SheetNotes(
                 state = state,
-                isEmpty = devices.isEmpty() && wakeable.isEmpty(),
+                isEmpty = devices.isEmpty() && wakeable.isEmpty() && toPairAgain.isEmpty(),
                 onPair = { pairing = it },
             )
         }
@@ -183,7 +200,7 @@ internal fun PlayOnSheetHost(
 private fun SheetNotes(
     state: PlayOnUiState,
     isEmpty: Boolean,
-    onPair: (RemoteDevice) -> Unit,
+    onPair: (PairingTarget) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(14.dp)) {
@@ -221,7 +238,7 @@ private fun Note(text: String) {
     )
 }
 
-/** A device row; holding it offers Rename and, for a paired TV, Forget pairing. */
+/** A device row; holding it offers Rename and, for a paired TV, Pair again and Forget pairing. */
 @Composable
 private fun DeviceMenuRow(
     title: String,
@@ -230,6 +247,7 @@ private fun DeviceMenuRow(
     isPaired: Boolean,
     onClick: () -> Unit,
     onRename: () -> Unit,
+    onPairAgain: () -> Unit,
     onForget: () -> Unit,
 ) {
     var showsMenu by remember { mutableStateOf(false) }
@@ -252,6 +270,14 @@ private fun DeviceMenuRow(
                 },
             )
             if (isPaired) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.remote_pair_again)) },
+                    leadingIcon = { Icon(painterResource(R.drawable.ic_remote_link), null) },
+                    onClick = {
+                        showsMenu = false
+                        onPairAgain()
+                    },
+                )
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.remote_forget_pairing)) },
                     leadingIcon = { Icon(painterResource(R.drawable.ic_remote_link_off), null) },

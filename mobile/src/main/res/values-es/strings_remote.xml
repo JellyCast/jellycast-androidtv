@@ -25,12 +25,14 @@
     <string name="remote_cancel">Cancelar</string>
     <string name="remote_name_this_phone">El nombre solo se usa en este teléfono.</string>
     <string name="remote_forget_pairing">Olvidar vinculación</string>
+    <string name="remote_pair_again">Vincular de nuevo</string>
+    <string name="remote_pair_again_detail">Vincúlala de nuevo para encenderla desde este teléfono</string>
     <string name="remote_pair_explanation">Una sola vez. Después tu teléfono enciende la tele e inicia JellyCast, aunque todo esté en reposo.</string>
     <string name="remote_code_soon">El código aparecerá enseguida en la tele</string>
     <string name="remote_try_again">Reintentar</string>
     <string name="remote_type_code">Escribe el código que aparece ahora en la tele</string>
     <string name="remote_pair">Vincular</string>
-    <string name="remote_no_answer">La tele no responde. ¿Está JellyCast abierto en ella?</string>
+    <string name="remote_no_answer">La tele no respondió. ¿Está encendida y en esta red?</string>
     <string name="remote_wrong_code">Ese código no coincide. Vuelve a intentarlo para obtener uno nuevo.</string>
     <string name="remote_pairing_failed">La vinculación no funcionó. Vuelve a intentarlo para obtener un código nuevo.</string>
     <string name="remote_command_failed">La tele no lo recibió</string>

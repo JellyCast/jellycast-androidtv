@@ -51,11 +51,12 @@ class FakeAndroidTvLink : AndroidTvLink {
     val opened = mutableListOf<Pair<String, String>>()
     val turnedOff = mutableListOf<String>()
     var failWake = false
+    var wakeError = IOException("asleep for good")
 
     override suspend fun isReachable(host: String): Boolean = host in reachableHosts
 
     override suspend fun wakeAndOpen(host: String, link: String) {
-        if (failWake) throw IOException("asleep for good")
+        if (failWake) throw wakeError
         opened += host to link
     }
 

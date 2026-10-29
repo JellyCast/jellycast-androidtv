@@ -25,12 +25,14 @@
     <string name="remote_cancel">Annuleren</string>
     <string name="remote_name_this_phone">De naam geldt alleen op deze telefoon.</string>
     <string name="remote_forget_pairing">Koppeling vergeten</string>
+    <string name="remote_pair_again">Opnieuw koppelen</string>
+    <string name="remote_pair_again_detail">Koppel opnieuw om hem vanaf deze telefoon aan te zetten</string>
     <string name="remote_pair_explanation">Eenmalig. Daarna zet je telefoon de tv aan en start hij JellyCast, ook als alles in standby staat.</string>
     <string name="remote_code_soon">De code verschijnt zo op de tv</string>
     <string name="remote_try_again">Opnieuw proberen</string>
     <string name="remote_type_code">Typ de code die nu op de tv staat</string>
     <string name="remote_pair">Koppelen</string>
-    <string name="remote_no_answer">De tv antwoordt niet. Staat JellyCast erop open?</string>
+    <string name="remote_no_answer">De tv antwoordde niet. Staat hij aan en zit hij op dit netwerk?</string>
     <string name="remote_wrong_code">Die code klopt niet. Probeer opnieuw voor een nieuwe.</string>
     <string name="remote_pairing_failed">Koppelen lukte niet. Probeer opnieuw voor een nieuwe code.</string>
     <string name="remote_command_failed">De tv heeft dat niet ontvangen</string>

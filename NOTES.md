@@ -25,6 +25,8 @@ TV and download pill on tablets (2026-10-29, same change as on the iPad): on a t
 
 Home on a tablet in landscape (2026-10-29, same change as on the iPad): the first tile's image frame reaches down to the lower stacked tile's image, so the images line up at the top and the bottom, with the 16:9 image letterboxed on black. Not checked on the tablet yet.
 
+Chromecast pairing per device (2026-10-29, same fix as on iOS): every device made its remote-protocol certificate with the same name ("JellyCast") and serial number (0x1000), so the Chromecast kept only the device that paired last (found on the iPhone after pairing the iPad). New certificates get a name and random serial of their own (`generateClientIdentity`); a shared one is replaced before pairing again (`renewIfShared`). "Play on" a paired TV with JellyCast open falls back to the server when waking fails, and a TV that refuses the certificate (`SSLException`) stays paired but marked `needsPairing`: "Play on…" shows it with "Pair again", also while its JellyCast is closed (pairing needs only the address), and every paired TV offers Pair again on a long press. Tests: `every client certificate has a name and serial number of its own`, `a paired TV that refuses this phone is forgotten and plays through the server`. Not checked on a device.
+
 Not checked yet: a Compact download (server transcode), pairing and waking the Chromecast from the phone, the AI chat with a real key.
 
 ## Status (2026-10-25)

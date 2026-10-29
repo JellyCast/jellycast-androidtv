@@ -13,7 +13,6 @@ internal object Der {
             byteArrayOf(0xF7.toByte(), 0x0D, 0x01, 0x01, 0x0B)
     private val commonNameOid = byteArrayOf(0x06, 0x03, 0x55, 0x04, 0x03)
     private val nullValue = byteArrayOf(0x05, 0x00)
-    private val serialNumber = byteArrayOf(0x10, 0x00)
 
     private const val TAG_INTEGER = 0x02
     private const val TAG_BIT_STRING = 0x03
@@ -30,6 +29,7 @@ internal object Der {
     /** [subjectPublicKeyInfo] is the key's X.509 encoding (`PublicKey.getEncoded()`). */
     fun tbsCertificate(
         commonName: String,
+        serialNumber: ByteArray,
         subjectPublicKeyInfo: ByteArray,
         validFrom: Date,
         validUntil: Date,

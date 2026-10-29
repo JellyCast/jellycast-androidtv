@@ -26,12 +26,14 @@
     <string name="remote_cancel">Cancel</string>
     <string name="remote_name_this_phone">The name is only used on this phone.</string>
     <string name="remote_forget_pairing">Forget pairing</string>
+    <string name="remote_pair_again">Pair again</string>
+    <string name="remote_pair_again_detail">Pair again to turn it on from this phone</string>
     <string name="remote_pair_explanation">Once. After that your phone turns the TV on and starts JellyCast, even when everything is in standby.</string>
     <string name="remote_code_soon">The code appears on the TV in a moment</string>
     <string name="remote_try_again">Try again</string>
     <string name="remote_type_code">Type the code that is on the TV now</string>
     <string name="remote_pair">Pair</string>
-    <string name="remote_no_answer">The TV didn’t answer. Is JellyCast open on it?</string>
+    <string name="remote_no_answer">The TV didn’t answer. Is it on, and on this network?</string>
     <string name="remote_wrong_code">That code doesn’t match. Try again for a new one.</string>
     <string name="remote_pairing_failed">Pairing didn’t work. Try again for a new code.</string>
     <string name="remote_command_failed">The TV didn’t get that</string>

@@ -48,7 +48,7 @@ import nl.jellycast.mobile.R
 import nl.jellycast.mobile.core.designsystem.component.AccentButton
 import nl.jellycast.mobile.core.designsystem.theme.JellyCastColors
 import nl.jellycast.mobile.core.designsystem.theme.JellyCastText
-import nl.jellycast.mobile.core.remote.RemoteDevice
+import nl.jellycast.mobile.core.remote.PairingTarget
 import org.koin.compose.viewmodel.koinViewModel
 
 private const val DISABLED_ALPHA = 0.45f
@@ -57,13 +57,13 @@ private const val FAINT_ALPHA = 0.12f
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun PairTvSheet(
-    device: RemoteDevice,
+    target: PairingTarget,
     onDismiss: () -> Unit,
-    viewModel: PairTvViewModel = koinViewModel(key = "pair-${device.deviceId}"),
+    viewModel: PairTvViewModel = koinViewModel(key = "pair-${target.deviceId}"),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    DisposableEffect(device.deviceId) {
-        viewModel.onStart(device)
+    DisposableEffect(target.deviceId) {
+        viewModel.onStart(target)
         onDispose { viewModel.onCancel() }
     }
     val dismiss by rememberUpdatedState(onDismiss)
@@ -94,7 +94,7 @@ internal fun PairTvSheet(
                     color = JellyCastColors.TextMuted,
                 )
             }
-            DeviceCard(device)
+            DeviceCard(target)
             when (val phase = state.phase) {
                 PairingPhase.Connecting, PairingPhase.Paired -> Waiting()
 
@@ -114,7 +114,7 @@ internal fun PairTvSheet(
                     )
                     AccentButton(
                         stringResource(R.string.remote_try_again),
-                        onClick = { viewModel.onStart(device) },
+                        onClick = { viewModel.onStart(target) },
                         icon = R.drawable.ic_remote_refresh,
                     )
                 }
@@ -150,7 +150,7 @@ private fun Waiting() {
 private val CardShape = RoundedCornerShape(18.dp)
 
 @Composable
-private fun DeviceCard(device: RemoteDevice) {
+private fun DeviceCard(target: PairingTarget) {
     Row(
         Modifier
             .fillMaxWidth()
@@ -177,12 +177,12 @@ private fun DeviceCard(device: RemoteDevice) {
         }
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(
-                device.name,
+                target.name,
                 style = JellyCastText.Body.copy(fontWeight = FontWeight.SemiBold),
                 color = JellyCastColors.Text,
             )
             Text(
-                listOfNotNull(stringResource(R.string.remote_google_tv), device.address)
+                listOf(stringResource(R.string.remote_google_tv), target.host)
                     .joinToString(" · "),
                 style = JellyCastText.Subheadline,
                 color = JellyCastColors.TextMuted,

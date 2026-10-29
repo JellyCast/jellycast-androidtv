@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import nl.jellycast.mobile.core.remote.PairedTv
-import nl.jellycast.mobile.core.remote.RemoteDevice
+import nl.jellycast.mobile.core.remote.PairingTarget
 import nl.jellycast.mobile.core.remote.RemoteSessions
 import nl.jellycast.mobile.core.remote.androidtv.AndroidTvPairing
 import nl.jellycast.mobile.core.remote.androidtv.PairingException
@@ -52,8 +52,7 @@ class PairTvViewModel(
     private var job: Job? = null
     private var code: CompletableDeferred<String>? = null
 
-    fun onStart(device: RemoteDevice) {
-        val host = device.address ?: return
+    fun onStart(target: PairingTarget) {
         job?.cancel()
         val entered = CompletableDeferred<String>()
         code = entered
@@ -63,12 +62,12 @@ class PairTvViewModel(
                 val phase =
                     try {
                         pairing.pair(
-                            host,
+                            target.host,
                             client.pairingName,
                             onCodeShown = { setPhase(PairingPhase.EnterCode) },
                             awaitCode = { entered.await() },
                         )
-                        remote.addPaired(PairedTv(device.deviceId, host, device.name))
+                        remote.addPaired(PairedTv(target.deviceId, target.host, target.name))
                         PairingPhase.Paired
                     } catch (_: PairingException.WrongCode) {
                         PairingPhase.Failed(PairingFailure.WrongCode)

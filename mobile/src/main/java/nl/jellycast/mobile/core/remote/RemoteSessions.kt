@@ -1,6 +1,7 @@
 package nl.jellycast.mobile.core.remote
 
 import java.io.IOException
+import javax.net.ssl.SSLException
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.CoroutineScope
@@ -57,22 +58,32 @@ data class RemoteState(
                 .filter { tv -> devices.none { it.deviceId == tv.deviceId } }
                 .map { it.copy(name = names[it.deviceId] ?: it.name) }
 
-    val wakeableTvs: List<PairedTv> get() = sleepingTvs.filter { it.deviceId in reachableTvs }
+    val wakeableTvs: List<PairedTv>
+        get() = sleepingTvs.filter { !it.needsPairing && it.deviceId in reachableTvs }
+
+    /** Paired TVs that refused this phone and whose JellyCast isn't open. */
+    val tvsToPairAgain: List<PairedTv> get() = sleepingTvs.filter { it.needsPairing }
+
+    /** The paired TV to wake for this device, unless it has to pair again. */
+    fun wakeableTv(deviceId: String): PairedTv? = pairedTv(deviceId)?.takeUnless { it.needsPairing }
 
     /**
-     * TVs to offer with JellyCast open. A paired one always goes through the remote route,
-     * which needs a direct connection, so it only shows once the probe reached it.
+     * TVs to offer with JellyCast open. A paired one goes through the remote route, which needs
+     * a direct connection, so it only shows once the probe reached it.
      */
     val playableDevices: List<RemoteDevice>
-        get() = devices.filter { !isPaired(it.deviceId) || it.deviceId in reachableTvs }
+        get() = devices.filter { wakeableTv(it.deviceId) == null || it.deviceId in reachableTvs }
 
     /** After the probe: a paired TV that can't be reached from this network. */
     val hasUnreachablePairedTv: Boolean
         get() = hasCheckedReachability && paired.any { it.deviceId !in reachableTvs }
 
-    /** Android TVs with JellyCast open that aren't paired yet. */
+    /** Android TVs with JellyCast open that aren't paired, or have to pair again. */
     val pairableTvs: List<RemoteDevice>
-        get() = devices.filter { it.isAndroidTv && it.address != null && !isPaired(it.deviceId) }
+        get() =
+            devices.filter {
+                it.isAndroidTv && it.address != null && wakeableTv(it.deviceId) == null
+            }
 
     /** Something to offer in "Play on…": a TV with JellyCast open, or one that can be woken. */
     val hasTargets: Boolean get() = devices.isNotEmpty() || paired.isNotEmpty()
@@ -195,26 +206,62 @@ class RemoteSessions(
 
     /** Plays on a TV: a paired one is woken (it may be off while JellyCast is open). */
     fun launchPlay(device: RemoteDevice, itemId: String, startMs: Long, streams: StreamChoice?) {
-        val paired = _state.value.pairedTv(device.deviceId)
-        if (paired != null) return launchWakeAndPlay(paired, itemId, startMs, streams)
+        val paired = _state.value.wakeableTv(device.deviceId)
+        if (paired != null) {
+            return launchWakeAndPlay(
+                paired,
+                itemId,
+                startMs,
+                streams,
+                fallbackSessionId = device.id,
+            )
+        }
         val command = RemoteCommand.Play(itemId, startMs, streams ?: StreamChoice(null, null))
         launchSend(command, device.id)
     }
 
-    fun launchWakeAndPlay(tv: PairedTv, itemId: String, startMs: Long, streams: StreamChoice?) {
-        appScope.launch { wakeAndPlay(tv, itemId, startMs, streams) }
+    fun launchWakeAndPlay(
+        tv: PairedTv,
+        itemId: String,
+        startMs: Long,
+        streams: StreamChoice?,
+        fallbackSessionId: String? = null,
+    ) {
+        appScope.launch { wakeAndPlay(tv, itemId, startMs, streams, fallbackSessionId) }
     }
 
-    suspend fun wakeAndPlay(tv: PairedTv, itemId: String, startMs: Long, streams: StreamChoice?) {
+    /**
+     * With [fallbackSessionId] the TV app is open: when the remote protocol fails, the server
+     * starts it there instead. A TV that refuses this phone's certificate is marked to pair again.
+     */
+    suspend fun wakeAndPlay(
+        tv: PairedTv,
+        itemId: String,
+        startMs: Long,
+        streams: StreamChoice?,
+        fallbackSessionId: String? = null,
+    ) {
         val link =
             remotePlayLink(itemId, startMs, streams?.audioStreamIndex, streams?.subtitleStreamIndex)
         _state.update { it.copy(waking = tv.name) }
-        try {
-            tvLink.wakeAndOpen(tv.host, link)
-        } catch (_: IOException) {
+        val failure =
+            try {
+                tvLink.wakeAndOpen(tv.host, link)
+                null
+            } catch (e: IOException) {
+                e
+            } finally {
+                _state.update { it.copy(waking = null) }
+            }
+        if (failure == null) return
+        if (failure is SSLException) markNeedsPairing(tv.deviceId)
+        if (fallbackSessionId != null) {
+            send(
+                RemoteCommand.Play(itemId, startMs, streams ?: StreamChoice(null, null)),
+                fallbackSessionId,
+            )
+        } else {
             markFailed()
-        } finally {
-            _state.update { it.copy(waking = null) }
         }
     }
 
@@ -236,6 +283,18 @@ class RemoteSessions(
             state.copy(
                 paired = state.paired.filterNot { it.deviceId == tv.deviceId } + tv,
                 reachableTvs = state.reachableTvs + tv.deviceId,
+            )
+        }
+        save()
+    }
+
+    private suspend fun markNeedsPairing(deviceId: String) {
+        _state.update { state ->
+            state.copy(
+                paired =
+                    state.paired.map {
+                        if (it.deviceId == deviceId) it.copy(needsPairing = true) else it
+                    },
             )
         }
         save()

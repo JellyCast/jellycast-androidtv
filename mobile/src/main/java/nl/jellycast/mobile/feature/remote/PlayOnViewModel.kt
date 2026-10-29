@@ -9,25 +9,29 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import nl.jellycast.core.model.StreamChoice
 import nl.jellycast.mobile.core.remote.PairedTv
+import nl.jellycast.mobile.core.remote.PairingTarget
 import nl.jellycast.mobile.core.remote.RemoteDevice
 import nl.jellycast.mobile.core.remote.RemoteSessions
 import nl.jellycast.mobile.core.remote.RemoteState
+import nl.jellycast.mobile.core.remote.pairingTarget
 
 data class PlayOnUiState(
     val devices: List<RemoteDevice> = emptyList(),
     val wakeableTvs: List<PairedTv> = emptyList(),
+    val tvsToPairAgain: List<PairedTv> = emptyList(),
     /** An Android TV with JellyCast open that can be paired. */
-    val pairableTv: RemoteDevice? = null,
+    val pairableTv: PairingTarget? = null,
     val hasUnreachablePairedTv: Boolean = false,
-    val pairedDeviceIds: Set<String> = emptySet(),
+    val paired: Map<String, PairedTv> = emptyMap(),
 )
 
 internal fun RemoteState.toPlayOnUiState() = PlayOnUiState(
     devices = playableDevices,
     wakeableTvs = wakeableTvs,
-    pairableTv = pairableTvs.firstOrNull(),
+    tvsToPairAgain = tvsToPairAgain,
+    pairableTv = pairableTvs.firstNotNullOfOrNull { it.pairingTarget() },
     hasUnreachablePairedTv = hasUnreachablePairedTv,
-    pairedDeviceIds = paired.map { it.deviceId }.toSet(),
+    paired = paired.associateBy { it.deviceId },
 )
 
 /** Where to play: the TVs that take commands, the ones that can be woken, and this phone. */
