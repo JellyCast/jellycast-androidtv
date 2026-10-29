@@ -44,6 +44,7 @@ import nl.jellycast.core.playback.PlaybackTechProvider
 import nl.jellycast.core.playback.PlayerFactory
 import okhttp3.OkHttpClient
 import org.jellyfin.sdk.Jellyfin
+import org.jellyfin.sdk.api.client.ApiClient
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.bind
@@ -74,7 +75,12 @@ private fun networkModule(versionName: String, devTools: Boolean) = module {
     single { createJellyfinInstance(androidContext(), versionName) }
     single { get<Jellyfin>().createApi() }
     singleOf(::JellyfinImageUrlBuilder) { bind<ImageUrlBuilder>() }
-    single { createImageLoader(androidContext(), enableLogging = devTools) }
+    single {
+        val api = get<ApiClient>()
+        createImageLoader(androidContext(), serverAddress = {
+            api.baseUrl
+        }, enableLogging = devTools)
+    }
 }
 
 private val dataModule =

@@ -14,12 +14,12 @@ import nl.jellycast.core.model.Spine
 
 // The on-disk form of a snapshot, apart from the models so a model change can't silently break
 // reading an older file: bump the format version instead.
-internal const val CACHE_FORMAT_VERSION = 1
+internal const val CACHE_FORMAT_VERSION = 2
 
 @Serializable
 internal data class CachedLibrary(
     val formatVersion: Int,
-    val serverUrl: String,
+    val serverId: String,
     val userId: String,
     val syncedAtMs: Long,
     val movies: List<CachedMovie>,
@@ -118,9 +118,9 @@ internal data class CachedEpisode(
     val ids: CachedIds = CachedIds(),
 )
 
-internal fun LibrarySnapshot.toCached(serverUrl: String, userId: String) = CachedLibrary(
+internal fun LibrarySnapshot.toCached(serverId: String, userId: String) = CachedLibrary(
     formatVersion = CACHE_FORMAT_VERSION,
-    serverUrl = serverUrl,
+    serverId = serverId,
     userId = userId,
     syncedAtMs = syncedAtMs,
     movies = movies.map { it.toCached() },

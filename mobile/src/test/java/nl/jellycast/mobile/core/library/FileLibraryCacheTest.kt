@@ -62,7 +62,7 @@ class FileLibraryCacheTest {
         cache.save(TestAccount, snapshot)
 
         assertNull(cache.load(TestAccount.copy(userId = "u2")))
-        assertNull(cache.load(TestAccount.copy(serverUrl = "http://other:8096")))
+        assertNull(cache.load(TestAccount.copy(serverId = "other-server")))
 
         file.writeText("{ not json")
         assertNull(cache.load(TestAccount))

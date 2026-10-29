@@ -28,7 +28,7 @@ class FileLibraryCache(private val file: File, private val io: CoroutineDispatch
                 .decodeFromString(CachedLibrary.serializer(), file.readText())
                 .takeIf {
                     it.formatVersion == CACHE_FORMAT_VERSION &&
-                        it.serverUrl == account.serverUrl &&
+                        it.serverId == account.serverId &&
                         it.userId == account.userId
                 }?.toSnapshot()
         } catch (e: IOException) {
@@ -48,7 +48,7 @@ class FileLibraryCache(private val file: File, private val io: CoroutineDispatch
             val text =
                 CacheJson.encodeToString(
                     CachedLibrary.serializer(),
-                    snapshot.toCached(account.serverUrl, account.userId),
+                    snapshot.toCached(account.serverId, account.userId),
                 )
             // Written next to the old file and renamed, so a crash never leaves half a library.
             val partial = File(file.parentFile, "${file.name}.partial")

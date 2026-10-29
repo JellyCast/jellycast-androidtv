@@ -107,7 +107,11 @@ class DefaultSessionRepository(
 
                     else ->
                         ServerCheckResult.Success(
-                            server = ServerInfo(url = url, name = info.serverName ?: url),
+                            server = ServerInfo(
+                                url = url,
+                                name = info.serverName ?: url,
+                                id = info.id.orEmpty(),
+                            ),
                             version = version,
                         )
                 }
@@ -127,7 +131,11 @@ class DefaultSessionRepository(
 
     override suspend fun saveServer(server: ServerInfo) {
         withContext(dispatchers.io) {
-            store.saveServer(url = server.url, name = server.name)
+            store.saveServer(url = server.url, name = server.name, id = server.id)
+            if (server.id.isNotEmpty()) {
+                val known = store.addresses(server.id).first()
+                if (server.url !in known) store.saveAddresses(server.id, known + server.url)
+            }
             api.update(baseUrl = server.url, accessToken = null)
         }
     }

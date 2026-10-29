@@ -10,7 +10,7 @@ import nl.jellycast.mobile.core.library.LibrarySnapshot
 import nl.jellycast.mobile.core.network.Connectivity
 import nl.jellycast.mobile.core.network.NetworkKind
 
-val TestAccount = LibraryAccount(serverUrl = "http://192.168.1.4:8096", userId = "u1")
+val TestAccount = LibraryAccount(serverId = "server-1", userId = "u1")
 
 /** Returns [content] (or [failure]) from every fetch; [gate] holds a fetch until completed. */
 class FakeLibrarySyncRepository(

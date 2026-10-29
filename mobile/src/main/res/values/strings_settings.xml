@@ -10,6 +10,20 @@
     <string name="settings_cancel">Cancel</string>
     <string name="settings_server">Server</string>
     <string name="settings_address">Address</string>
+    <string name="settings_addresses_example" translatable="false">10.8.0.1:8096</string>
+    <string name="settings_addresses">Addresses</string>
+    <string name="settings_addresses_in_use">In use</string>
+    <string name="settings_addresses_order_footer">JellyCast uses the first address from the top that answers.</string>
+    <string name="settings_addresses_add">Add address</string>
+    <string name="settings_addresses_add_confirm">Add</string>
+    <string name="settings_addresses_add_footer">Add another address of %1$s, for example over your VPN. You stay signed in.</string>
+    <string name="settings_addresses_more">More</string>
+    <string name="settings_addresses_move_up">Move up</string>
+    <string name="settings_addresses_move_down">Move down</string>
+    <string name="settings_addresses_remove">Remove</string>
+    <string name="settings_addresses_not_answering">The server doesn’t answer on this address right now.</string>
+    <string name="settings_addresses_already_listed">This address is already in the list.</string>
+    <string name="settings_addresses_other_server">This address leads to another server: %1$s.</string>
     <string name="settings_signed_in_as">Signed in as</string>
     <string name="settings_library">Library</string>
     <string name="settings_movies">Movies</string>

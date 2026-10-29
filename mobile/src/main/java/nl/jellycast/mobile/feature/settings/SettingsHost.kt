@@ -14,7 +14,8 @@ import org.koin.compose.viewmodel.koinViewModel
 
 /**
  * The settings as a Material full-screen dialog, shown while `AppNavigation.showsSettings` is set
- * (iOS shows a sheet). AI chat opens inside it, with Back returning to the settings.
+ * (iOS shows a sheet). AI chat and the server addresses open inside it, with Back returning to
+ * the settings.
  */
 @Composable
 fun SettingsHost() {
@@ -27,11 +28,22 @@ fun SettingsHost() {
             DialogProperties(usePlatformDefaultWidth = false, decorFitsSystemWindows = false),
     ) {
         var showsAiChat by rememberSaveable { mutableStateOf(false) }
-        BackHandler(enabled = showsAiChat) { showsAiChat = false }
-        if (showsAiChat) {
-            AiChatSettingsScreen(onBack = { showsAiChat = false })
-        } else {
-            SettingsScreen(onOpenAiChat = { showsAiChat = true }, onClose = close)
+        var showsAddresses by rememberSaveable { mutableStateOf(false) }
+        BackHandler(enabled = showsAiChat || showsAddresses) {
+            showsAiChat = false
+            showsAddresses = false
+        }
+        when {
+            showsAiChat -> AiChatSettingsScreen(onBack = { showsAiChat = false })
+
+            showsAddresses -> ServerAddressesScreen(onBack = { showsAddresses = false })
+
+            else ->
+                SettingsScreen(
+                    onOpenAiChat = { showsAiChat = true },
+                    onOpenAddresses = { showsAddresses = true },
+                    onClose = close,
+                )
         }
     }
 }
@@ -39,6 +51,7 @@ fun SettingsHost() {
 @Composable
 private fun SettingsScreen(
     onOpenAiChat: () -> Unit,
+    onOpenAddresses: () -> Unit,
     onClose: () -> Unit,
     viewModel: SettingsViewModel = koinViewModel(),
 ) {
@@ -49,6 +62,7 @@ private fun SettingsScreen(
         onQualityChange = viewModel::onQualityChange,
         onRatingSourceChange = viewModel::onRatingSourceChange,
         onOpenAiChat = onOpenAiChat,
+        onOpenAddresses = onOpenAddresses,
         onSignOut = {
             onClose()
             viewModel.onSignOut()
@@ -75,6 +89,22 @@ private fun AiChatSettingsScreen(
         onRemoveKey = viewModel::onRemoveKey,
         onSearchesWebChange = viewModel::onSearchesWebChange,
         onAvoidsSpoilersChange = viewModel::onAvoidsSpoilersChange,
+        onBack = onBack,
+    )
+}
+
+@Composable
+private fun ServerAddressesScreen(
+    onBack: () -> Unit,
+    viewModel: ServerAddressesViewModel = koinViewModel(),
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    ServerAddressesContent(
+        uiState = uiState,
+        onUse = viewModel::onUse,
+        onAdd = viewModel::onAdd,
+        onMove = viewModel::onMove,
+        onRemove = viewModel::onRemove,
         onBack = onBack,
     )
 }

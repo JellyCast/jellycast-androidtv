@@ -3,8 +3,9 @@ package nl.jellycast.mobile.di
 import java.io.File
 import nl.jellycast.core.common.AppDispatchers
 import nl.jellycast.core.data.repository.DefaultLibrarySyncRepository
-import nl.jellycast.core.data.repository.DefaultServerStatusRepository
+import nl.jellycast.core.data.repository.DefaultServerAddressRepository
 import nl.jellycast.core.data.repository.LibrarySyncRepository
+import nl.jellycast.core.data.repository.ServerAddressRepository
 import nl.jellycast.core.data.repository.ServerStatusRepository
 import nl.jellycast.core.di.APP_SCOPE
 import nl.jellycast.mobile.core.library.DefaultLibraryStore
@@ -23,7 +24,8 @@ import org.koin.dsl.module
 val libraryModule =
     module {
         single<LibrarySyncRepository> { DefaultLibrarySyncRepository(get(), get(), get(), get()) }
-        single<ServerStatusRepository> { DefaultServerStatusRepository(get(), get(), get()) }
+        single { DefaultServerAddressRepository(get(), get(), get(), get()) } binds
+            arrayOf(ServerStatusRepository::class, ServerAddressRepository::class)
         single<LibraryCache> {
             FileLibraryCache(
                 File(androidContext().filesDir, "library.json"),

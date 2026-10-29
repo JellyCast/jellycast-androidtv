@@ -6,7 +6,7 @@ import nl.jellycast.core.model.Movie
 import nl.jellycast.core.model.Series
 
 /** Who the library belongs to; a cached library of another server or user is never shown. */
-data class LibraryAccount(val serverUrl: String, val userId: String)
+data class LibraryAccount(val serverId: String, val userId: String)
 
 /** Everything one user can watch on one server, as one full sync returns it. */
 data class LibraryContent(

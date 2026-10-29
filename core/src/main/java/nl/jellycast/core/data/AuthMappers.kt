@@ -9,7 +9,7 @@ import org.jellyfin.sdk.model.api.ServerDiscoveryInfo
 
 fun StoredSession.toAuthState(): AuthState {
     val url = serverUrl ?: return AuthState.NoServer
-    val server = ServerInfo(url = url, name = serverName ?: url)
+    val server = ServerInfo(url = url, name = serverName ?: url, id = serverId.orEmpty())
     return if (accessToken != null && userId != null) {
         AuthState.LoggedIn(server = server, userName = userName.orEmpty())
     } else {

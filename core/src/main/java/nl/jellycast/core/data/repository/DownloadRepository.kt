@@ -161,7 +161,7 @@ class DefaultDownloadRepository(
     override suspend fun fetchBytes(url: String, timeoutMs: Long): ByteArray =
         withContext(dispatchers.io) {
             val client = http.newBuilder().readTimeout(timeoutMs, TimeUnit.MILLISECONDS).build()
-            execute(client.newCall(authorized(url).build())) { response ->
+            execute(client.newCall(authorized(atAddressInUse(url)).build())) { response ->
                 response.checkSuccess()
                 response.requireBody().bytes()
             }
@@ -246,6 +246,18 @@ class DefaultDownloadRepository(
         } catch (_: IOException) {
             false
         }
+    }
+
+    /** A Compact download keeps its playlist URL; after a switch of address it goes on there. */
+    private suspend fun atAddressInUse(url: String): String {
+        val inUse = api.baseUrl?.trimEnd('/') ?: return url
+        val serverId = store.session.first().serverId ?: return url
+        val old =
+            store.addresses(serverId).first()
+                .map { it.trimEnd('/') }
+                .firstOrNull { it != inUse && url.startsWith("$it/") }
+                ?: return url
+        return inUse + url.removePrefix(old)
     }
 
     private fun authorized(url: String): Request.Builder =

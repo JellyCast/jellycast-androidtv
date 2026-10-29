@@ -52,6 +52,7 @@ fun SettingsContent(
     onQualityChange: (NetworkKind, QualityPreference) -> Unit,
     onRatingSourceChange: (RatingSource) -> Unit,
     onOpenAiChat: () -> Unit,
+    onOpenAddresses: () -> Unit,
     onSignOut: () -> Unit,
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
@@ -78,7 +79,7 @@ fun SettingsContent(
         },
     ) { padding ->
         SettingsColumn(Modifier.padding(padding)) {
-            ServerSection(uiState)
+            ServerSection(uiState, onOpenAddresses)
             LibrarySection(uiState, onRefreshLibrary)
             QualitySection(uiState, onQualityChange)
             downloadsSection()
@@ -133,10 +134,14 @@ internal fun SettingsColumn(modifier: Modifier = Modifier, content: @Composable 
 }
 
 @Composable
-private fun ServerSection(uiState: SettingsUiState) {
+private fun ServerSection(uiState: SettingsUiState, onOpenAddresses: () -> Unit) {
     SettingsSection(title = stringResource(R.string.settings_server)) {
         SettingsRow(stringResource(R.string.settings_server), value = uiState.serverName)
-        SettingsRow(stringResource(R.string.settings_address), supporting = uiState.serverUrl)
+        SettingsRow(
+            stringResource(R.string.settings_address),
+            supporting = addressTitle(uiState.serverUrl),
+            onClick = onOpenAddresses,
+        )
         SettingsRow(stringResource(R.string.settings_signed_in_as), value = uiState.userName)
     }
 }
@@ -316,6 +321,7 @@ private fun SettingsContentPreview() {
             onQualityChange = { _, _ -> },
             onRatingSourceChange = {},
             onOpenAiChat = {},
+            onOpenAddresses = {},
             onSignOut = {},
             onClose = {},
         )

@@ -1,6 +1,7 @@
 package nl.jellycast.core.model
 
-data class ServerInfo(val url: String, val name: String)
+/** [id] is the server's own id; empty when the server wasn't asked (discovery, an old session). */
+data class ServerInfo(val url: String, val name: String, val id: String = "")
 
 /** Never contains the access token. */
 sealed interface AuthState {
