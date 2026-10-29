@@ -125,7 +125,8 @@ internal fun HomeGrid(
 
 /**
  * The first tile over the full width, or in landscape over two columns with [stacked] beside it;
- * its image then fills the height of the stack, so both end on the same line.
+ * its image frame then reaches down to the lower stacked image, so both images end on one line,
+ * with the 16:9 image letterboxed in it.
  */
 @Composable
 private fun FeaturedBlock(
@@ -169,7 +170,8 @@ private fun FeaturedBlock(
             unavailable = featured.itemId in unavailableIds,
             onClick = { onTileClick(featured) },
             onLongPress = { onTileLongPress(featured) },
-            imageHeight = stackHeight - style.textBlockHeight(),
+            imageHeight = stackHeight - tileStyle(isRegular, false).textBlockHeight(),
+            letterboxed = true,
             modifier = Modifier.width(featuredWidth),
         )
         Column(Modifier.width(tileWidth), verticalArrangement = Arrangement.spacedBy(spec.rowGap)) {

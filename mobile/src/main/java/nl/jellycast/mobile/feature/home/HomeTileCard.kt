@@ -104,7 +104,8 @@ internal fun TileStyle.textBlockHeight(): Dp = with(LocalDensity.current) {
 
 /**
  * A 16:9 image with its badges and progress, then one line of title and one of meta, so every
- * tile in a row has the same height. [imageHeight] replaces the 16:9 image height.
+ * tile in a row has the same height. [imageHeight] replaces the 16:9 image height; with
+ * [letterboxed] the image keeps 16:9 inside that frame, on black.
  */
 @Composable
 internal fun HomeTileCard(
@@ -116,6 +117,7 @@ internal fun HomeTileCard(
     onLongPress: () -> Unit,
     modifier: Modifier = Modifier,
     imageHeight: Dp? = null,
+    letterboxed: Boolean = false,
 ) {
     val density = LocalDensity.current
     Column(
@@ -127,6 +129,7 @@ internal fun HomeTileCard(
             tile,
             style,
             imageWidthPx,
+            letterboxed,
             if (imageHeight != null) {
                 Modifier.fillMaxWidth().height(imageHeight)
             } else {
@@ -159,15 +162,22 @@ private fun TileImage(
     tile: HomeTile,
     style: TileStyle,
     imageWidthPx: Int,
+    letterboxed: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val shape = RoundedCornerShape(style.imageRadius)
-    Box(modifier.clip(shape).background(JellyCastColors.Surface)) {
+    val frameColor = if (letterboxed) Color.Black else JellyCastColors.Surface
+    Box(modifier.clip(shape).background(frameColor)) {
         AsyncImage(
             model = tile.imageUrl?.let { withFillWidth(it, imageWidthPx) },
             contentDescription = null,
             contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize(),
+            modifier =
+                if (letterboxed) {
+                    Modifier.align(Alignment.Center).fillMaxWidth().aspectRatio(LANDSCAPE_RATIO)
+                } else {
+                    Modifier.fillMaxSize()
+                },
         )
         tile.label?.let { label ->
             TileLabel(

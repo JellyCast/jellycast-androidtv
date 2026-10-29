@@ -23,6 +23,8 @@ Opening the app (cold start or back to the foreground) while a TV plays opens th
 
 TV and download pill on tablets (2026-10-29, same change as on the iPad): on a tablet the TV bar and the download bar are no longer a bar above the tab bar but a pill at the right end of the tab bar (`TabBarWithPill`, `TvPillContent`, `DownloadPill`), so the space above stays free for the mini player, which can show at the same time. Below 1000 dp wide (portrait) only the still in a progress ring, or the download icon. Phones keep the bar. Compiles, tests, ktlint and lint pass; not checked on the tablet yet (unreachable over adb).
 
+Home on a tablet in landscape (2026-10-29, same change as on the iPad): the first tile's image frame reaches down to the lower stacked tile's image, so the images line up at the top and the bottom, with the 16:9 image letterboxed on black. Not checked on the tablet yet.
+
 Not checked yet: a Compact download (server transcode), pairing and waking the Chromecast from the phone, the AI chat with a real key.
 
 ## Status (2026-10-25)
