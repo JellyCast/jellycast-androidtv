@@ -2,11 +2,13 @@ package nl.jellycast.mobile.feature.remote
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
@@ -68,27 +70,28 @@ fun TvPillContent(
         color = JellyCastColors.Rail,
     ) {
         if (showsTitle) {
-            Box {
-                Row(
-                    Modifier.fillMaxHeight().padding(start = 4.dp, end = 14.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    PillStill(session, Modifier.size(StillWidth, StillHeight))
+            Row(
+                Modifier.fillMaxHeight().padding(start = 4.dp, end = 14.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                PillStill(session, Modifier.size(StillWidth, StillHeight))
+                // Under the title only: across the still it ran into the pill's rounded ends.
+                Box(Modifier.widthIn(max = TitleMaxWidth).width(IntrinsicSize.Max)) {
                     Text(
                         remoteTitle(session.item),
                         style = JellyCastText.Subheadline.copy(fontWeight = FontWeight.SemiBold),
                         color = JellyCastColors.Text,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.widthIn(max = TitleMaxWidth),
+                        modifier = Modifier.padding(bottom = 6.dp),
+                    )
+                    RemoteProgressLine(
+                        progress = { session.progressAt(nowMs) },
+                        height = 2.dp,
+                        modifier = Modifier.align(Alignment.BottomStart),
                     )
                 }
-                RemoteProgressLine(
-                    progress = { session.progressAt(nowMs) },
-                    height = 2.dp,
-                    modifier = Modifier.align(Alignment.BottomCenter).padding(horizontal = 14.dp),
-                )
             }
         } else {
             Box(
