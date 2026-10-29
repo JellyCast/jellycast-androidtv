@@ -114,6 +114,7 @@ fun HomeSuggestionContent(
 
     val shownId = success?.suggestion?.id
     var settledId by remember { mutableStateOf(shownId) }
+    var showsAdReason by remember(shownId) { mutableStateOf(false) }
     var browsed by remember { mutableStateOf(false) }
     LaunchedEffect(shownId) {
         if (browsed) delay(BACKDROP_SETTLE_MS)
@@ -159,7 +160,14 @@ fun HomeSuggestionContent(
         )
         SuggestionColumn(
             uiState = uiState,
-            onPlay = onPlay,
+            showsAdReason = showsAdReason,
+            onPlay = {
+                if (success?.suggestion is Suggestion.AdSuggestion) {
+                    showsAdReason = !showsAdReason
+                } else {
+                    onPlay()
+                }
+            },
             onRetry = onRetry,
             playRequester = playRequester,
         )
@@ -170,6 +178,7 @@ fun HomeSuggestionContent(
 @Composable
 private fun SuggestionColumn(
     uiState: HomeSuggestionUiState,
+    showsAdReason: Boolean,
     onPlay: () -> Unit,
     onRetry: () -> Unit,
     playRequester: FocusRequester,
@@ -178,7 +187,8 @@ private fun SuggestionColumn(
     Column(Modifier.padding(start = Dimens.SafeHorizontal)) {
         Spacer(Modifier.height(Dimens.SectionBarHeight + SuggestionTopGap))
         when (uiState) {
-            is HomeSuggestionUiState.Success -> SuggestionDetails(uiState.suggestion)
+            is HomeSuggestionUiState.Success ->
+                SuggestionDetails(uiState.suggestion, showsAdReason = showsAdReason)
 
             HomeSuggestionUiState.Loading ->
                 if (rememberDelayedVisible()) {
@@ -195,11 +205,19 @@ private fun SuggestionColumn(
             modifier = Modifier.padding(top = 18.dp).stopHorizontalExit(),
             horizontalArrangement = Arrangement.spacedBy(14.dp),
         ) {
+            val isAd = success?.suggestion is Suggestion.AdSuggestion
             val resumes = success?.suggestion?.resumePositionMs()?.let { it > 0 } == true
             PillButton(
-                text = stringResource(if (resumes) R.string.home_resume else R.string.home_play),
+                text =
+                    stringResource(
+                        when {
+                            isAd -> R.string.ad_why_title
+                            resumes -> R.string.home_resume
+                            else -> R.string.home_play
+                        },
+                    ),
                 onClick = onPlay,
-                icon = painterResource(R.drawable.ic_play),
+                icon = if (isAd) null else painterResource(R.drawable.ic_play),
                 isPrimary = true,
                 enabled = success != null,
                 modifier = Modifier.focusRequester(playRequester),

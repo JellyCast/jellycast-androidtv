@@ -37,6 +37,7 @@ tv/src/main/java/nl/jellycast/tv/       # :tv, this app
       component/                # PosterCard, TvRow (row with focus behaviour), PillButton, Backdrop ...
     ui/                         # small shared UI helpers without design (e.g. focus utils)
   feature/
+    consent/                    # UsageConsentScreen: the usage statistics question before the app
     server/                     # ServerScreen: find or enter the server address and check it
     login/                      # LoginScreen: Quick Connect and password
     home/                       # start screen: section bar (Home/Series/Movies/Library), always opens on Home;
@@ -66,8 +67,8 @@ mobile/src/main/java/nl/jellycast/mobile/   # :mobile, phone and tablet app (Mat
   core/designsystem/          # iOS tokens (JellyCastColors, JellyCastText), LayoutMetrics, shared components
   core/library/               # LibraryStore (cache + sync), LibraryIndex (derived lists)
   core/network/ core/settings/ core/downloads/ core/remote/ core/chat/
-  ui/                         # pieces several screens share: info panel, action drawer, downloads, remote, chat
-  feature/                    # home, library, lists, movie, person, series, player, downloads, remote, settings, signin, splash
+  ui/                         # pieces several screens share: info panel, action drawer, downloads, remote, chat, usage
+  feature/                    # consent, home, library, lists, movie, person, series, player, downloads, remote, settings, signin, splash
 mobile/docs/                  # specs of the iOS screens the port follows
 ```
 ## File rules

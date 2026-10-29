@@ -53,10 +53,11 @@ fun SettingsScreen(
         onMovieViewToggle = viewModel::onMovieViewToggle,
         onLanguageClick = viewModel::onLanguageClick,
         modifier = modifier,
+        onUsageToggle = viewModel::onUsageToggle,
     )
 }
 
-private enum class Explained { None, Language, MovieView, MaxBitrate, BurnInAss, Playback }
+private enum class Explained { None, Language, MovieView, MaxBitrate, BurnInAss, Playback, Usage }
 
 private class SettingsFocus(
     val first: FocusRequester = FocusRequester(),
@@ -75,6 +76,7 @@ fun SettingsContent(
     onMovieViewToggle: () -> Unit,
     onLanguageClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onUsageToggle: () -> Unit = {},
 ) {
     val focus = remember { SettingsFocus() }
     var openedServer by rememberSaveable { mutableStateOf(false) }
@@ -120,7 +122,9 @@ fun SettingsContent(
                 onChangeServer()
             },
             onLogout = onLogout,
+            onUsageToggle = onUsageToggle,
             focus = focus,
+            explanation = explanation,
         )
     }
 }
@@ -233,7 +237,9 @@ private fun ColumnScope.AccountGroup(
     uiState: SettingsUiState,
     onChangeServer: () -> Unit,
     onLogout: () -> Unit,
+    onUsageToggle: () -> Unit,
     focus: SettingsFocus,
+    explanation: ExplanationState<Explained>,
 ) {
     val buttonModifier = Modifier.align(Alignment.CenterHorizontally)
     val logoutLabel =
@@ -246,6 +252,18 @@ private fun ColumnScope.AccountGroup(
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
         modifier = Modifier.width(AuthContentWidth),
+    )
+    AuthButton(
+        text =
+            stringResource(
+                if (uiState.usageAllowed) {
+                    R.string.settings_usage_on
+                } else {
+                    R.string.settings_usage_off
+                },
+            ),
+        onClick = onUsageToggle,
+        modifier = buttonModifier.explains(explanation, Explained.Usage),
     )
     AuthButton(
         text = stringResource(R.string.settings_change_server),
@@ -272,6 +290,7 @@ private fun Explained.text(): String = when (this) {
     Explained.MaxBitrate -> stringResource(R.string.settings_max_bitrate_explain)
     Explained.BurnInAss -> stringResource(R.string.settings_burn_in_ass_explain)
     Explained.Playback -> stringResource(R.string.settings_playback_explain)
+    Explained.Usage -> stringResource(R.string.settings_usage_footer)
 }
 
 // Tighter than the login screens: more buttons, and everything has to fit in 540 dp.

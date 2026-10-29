@@ -7,6 +7,7 @@ import kotlinx.coroutines.test.runTest
 import nl.jellycast.core.model.AppInfo
 import nl.jellycast.core.model.AuthState
 import nl.jellycast.core.model.MovieView
+import nl.jellycast.core.model.UsageChoice
 import nl.jellycast.core.playback.DEFAULT_MAX_BITRATE
 import nl.jellycast.core.playback.MaxBitrateOptions
 import nl.jellycast.core.playback.nextMaxBitrate
@@ -16,6 +17,7 @@ import nl.jellycast.core.testing.FakeLanguageRepository
 import nl.jellycast.core.testing.FakePlaybackSettingsStore
 import nl.jellycast.core.testing.FakeSessionRepository
 import nl.jellycast.core.testing.FakeUiPreferencesRepository
+import nl.jellycast.core.testing.FakeUsageRepository
 import nl.jellycast.core.testing.MainDispatcherRule
 import nl.jellycast.core.testing.Spanish
 import nl.jellycast.core.testing.TestServer
@@ -33,6 +35,7 @@ class SettingsViewModelTest {
     private val settingsStore = FakePlaybackSettingsStore()
     private val uiPreferences = FakeUiPreferencesRepository()
     private val languages = FakeLanguageRepository()
+    private val usage = FakeUsageRepository()
 
     private fun viewModel(
         repository: FakeSessionRepository =
@@ -43,7 +46,22 @@ class SettingsViewModelTest {
         settingsStore,
         uiPreferences,
         languages,
+        usage,
     )
+
+    @Test
+    fun `the usage button turns statistics off and on`() = runTest {
+        val viewModel = viewModel()
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
+            viewModel.uiState.collect {}
+        }
+
+        viewModel.onUsageToggle()
+        assertEquals(UsageChoice.Allowed, usage.choice.value)
+        assertEquals(true, viewModel.uiState.value.usageAllowed)
+        viewModel.onUsageToggle()
+        assertEquals(UsageChoice.Declined, usage.choice.value)
+    }
 
     @Test
     fun `shows version and account`() = runTest {

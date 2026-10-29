@@ -21,6 +21,8 @@ val localProperties =
         if (file.exists()) file.inputStream().use(::load)
     }
 val devServerUrl = localProperties.getProperty("jellyfin.serverUrl").orEmpty()
+// A JellyCast test service elsewhere, e.g. one on the Mac for the emulator; debug builds only.
+val devServiceUrl = localProperties.getProperty("jellycast.serviceUrl").orEmpty()
 
 android {
     namespace = "nl.jellycast.mobile"
@@ -50,11 +52,13 @@ android {
     buildTypes {
         debug {
             buildConfigField("String", "DEV_SERVER_URL", "\"$devServerUrl\"")
+            buildConfigField("String", "DEV_SERVICE_URL", "\"$devServiceUrl\"")
             buildConfigField("boolean", "DEV_TOOLS", "true")
             if (hasReleaseKeystore) signingConfig = signingConfigs.getByName("release")
         }
         release {
             buildConfigField("String", "DEV_SERVER_URL", "\"\"")
+            buildConfigField("String", "DEV_SERVICE_URL", "\"\"")
             buildConfigField("boolean", "DEV_TOOLS", "false")
             isMinifyEnabled = true
             isShrinkResources = true

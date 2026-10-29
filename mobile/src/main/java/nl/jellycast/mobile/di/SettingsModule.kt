@@ -23,6 +23,7 @@ import nl.jellycast.mobile.core.settings.SystemAudioOutputDelay
 import nl.jellycast.mobile.feature.settings.AiChatSettingsViewModel
 import nl.jellycast.mobile.feature.settings.ServerAddressesViewModel
 import nl.jellycast.mobile.feature.settings.SettingsViewModel
+import nl.jellycast.mobile.feature.settings.UsageSettingsViewModel
 import nl.jellycast.mobile.feature.signin.ServerDiscovery
 import nl.jellycast.mobile.feature.signin.SignInViewModel
 import nl.jellycast.mobile.feature.signin.UdpServerDiscovery
@@ -82,4 +83,5 @@ val settingsModule =
         viewModel { ChatViewModel(get(), get(), get(), get()) }
         viewModel { AiChatSettingsViewModel(get(), get()) }
         viewModel { ServerAddressesViewModel(get(), get(), get()) }
+        viewModel { UsageSettingsViewModel(get()) }
     }

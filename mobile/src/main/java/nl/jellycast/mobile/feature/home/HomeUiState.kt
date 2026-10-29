@@ -1,5 +1,6 @@
 package nl.jellycast.mobile.feature.home
 
+import nl.jellycast.core.model.AdCampaign
 import nl.jellycast.core.model.PlayableItem
 import nl.jellycast.core.model.Series
 import nl.jellycast.mobile.core.library.NewItem
@@ -59,5 +60,11 @@ sealed interface HomeTile {
         HomeTile {
         override val contentId: String get() = series.id
         override val itemId: String get() = series.id
+    }
+
+    /** A campaign from the JellyCast service, chosen by [country] only. */
+    data class Ad(val campaign: AdCampaign, val country: String?) : HomeTile {
+        override val contentId: String get() = "ad-${campaign.id}"
+        override val itemId: String get() = contentId
     }
 }

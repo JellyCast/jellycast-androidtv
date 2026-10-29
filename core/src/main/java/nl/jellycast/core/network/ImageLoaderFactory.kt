@@ -71,7 +71,8 @@ private class ServerImageInterceptor(private val serverAddress: () -> String?) :
 internal fun serverImagePath(url: String): String? {
     if (!url.startsWith("http")) return null
     val start = url.indexOf("/Items/")
-    return url.substring(start).takeIf { start > 0 && "/Images/" in it }
+    if (start <= 0) return null
+    return url.substring(start).takeIf { "/Images/" in it }
 }
 
 private const val MEMORY_CACHE_PERCENT = 0.20

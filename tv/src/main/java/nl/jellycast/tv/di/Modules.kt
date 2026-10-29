@@ -1,10 +1,13 @@
 package nl.jellycast.tv.di
 
 import nl.jellycast.core.common.HomeSectionLeaves
+import nl.jellycast.core.common.currentDeviceDetails
 import nl.jellycast.core.data.repository.TvProviderWatchNextRepository
 import nl.jellycast.core.data.repository.WatchNextRepository
 import nl.jellycast.core.di.coreModules
 import nl.jellycast.core.model.AppInfo
+import nl.jellycast.core.model.ServiceClientInfo
+import nl.jellycast.core.model.TEST_SERVICE_ADDRESSES
 import nl.jellycast.tv.BuildConfig
 import nl.jellycast.tv.MainViewModel
 import nl.jellycast.tv.feature.detail.MovieDetailViewModel
@@ -57,4 +60,14 @@ val featureModules =
     }
 
 val jellyCastModules =
-    coreModules(BuildConfig.VERSION_NAME, BuildConfig.DEV_TOOLS) + listOf(appModule, featureModules)
+    coreModules(
+        BuildConfig.VERSION_NAME,
+        BuildConfig.DEV_TOOLS,
+        ServiceClientInfo(
+            platform = "androidtv",
+            device = currentDeviceDetails(BuildConfig.VERSION_NAME, BuildConfig.VERSION_CODE),
+            addresses =
+                BuildConfig.DEV_SERVICE_URL.takeIf { it.isNotEmpty() }?.let(::listOf)
+                    ?: TEST_SERVICE_ADDRESSES,
+        ),
+    ) + listOf(appModule, featureModules)

@@ -1,5 +1,6 @@
 package nl.jellycast.tv.feature.home
 
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.tv.material3.MaterialTheme
 import androidx.tv.material3.Text
+import java.util.Locale
 import nl.jellycast.core.model.Movie
 import nl.jellycast.core.model.remainingMs
 import nl.jellycast.tv.R
@@ -51,7 +53,11 @@ internal val SuggestionHeight =
     ReasonAreaHeight + LogoHeight + DetailsGap + MetaHeight + DetailsGap + OverviewHeight
 
 @Composable
-internal fun SuggestionDetails(suggestion: Suggestion, modifier: Modifier = Modifier) {
+internal fun SuggestionDetails(
+    suggestion: Suggestion,
+    modifier: Modifier = Modifier,
+    showsAdReason: Boolean = false,
+) {
     Column(
         modifier = modifier.width(464.dp).height(SuggestionHeight),
         verticalArrangement = Arrangement.spacedBy(DetailsGap),
@@ -84,11 +90,20 @@ internal fun SuggestionDetails(suggestion: Suggestion, modifier: Modifier = Modi
         ) {
             when (suggestion) {
                 is Suggestion.MovieSuggestion -> MovieMeta(suggestion.movie)
+
                 is Suggestion.SeriesSuggestion -> SeriesMeta(suggestion)
+
+                is Suggestion.AdSuggestion ->
+                    MutedText(stringResource(R.string.ad_meta, suggestion.campaign.advertiser))
             }
         }
         Text(
-            text = suggestion.overview().orEmpty(),
+            text =
+                if (suggestion is Suggestion.AdSuggestion && showsAdReason) {
+                    adReason(suggestion.country)
+                } else {
+                    suggestion.overview().orEmpty()
+                },
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             maxLines = 3,
@@ -121,6 +136,17 @@ private fun SuggestionReason.labelRes(): Int = when (this) {
     SuggestionReason.NextEpisode -> R.string.home_reason_next_episode
     SuggestionReason.RecentlyAdded -> R.string.home_reason_recently_added
     SuggestionReason.ForTonight -> R.string.home_reason_for_tonight
+    SuggestionReason.Ad -> R.string.ad_label
+}
+
+@Composable
+private fun adReason(country: String?): String {
+    val name = country?.let { Locale("", it).displayCountry }?.takeIf { it.isNotBlank() }
+    return if (name == null) {
+        stringResource(R.string.ad_why_no_country)
+    } else {
+        stringResource(R.string.ad_why, name)
+    }
 }
 
 @Composable
@@ -225,24 +251,29 @@ internal fun SuggestionSkeleton(modifier: Modifier = Modifier) {
 internal fun Suggestion.backdropUrl(): String? = when (this) {
     is Suggestion.MovieSuggestion -> movie.artwork.backdrop
     is Suggestion.SeriesSuggestion -> series.artwork.backdrop
+    is Suggestion.AdSuggestion -> campaign.imageUrl
 }
 
 private fun Suggestion.logoUrl(): String? = when (this) {
     is Suggestion.MovieSuggestion -> movie.artwork.logo
     is Suggestion.SeriesSuggestion -> series.artwork.logo
+    is Suggestion.AdSuggestion -> null
 }
 
 internal fun Suggestion.title(): String = when (this) {
     is Suggestion.MovieSuggestion -> movie.title
     is Suggestion.SeriesSuggestion -> series.title
+    is Suggestion.AdSuggestion -> campaign.title ?: campaign.advertiser
 }
 
 private fun Suggestion.overview(): String? = when (this) {
     is Suggestion.MovieSuggestion -> movie.overview
     is Suggestion.SeriesSuggestion -> series.overview
+    is Suggestion.AdSuggestion -> campaign.url?.let { Uri.parse(it).host?.removePrefix("www.") }
 }
 
 internal fun Suggestion.resumePositionMs(): Long = when (this) {
     is Suggestion.MovieSuggestion -> movie.resumePositionMs
     is Suggestion.SeriesSuggestion -> episode.resumePositionMs
+    is Suggestion.AdSuggestion -> 0
 }

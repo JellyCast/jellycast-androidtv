@@ -16,6 +16,7 @@ data class SettingsUiState(
     val movieView: MovieView = MovieView.Detail,
     /** `null` only in previews and tests. */
     val language: AppLanguage? = null,
+    val usageAllowed: Boolean = false,
 )
 
 internal fun Int.toMbpsOrNull(): Int? = if (this >= DEFAULT_MAX_BITRATE) null else this / 1_000_000

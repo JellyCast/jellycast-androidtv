@@ -71,6 +71,7 @@ private fun SettingsScreen(
         downloadsSection = {
             AudioDelaySettingsSection()
             DownloadsSettingsSection()
+            UsageSettingsSection()
         },
     )
 }

@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -21,8 +22,11 @@ import kotlinx.coroutines.withTimeoutOrNull
 import nl.jellycast.core.common.Clock
 import nl.jellycast.core.common.HomeSectionLeaves
 import nl.jellycast.core.common.LOAD_TIMEOUT_MS
+import nl.jellycast.core.data.repository.AdRepository
 import nl.jellycast.core.data.repository.LibraryRepository
 import nl.jellycast.core.data.repository.WatchNextRepository
+import nl.jellycast.core.model.AdCampaign
+import nl.jellycast.core.model.AdPlacements
 import nl.jellycast.core.model.Episode
 import nl.jellycast.core.model.HomeSection
 import nl.jellycast.core.model.Movie
@@ -49,6 +53,21 @@ sealed interface Suggestion {
         override val id: String get() = episode.id
         override val backdropOwnerId: String get() = series.id
     }
+
+    /** A campaign from the JellyCast service, chosen by [country] only. */
+    data class AdSuggestion(val campaign: AdCampaign, val country: String?) : Suggestion {
+        override val id: String get() = "ad-${campaign.id}"
+        override val reason: SuggestionReason get() = SuggestionReason.Ad
+        override val backdropOwnerId: String get() = id
+    }
+}
+
+/** The ad never takes the first suggestion; a shorter stack gets it last. */
+internal fun List<Suggestion>.withAd(placements: AdPlacements?): List<Suggestion> {
+    val campaign = placements?.home ?: return this
+    if (isEmpty()) return this
+    val at = (campaign.position ?: 1).coerceIn(1, size)
+    return take(at) + Suggestion.AdSuggestion(campaign, placements.country) + drop(at)
 }
 
 sealed interface HomeSuggestionUiState {
@@ -72,6 +91,7 @@ class HomeSuggestionViewModel(
     private val watchNext: WatchNextRepository,
     private val clock: Clock,
     sectionLeaves: HomeSectionLeaves,
+    private val ads: AdRepository,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<HomeSuggestionUiState>(HomeSuggestionUiState.Loading)
     val uiState: StateFlow<HomeSuggestionUiState> = _uiState.asStateFlow()
@@ -85,7 +105,10 @@ class HomeSuggestionViewModel(
         // Spin up the server disk for the shown suggestion, but only once browsing settles.
         viewModelScope.launch {
             uiState
-                .map { (it as? HomeSuggestionUiState.Success)?.suggestion?.id }
+                .map { state ->
+                    (state as? HomeSuggestionUiState.Success)?.suggestion
+                        ?.takeIf { it !is Suggestion.AdSuggestion }?.id
+                }
                 .filterNotNull()
                 .distinctUntilChanged()
                 .collectLatest {
@@ -96,7 +119,9 @@ class HomeSuggestionViewModel(
         viewModelScope.launch {
             sectionLeaves.leavesOf(HomeSection.Home).collect {
                 val stack = (_uiState.value as? HomeSuggestionUiState.Success)?.stack.orEmpty()
-                library.advanceBackdrops(stack.map { it.backdropOwnerId })
+                library.advanceBackdrops(
+                    stack.filterNot { it is Suggestion.AdSuggestion }.map { it.backdropOwnerId },
+                )
             }
         }
         viewModelScope.launch {
@@ -115,6 +140,8 @@ class HomeSuggestionViewModel(
 
         is Suggestion.SeriesSuggestion ->
             copy(series = library.withBackdrop(series), episode = library.withBackdrop(episode))
+
+        is Suggestion.AdSuggestion -> this
     }
 
     fun onRetry() {
@@ -151,6 +178,9 @@ class HomeSuggestionViewModel(
 
                     is Suggestion.SeriesSuggestion ->
                         PlayRequest(suggestion.episode.id, suggestion.episode.resumePositionMs)
+
+                    // Its button shows why it's there instead; the screen handles that.
+                    is Suggestion.AdSuggestion -> return@update state
                 }
             state.copy(playRequest = request)
         }
@@ -250,7 +280,7 @@ class HomeSuggestionViewModel(
         suggestions.firstOrNull { it.isFailure }?.let { failed ->
             return@coroutineScope Result.failure(requireNotNull(failed.exceptionOrNull()))
         }
-        Result.success(suggestions.map { it.getOrThrow() })
+        Result.success(suggestions.map { it.getOrThrow() }.withAd(ads.placements.first()))
     }
 
     private suspend fun seriesFor(candidate: Candidate.EpisodeCandidate): Result<Suggestion> {

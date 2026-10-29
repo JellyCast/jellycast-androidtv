@@ -51,6 +51,8 @@ internal val HomeTile.title: String
         }
 
         is HomeTile.NotStarted -> series.title
+
+        is HomeTile.Ad -> campaign.title ?: campaign.advertiser
     }
 
 /** "S2 · E7 · Episode name", "S4 · E1 · new episode", "Movie · 2001", "Series · 2 seasons". */
@@ -80,6 +82,8 @@ internal fun HomeTile.meta(): String = when (this) {
             stringResource(R.string.home_series),
             pluralStringResource(R.plurals.home_seasons, seasonCount, seasonCount),
         )
+
+    is HomeTile.Ad -> stringResource(R.string.ad_meta, campaign.advertiser)
 }
 
 @Composable
@@ -154,10 +158,12 @@ internal val HomeTile.imageUrl: String?
         }
 
         is HomeTile.NotStarted -> series.artwork.run { backdrop ?: landscape ?: poster }
+
+        is HomeTile.Ad -> campaign.imageUrl
     }
 
 /** Where a tap on a tile goes: the movie, or the series page at its next episode. */
-internal val HomeTile.route: Route
+internal val HomeTile.route: Route?
     get() = when (this) {
         is HomeTile.Continue -> when (item) {
             is PlayableItem.MovieItem -> MovieRoute(item.movie.id)
@@ -170,9 +176,11 @@ internal val HomeTile.route: Route
         }
 
         is HomeTile.NotStarted -> SeriesRoute(series.id)
+
+        is HomeTile.Ad -> null
     }
 
-internal val HomeTile.actionTarget: ActionTarget
+internal val HomeTile.actionTarget: ActionTarget?
     get() = when (this) {
         is HomeTile.Continue -> when (item) {
             is PlayableItem.MovieItem -> ActionTarget.MovieTarget(item.movie)
@@ -185,6 +193,8 @@ internal val HomeTile.actionTarget: ActionTarget
         }
 
         is HomeTile.NotStarted -> ActionTarget.SeriesTarget(series)
+
+        is HomeTile.Ad -> null
     }
 
 /** Offline and not downloaded: dimmed, and the caller disables its taps. */

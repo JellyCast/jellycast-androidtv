@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.tv.material3.MaterialTheme
 import nl.jellycast.core.data.repository.DebugSegments
@@ -32,6 +33,7 @@ import nl.jellycast.core.playback.FrameRateMode
 import nl.jellycast.core.playback.PlaybackSettingsStore
 import nl.jellycast.tv.core.designsystem.component.BrandSplash
 import nl.jellycast.tv.core.designsystem.theme.JellyCastTheme
+import nl.jellycast.tv.feature.consent.UsageConsentScreen
 import nl.jellycast.tv.navigation.JellyCastNavHost
 import org.koin.android.ext.android.get
 import org.koin.compose.viewmodel.koinViewModel
@@ -80,6 +82,11 @@ class MainActivity : ComponentActivity() {
                 val viewModel: MainViewModel = koinViewModel()
                 val uiState by viewModel.uiState.collectAsStateWithLifecycle()
                 val authState by viewModel.authState.collectAsStateWithLifecycle()
+                val needsUsageChoice by viewModel.needsUsageChoice.collectAsStateWithLifecycle()
+                LifecycleStartEffect(Unit) {
+                    viewModel.onAppVisible()
+                    onStopOrDispose {}
+                }
 
                 // Saveable: no second splash after a language switch or a recreated Activity.
                 var splashDrawn by rememberSaveable { mutableStateOf(false) }
@@ -98,7 +105,13 @@ class MainActivity : ComponentActivity() {
                 ) {
                     // Composing the start screen while the splash line draws makes it stutter.
                     val state = uiState
-                    if (state is MainUiState.Ready && (splashDrawn || splashSkipped)) {
+                    val splashOut = splashDrawn || splashSkipped
+                    // Asked before the app itself, so nothing it opens can cover the question.
+                    if (needsUsageChoice == true && splashOut) {
+                        UsageConsentScreen(onChoose = viewModel::onUsageChoice)
+                    } else if (needsUsageChoice == false && state is MainUiState.Ready &&
+                        splashOut
+                    ) {
                         JellyCastNavHost(
                             startDestination = state.startDestination,
                             authState = authState,

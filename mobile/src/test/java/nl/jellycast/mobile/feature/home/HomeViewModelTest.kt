@@ -8,6 +8,7 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import nl.jellycast.core.testing.FakeAdRepository
 import nl.jellycast.core.testing.MainDispatcherRule
 import nl.jellycast.core.testing.testEpisode
 import nl.jellycast.core.testing.testMovie
@@ -39,7 +40,8 @@ class HomeViewModelTest {
         store: FakeLibraryStore,
         availability: OfflineAvailability = NothingDownloaded,
     ): HomeViewModel {
-        val viewModel = HomeViewModel(store, connectivity, availability) { NOW_MS }
+        val viewModel =
+            HomeViewModel(store, connectivity, FakeAdRepository(), availability) { NOW_MS }
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             viewModel.uiState.collect {}
         }

@@ -11,9 +11,11 @@ import kotlinx.coroutines.launch
 import nl.jellycast.core.data.repository.LanguageRepository
 import nl.jellycast.core.data.repository.SessionRepository
 import nl.jellycast.core.data.repository.UiPreferencesRepository
+import nl.jellycast.core.data.repository.UsageRepository
 import nl.jellycast.core.model.AppInfo
 import nl.jellycast.core.model.AuthState
 import nl.jellycast.core.model.MovieView
+import nl.jellycast.core.model.UsageChoice
 import nl.jellycast.core.playback.PlaybackSettingsStore
 import nl.jellycast.core.playback.nextMaxBitrate
 
@@ -23,6 +25,7 @@ class SettingsViewModel(
     private val playbackSettings: PlaybackSettingsStore,
     private val uiPreferences: UiPreferencesRepository,
     private val languageRepository: LanguageRepository,
+    private val usage: UsageRepository,
 ) : ViewModel() {
     private val isLoggingOut = MutableStateFlow(false)
 
@@ -52,7 +55,16 @@ class SettingsViewModel(
             )
         }.combine(languageRepository.current) { state, language ->
             state.copy(language = language)
+        }.combine(usage.choice) { state, choice ->
+            state.copy(usageAllowed = choice == UsageChoice.Allowed)
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), initialState)
+
+    fun onUsageToggle() {
+        val allowed = uiState.value.usageAllowed
+        viewModelScope.launch {
+            usage.choose(if (allowed) UsageChoice.Declined else UsageChoice.Allowed)
+        }
+    }
 
     fun onBurnInAssToggle() {
         playbackSettings.setBurnInAss(!playbackSettings.settings.value.burnInAss)

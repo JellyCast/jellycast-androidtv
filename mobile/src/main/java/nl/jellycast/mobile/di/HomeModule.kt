@@ -8,5 +8,5 @@ import org.koin.dsl.module
 /** Owner: the home worker. */
 val homeModule =
     module {
-        viewModel { HomeViewModel(get(), get(), getOrNull() ?: NothingDownloaded) }
+        viewModel { HomeViewModel(get(), get(), get(), getOrNull() ?: NothingDownloaded) }
     }

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="usage_title">Statistiek</string>
+    <string name="usage_intro">We tellen hoeveel toestellen JellyCast gebruiken, per land, om de app gratis te houden. Zonder je naam of wat je kijkt.</string>
+    <string name="usage_more">Meer informatie</string>
+    <string name="usage_continue">Verder</string>
+    <string name="usage_continue_without">Verder zonder statistiek</string>
+    <string name="usage_detail_ping">Als je de app opent, stuurt hij een willekeurig nummer dat alleen voor deze app is gemaakt, je land en het uur. Niet je naam, je server of wat je kijkt.</string>
+    <string name="usage_detail_device">Voor ondersteuning stuurt hij ook het soort toestel, de systeemversie en de app-versie mee, zoals “%1$s”. Niet de naam van je toestel.</string>
+    <string name="usage_detail_country">Het land komt uit je internetadres, en dat adres wordt nooit bewaard.</string>
+    <string name="usage_detail_retention">De gegevens worden na 13 maanden verwijderd.</string>
+    <string name="usage_detail_settings">Je kunt dit altijd wijzigen in Instellingen.</string>
+    <string name="settings_privacy">Privacy</string>
+    <string name="settings_usage">Anonieme gebruiksstatistiek</string>
+    <string name="settings_usage_details">Wat er wordt verstuurd</string>
+    <string name="settings_usage_footer">Telt dit toestel per land, zodat JellyCast adverteerders kan vinden en gratis blijft.</string>
+    <string name="ad_label">Advertentie</string>
+    <string name="ad_meta">Advertentie · %1$s</string>
+    <string name="ad_visit">Naar de website</string>
+    <string name="ad_why_title">Waarom zie ik dit?</string>
+    <string name="ad_why">JellyCast kiest advertenties alleen op land, nooit op wat je kijkt. Je ziet deze omdat je in %1$s bent.</string>
+    <string name="ad_why_no_country">JellyCast kiest advertenties alleen op land, nooit op wat je kijkt.</string>
+</resources>

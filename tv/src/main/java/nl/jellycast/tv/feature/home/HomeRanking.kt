@@ -3,7 +3,14 @@ package nl.jellycast.tv.feature.home
 import nl.jellycast.core.model.Episode
 import nl.jellycast.core.model.Movie
 
-enum class SuggestionReason { ContinueWatching, NewEpisode, NextEpisode, RecentlyAdded, ForTonight }
+enum class SuggestionReason {
+    ContinueWatching,
+    NewEpisode,
+    NextEpisode,
+    RecentlyAdded,
+    ForTonight,
+    Ad,
+}
 
 /** A suggestion before its series has been fetched. */
 sealed interface Candidate {

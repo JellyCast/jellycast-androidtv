@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="usage_title">Statistics</string>
+    <string name="usage_intro">We count how many devices use JellyCast, per country, to keep it free. Without your name or what you watch.</string>
+    <string name="usage_more">More information</string>
+    <string name="usage_continue">Continue</string>
+    <string name="usage_continue_without">Continue without statistics</string>
+    <string name="usage_detail_ping">When you open the app, it sends a random number made for this app, your country and the hour. Not your name, your server or what you watch.</string>
+    <string name="usage_detail_device">For support it also sends the kind of device, its system version and the app version, such as “%1$s”. Not the name of your device.</string>
+    <string name="usage_detail_country">The country comes from your internet address, which is never stored.</string>
+    <string name="usage_detail_retention">The details are deleted after 13 months.</string>
+    <string name="usage_detail_settings">You can change this any time in Settings.</string>
+    <string name="settings_usage_footer">Counts this device per country, so JellyCast can find advertisers and stay free.</string>
+    <string name="ad_label">Ad</string>
+    <string name="ad_meta">Ad · %1$s</string>
+    <string name="ad_why_title">Why am I seeing this?</string>
+    <string name="ad_why">JellyCast chooses ads by country only, never by what you watch. You see this one because you\'re in %1$s.</string>
+    <string name="ad_why_no_country">JellyCast chooses ads by country only, never by what you watch.</string>
+    <string name="settings_usage_on">Usage statistics: on</string>
+    <string name="settings_usage_off">Usage statistics: off</string>
+</resources>

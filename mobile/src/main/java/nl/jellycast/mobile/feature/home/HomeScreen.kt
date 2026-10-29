@@ -54,6 +54,7 @@ fun HomeScreen(modifier: Modifier = Modifier) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val navigation = LocalAppNavigation.current
     var actionTarget by remember { mutableStateOf<ActionTarget?>(null) }
+    var shownAd by remember { mutableStateOf<HomeTile.Ad?>(null) }
     HomeContent(
         uiState = uiState,
         onOpen = navigation::open,
@@ -62,8 +63,10 @@ fun HomeScreen(modifier: Modifier = Modifier) {
         onRefresh = viewModel::onRefresh,
         onRetry = viewModel::onRetry,
         modifier = modifier,
+        onShowAd = { shownAd = it },
     )
     MediaActionDrawer(actionTarget, onDismiss = { actionTarget = null })
+    shownAd?.let { HomeAdSheet(it, onDismiss = { shownAd = null }) }
 }
 
 @Composable
@@ -75,6 +78,7 @@ internal fun HomeContent(
     onRefresh: () -> Unit,
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
+    onShowAd: (HomeTile.Ad) -> Unit = {},
 ) {
     val isRegular = LocalLayout.current.isRegular
     Box(modifier.fillMaxSize().background(JellyCastColors.Background)) {
@@ -94,8 +98,10 @@ internal fun HomeContent(
                     HomeGrid(
                         tiles = content.tiles,
                         unavailableIds = uiState.unavailableIds,
-                        onTileClick = { onOpen(it.route) },
-                        onTileLongPress = { onShowActions(it.actionTarget) },
+                        onTileClick = { tile ->
+                            if (tile is HomeTile.Ad) onShowAd(tile) else tile.route?.let(onOpen)
+                        },
+                        onTileLongPress = { tile -> tile.actionTarget?.let(onShowActions) },
                         featuredOverlay = {
                             SettingsButton(onOpenSettings, Modifier.padding(FeaturedButtonInset))
                         },

@@ -7,9 +7,11 @@ import kotlinx.coroutines.test.runTest
 import nl.jellycast.core.common.Clock
 import nl.jellycast.core.common.HomeSectionLeaves
 import nl.jellycast.core.model.PlayRequest
+import nl.jellycast.core.testing.FakeAdRepository
 import nl.jellycast.core.testing.FakeLibraryRepository
 import nl.jellycast.core.testing.FakeWatchNextRepository
 import nl.jellycast.core.testing.MainDispatcherRule
+import nl.jellycast.core.testing.testCampaign
 import nl.jellycast.core.testing.testEpisode
 import nl.jellycast.core.testing.testMovie
 import nl.jellycast.core.testing.testSeries
@@ -48,9 +50,10 @@ class HomeSuggestionViewModelTest {
         )
 
     private val watchNext = FakeWatchNextRepository()
+    private val ads = FakeAdRepository()
 
     private fun viewModel() =
-        HomeSuggestionViewModel(library, watchNext, clock, HomeSectionLeaves())
+        HomeSuggestionViewModel(library, watchNext, clock, HomeSectionLeaves(), ads)
 
     private fun HomeSuggestionViewModel.success() = uiState.value as HomeSuggestionUiState.Success
 
@@ -69,6 +72,24 @@ class HomeSuggestionViewModelTest {
 
         assertEquals(listOf("m1", "e2", "m2"), viewModel.ids())
         assertEquals(0, viewModel.success().index)
+    }
+
+    @Test
+    fun `an ad goes on its place in the stack, never first`() = runTest {
+        ads.placements.value = ads.placements.value?.copy(home = testCampaign(position = 0))
+
+        assertEquals(listOf("m1", "ad-1", "e2", "m2"), viewModel().ids())
+    }
+
+    @Test
+    fun `play on an ad plays nothing`() = runTest {
+        ads.placements.value = ads.placements.value?.copy(home = testCampaign(position = 1))
+        val viewModel = viewModel()
+
+        viewModel.onNext()
+        viewModel.onPlay()
+
+        assertEquals(null, viewModel.success().playRequest)
     }
 
     @Test

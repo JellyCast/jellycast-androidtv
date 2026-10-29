@@ -18,10 +18,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import nl.jellycast.core.model.AuthState
 import nl.jellycast.mobile.core.designsystem.theme.JellyCastTheme
 import nl.jellycast.mobile.core.designsystem.theme.ProvideLayoutMetrics
+import nl.jellycast.mobile.feature.consent.UsageConsentScreen
 import nl.jellycast.mobile.feature.signin.SignInScreen
 import nl.jellycast.mobile.feature.splash.BrandSplash
 import nl.jellycast.mobile.navigation.MainShell
@@ -45,7 +47,16 @@ class MainActivity : ComponentActivity() {
                         val viewModel: MainViewModel = koinViewModel()
                         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
                         val authState by viewModel.authState.collectAsStateWithLifecycle()
-                        if (uiState is MainUiState.Ready) {
+                        val needsUsageChoice by
+                            viewModel.needsUsageChoice.collectAsStateWithLifecycle()
+                        LifecycleStartEffect(Unit) {
+                            viewModel.onAppVisible()
+                            onStopOrDispose {}
+                        }
+                        // Asked before the app itself, so nothing it opens can cover the question.
+                        if (needsUsageChoice == true) {
+                            UsageConsentScreen(onChoose = viewModel::onUsageChoice)
+                        } else if (needsUsageChoice == false && uiState is MainUiState.Ready) {
                             // Follows the session: signing in opens the app, signing out (or a
                             // revoked token) returns to sign-in.
                             val signedIn =

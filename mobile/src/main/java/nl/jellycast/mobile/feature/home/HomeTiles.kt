@@ -1,5 +1,6 @@
 package nl.jellycast.mobile.feature.home
 
+import nl.jellycast.core.model.AdPlacements
 import nl.jellycast.core.model.PlayableItem
 import nl.jellycast.mobile.core.library.LibraryIndex
 
@@ -21,6 +22,14 @@ fun homeTiles(index: LibraryIndex): List<HomeTile> {
             )
         }
     return (continueTiles + newTiles + notStartedTiles).distinctBy { it.contentId }
+}
+
+/** The ad never takes the first, featured tile; a list shorter than its place gets it last. */
+fun List<HomeTile>.withAd(placements: AdPlacements?): List<HomeTile> {
+    val campaign = placements?.home ?: return this
+    if (isEmpty()) return this
+    val at = (campaign.position ?: 1).coerceIn(1, size)
+    return take(at) + HomeTile.Ad(campaign, placements.country) + drop(at)
 }
 
 internal val PlayableItem.isInProgress: Boolean

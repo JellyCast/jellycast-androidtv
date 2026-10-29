@@ -9,10 +9,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.runningFold
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import nl.jellycast.core.data.repository.AdRepository
 import nl.jellycast.mobile.core.library.LibraryIndex
 import nl.jellycast.mobile.core.library.LibrarySnapshot
 import nl.jellycast.mobile.core.library.LibraryStore
@@ -28,14 +28,15 @@ private const val MIN_REFRESH_SPINNER_MS = 600L
 class HomeViewModel(
     private val store: LibraryStore,
     connectivity: Connectivity,
+    ads: AdRepository,
     private val offlineAvailability: OfflineAvailability = NothingDownloaded,
     private val nowMs: () -> Long = System::currentTimeMillis,
 ) : ViewModel() {
     private val refreshing = MutableStateFlow(false)
 
     private val library: Flow<Pair<LibrarySnapshot, List<HomeTile>>?> =
-        store.snapshot.map { snapshot ->
-            snapshot?.let { it to homeTiles(LibraryIndex(it, nowMs())) }
+        combine(store.snapshot, ads.placements) { snapshot, placements ->
+            snapshot?.let { it to homeTiles(LibraryIndex(it, nowMs())).withAd(placements) }
         }
 
     /** The last failure stays while a retry runs, so the banner can show its spinner. */
@@ -86,6 +87,7 @@ class HomeViewModel(
                 unavailableIds =
                     if (isOffline && library != null) {
                         library.second
+                            .filterNot { it is HomeTile.Ad }
                             .map { it.itemId }
                             .filterNot(offlineAvailability::isAvailableOffline)
                             .toSet()

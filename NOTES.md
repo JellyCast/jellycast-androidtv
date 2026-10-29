@@ -2,6 +2,17 @@
 
 Decisions, known issues and codec findings. Newest first in each section.
 
+## Usage statistics and ads (2026-10-29)
+
+Both apps, the same as iOS (`../jellycast-ios/NOTES.md` → Decisions). Research, rules and design: `../RECLAME-EN-METING.md`; the service: `../jellycast-api`.
+
+- `:core`: `JellyCastService` (OkHttp, first answering address of `TEST_SERVICE_ADDRESSES`: the test server on the Windows Jellyfin machine, `192.168.1.4:8090`, then `10.8.0.1:8090` over the VPN), `ServiceStore` (DataStore `service`: the choice, its version, the install ID, the last placements), `UsageRepository` and `AdRepository`. Debug builds can point elsewhere with `jellycast.serviceUrl` in `local.properties` (e.g. `http://127.0.0.1:8090` plus `adb reverse tcp:8090 tcp:8090` for a test server on the Mac); leave it out for real devices.
+- The question comes before the app (also before sign-in), until answered for `USAGE_CONSENT_VERSION` (2, as iOS). Mobile: one sentence, More information, a filled Continue and Continue without statistics under it. TV: the sign-in layout with Continue (initial focus), Continue without statistics and More information. Declining or turning it off deletes the install ID and sends nothing. Settings: mobile Privacy → Anonymous usage statistics; TV Account → "Usage statistics: on/off".
+- Allowed: a ping with the install ID, platform (`android`, `androidtv`), `Build.MANUFACTURER`, `Build.MODEL`, Android version and app version at launch and on coming back, at most once an hour. Never the device's own name.
+- Ads need no consent. A `home` campaign is a Home tile marked Ad at its position on mobile (never the featured tile; a sheet with the link and "why: your country"), and a suggestion marked AD in the Home stack on TV (never the first; its button "Why am I seeing this?" shows the reason, since a TV opens no links; the backdrop is the campaign image, so its subject must be on the right, as with backdrops).
+- Fixed on the way: the image loader crashed on any image that isn't the Jellyfin server's (`serverImagePath`).
+- Checked 2026-10-29: the question and a ping on the Chromecast (0.1.61, then 0.1.62 installed); declining, the ad suggestion and its reason, the image, and Settings in the Google TV emulator; the question, a ping, the ad tile and its sheet in the phone emulator, all against a test server on the Mac. Not checked: the tablet and the Galaxy A16 (not connected), the mobile Settings switch on a device.
+
 ## Mobile app (2026-10-28)
 
 `:mobile` (package `nl.jellycast.mobile`) is a port of the iOS app (`../jellycast-ios`): the same pages, layout and features, with Material 3 instead of iOS controls. Specs of the iOS screens: `mobile/docs/ios-spec-browsing.md` and `mobile/docs/ios-spec-player.md`. Built 2026-10-28 by nine parallel workers on a shared foundation (shell, navigation, design tokens, `LibraryStore`/`LibraryIndex`, stubs per area), then merged.

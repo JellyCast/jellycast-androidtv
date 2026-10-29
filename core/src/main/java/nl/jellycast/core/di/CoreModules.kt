@@ -10,12 +10,15 @@ import nl.jellycast.core.common.AppDispatchers
 import nl.jellycast.core.common.Clock
 import nl.jellycast.core.data.AudioPassthrough
 import nl.jellycast.core.data.ResourceGenreNames
+import nl.jellycast.core.data.repository.AdRepository
+import nl.jellycast.core.data.repository.DefaultAdRepository
 import nl.jellycast.core.data.repository.DefaultLanguageRepository
 import nl.jellycast.core.data.repository.DefaultLibraryRepository
 import nl.jellycast.core.data.repository.DefaultPlaybackRepository
 import nl.jellycast.core.data.repository.DefaultRemoteControlRepository
 import nl.jellycast.core.data.repository.DefaultSessionRepository
 import nl.jellycast.core.data.repository.DefaultUiPreferencesRepository
+import nl.jellycast.core.data.repository.DefaultUsageRepository
 import nl.jellycast.core.data.repository.LanguageRepository
 import nl.jellycast.core.data.repository.LibraryRepository
 import nl.jellycast.core.data.repository.OriginalLanguageRepository
@@ -23,11 +26,16 @@ import nl.jellycast.core.data.repository.PlaybackRepository
 import nl.jellycast.core.data.repository.RemoteControlRepository
 import nl.jellycast.core.data.repository.SessionRepository
 import nl.jellycast.core.data.repository.UiPreferencesRepository
+import nl.jellycast.core.data.repository.UsageRepository
 import nl.jellycast.core.data.repository.WikidataOriginalLanguageRepository
+import nl.jellycast.core.datastore.ServiceStore
 import nl.jellycast.core.datastore.SessionStore
 import nl.jellycast.core.datastore.UiPreferencesStore
 import nl.jellycast.core.model.GenreNames
+import nl.jellycast.core.model.ServiceClientInfo
+import nl.jellycast.core.network.HttpJellyCastService
 import nl.jellycast.core.network.ImageUrlBuilder
+import nl.jellycast.core.network.JellyCastService
 import nl.jellycast.core.network.JellyfinImageUrlBuilder
 import nl.jellycast.core.network.createImageLoader
 import nl.jellycast.core.network.createJellyfinInstance
@@ -57,12 +65,14 @@ import org.koin.dsl.module
  * Everything both apps share. The app adds its own `WatchNextRepository`, `AppInfo` and
  * ViewModels.
  */
-fun coreModules(versionName: String, devTools: Boolean): List<Module> = listOf(
-    commonModule,
-    networkModule(versionName, devTools),
-    dataModule,
-    playbackModule(devTools),
-)
+fun coreModules(versionName: String, devTools: Boolean, service: ServiceClientInfo): List<Module> =
+    listOf(
+        commonModule,
+        networkModule(versionName, devTools),
+        dataModule,
+        serviceModule(service),
+        playbackModule(devTools),
+    )
 
 private val commonModule =
     module {
@@ -108,6 +118,19 @@ private val dataModule =
         single<LanguageRepository> { DefaultLanguageRepository(androidContext()) }
         single<GenreNames> { ResourceGenreNames(androidContext(), get()) }
     }
+
+private fun serviceModule(client: ServiceClientInfo) = module {
+    single<JellyCastService> { HttpJellyCastService(client, get<AppDispatchers>().io) }
+    single {
+        ServiceStore(
+            PreferenceDataStoreFactory.create {
+                androidContext().preferencesDataStoreFile("service")
+            },
+        )
+    }
+    singleOf(::DefaultUsageRepository) { bind<UsageRepository>() }
+    singleOf(::DefaultAdRepository) { bind<AdRepository>() }
+}
 
 private fun playbackModule(devTools: Boolean) = module {
     singleOf(::DefaultPlaybackRepository) { bind<PlaybackRepository>() }

@@ -169,7 +169,9 @@ private fun TileImage(
     val frameColor = if (letterboxed) Color.Black else JellyCastColors.Surface
     Box(modifier.clip(shape).background(frameColor)) {
         AsyncImage(
-            model = tile.imageUrl?.let { withFillWidth(it, imageWidthPx) },
+            model = tile.imageUrl?.let {
+                if (tile is HomeTile.Ad) it else withFillWidth(it, imageWidthPx)
+            },
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier =
@@ -222,25 +224,24 @@ private fun TimeBadge(text: String, style: TileStyle, modifier: Modifier = Modif
     )
 }
 
-internal enum class TileLabel { New, NotStarted }
+internal enum class TileLabel { New, NotStarted, Ad }
 
 private val HomeTile.label: TileLabel?
     get() = when (this) {
         is HomeTile.Continue -> null
         is HomeTile.New -> TileLabel.New
         is HomeTile.NotStarted -> TileLabel.NotStarted
+        is HomeTile.Ad -> TileLabel.Ad
     }
 
 @Composable
 private fun TileLabel(label: TileLabel, isRegular: Boolean, modifier: Modifier = Modifier) {
     val text =
         stringResource(
-            if (label ==
-                TileLabel.New
-            ) {
-                R.string.home_badge_new
-            } else {
-                R.string.home_badge_not_started
+            when (label) {
+                TileLabel.New -> R.string.home_badge_new
+                TileLabel.NotStarted -> R.string.home_badge_not_started
+                TileLabel.Ad -> R.string.ad_label
             },
         )
     val isNew = label == TileLabel.New
