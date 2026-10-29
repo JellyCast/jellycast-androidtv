@@ -21,6 +21,8 @@ Home rebuilt 2026-10-28 as a YouTube-style tile grid (the same change as on iOS)
 
 Opening the app (cold start or back to the foreground) while a TV plays opens the now-playing remote screen, as a tap on the TV bar would (2026-10-28, `NowPlayingAutoOpen`): only the first server answer within 5 s of opening decides, once per opening, never over the app's own player (full or mini), and with several TVs the one the TV bar shows. A TV that starts later only gets the TV bar. Checked in the emulator without a TV playing (nothing opens); with a TV playing not yet checked on a device (tablet PIN-locked).
 
+TV and download pill on tablets (2026-10-29, same change as on the iPad): on a tablet the TV bar and the download bar are no longer a bar above the tab bar but a pill at the right end of the tab bar (`TabBarWithPill`, `TvPillContent`, `DownloadPill`), so the space above stays free for the mini player, which can show at the same time. Below 1000 dp wide (portrait) only the still in a progress ring, or the download icon. Phones keep the bar. Compiles, tests, ktlint and lint pass; not checked on the tablet yet (unreachable over adb).
+
 Not checked yet: a Compact download (server transcode), pairing and waking the Chromecast from the phone, the AI chat with a real key.
 
 ## Status (2026-10-25)

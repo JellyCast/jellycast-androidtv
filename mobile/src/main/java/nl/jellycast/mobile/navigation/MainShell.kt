@@ -9,9 +9,11 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationItemIconPosition
@@ -28,6 +30,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
@@ -56,8 +59,10 @@ import nl.jellycast.mobile.feature.player.isPlayerOpen
 import nl.jellycast.mobile.feature.series.SeriesScreen
 import nl.jellycast.mobile.feature.settings.SettingsHost
 import nl.jellycast.mobile.ui.downloads.DownloadAccessory
+import nl.jellycast.mobile.ui.downloads.DownloadPill
 import nl.jellycast.mobile.ui.remote.RemoteNowPlayingHost
 import nl.jellycast.mobile.ui.remote.TvBar
+import nl.jellycast.mobile.ui.remote.TvPillShape
 import org.koin.compose.koinInject
 
 /**
@@ -81,8 +86,12 @@ fun MainShell(modifier: Modifier = Modifier) {
             Column(Modifier.fillMaxSize()) {
                 TabContent(navigation, Modifier.weight(1f))
                 Column(Modifier.onSizeChanged { bottomBarHeightPx = it.height }) {
-                    AccessoryBar(navigation)
-                    TabBar(navigation)
+                    if (LocalLayout.current.isRegular) {
+                        TabBarWithPill(navigation)
+                    } else {
+                        AccessoryBar(navigation)
+                        TabBar(navigation)
+                    }
                 }
             }
             val bottomInset = with(density) { bottomBarHeightPx.toDp() }
@@ -144,6 +153,36 @@ private fun AccessoryBar(navigation: AppNavigation) {
         )
     }
 }
+
+/**
+ * On a tablet the TV bar or the download bar is a pill at the end of the tab bar instead of a bar
+ * above it, so the corner above stays free for the mini player, which can show at the same time.
+ */
+@Composable
+private fun TabBarWithPill(navigation: AppNavigation) {
+    BoxWithConstraints(Modifier.fillMaxWidth()) {
+        TabBar(navigation)
+        val shape = if (maxWidth >= PillTitleFromWidth) TvPillShape.WithTitle else TvPillShape.Ring
+        Box(
+            Modifier.align(Alignment.TopEnd).height(TabRowHeight).padding(end = 16.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            val tvShown = TvBar(isPlayerOpen(), pill = shape)
+            if (!tvShown && navigation.tab != AppTab.Downloads) {
+                DownloadPill(
+                    onOpenDownloads = { navigation.select(AppTab.Downloads) },
+                    showsTitle = shape == TvPillShape.WithTitle,
+                )
+            }
+        }
+    }
+}
+
+// The height of Material's ShortNavigationBar above the system navigation inset.
+private val TabRowHeight = 64.dp
+
+// Narrower, as a tablet in portrait, the tabs leave room for the still only.
+private val PillTitleFromWidth = 1000.dp
 
 private data class TabItem(val tab: AppTab, @StringRes val label: Int, @DrawableRes val icon: Int)
 
