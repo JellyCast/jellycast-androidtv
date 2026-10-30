@@ -17,7 +17,12 @@ class ServiceStore(private val dataStore: DataStore<Preferences>) {
     val consent: Flow<Consent> =
         dataStore.data.map { Consent(it[CHOICE], it[CONSENT_VERSION] ?: 0) }
 
-    val placementsJson: Flow<String?> = dataStore.data.map { it[PLACEMENTS] }
+    data class StoredPlacements(val json: String, val receivedAtMs: Long)
+
+    val placements: Flow<StoredPlacements?> =
+        dataStore.data.map { prefs ->
+            prefs[PLACEMENTS]?.let { StoredPlacements(it, prefs[PLACEMENTS_RECEIVED_AT] ?: 0) }
+        }
 
     suspend fun installId(): String? = dataStore.data.first()[INSTALL_ID]
 
@@ -30,8 +35,11 @@ class ServiceStore(private val dataStore: DataStore<Preferences>) {
         }
     }
 
-    suspend fun savePlacements(json: String) {
-        dataStore.edit { it[PLACEMENTS] = json }
+    suspend fun savePlacements(json: String, receivedAtMs: Long) {
+        dataStore.edit {
+            it[PLACEMENTS] = json
+            it[PLACEMENTS_RECEIVED_AT] = receivedAtMs
+        }
     }
 
     private companion object {
@@ -40,5 +48,6 @@ class ServiceStore(private val dataStore: DataStore<Preferences>) {
         val DECIDED_AT = longPreferencesKey("usage_decided_at")
         val INSTALL_ID = stringPreferencesKey("usage_install_id")
         val PLACEMENTS = stringPreferencesKey("ads_placements")
+        val PLACEMENTS_RECEIVED_AT = longPreferencesKey("ads_placements_received_at")
     }
 }

@@ -11,7 +11,8 @@ import nl.jellycast.core.network.parsePlacements
 
 /**
  * What the service wants on each ad placement, kept between launches so Home doesn't wait for
- * it. Nothing shows when the service never answered or a campaign has ended.
+ * it. Nothing shows when the service never answered, has not answered for a day (so a campaign
+ * can still be stopped) or a campaign has ended.
  */
 interface AdRepository {
     val placements: Flow<AdPlacements?>
@@ -21,6 +22,7 @@ interface AdRepository {
 }
 
 private const val REFRESH_INTERVAL_MS = 15 * 60 * 1000L
+private const val MAX_AGE_MS = 24 * 60 * 60 * 1000L
 
 class DefaultAdRepository(
     private val store: ServiceStore,
@@ -30,9 +32,10 @@ class DefaultAdRepository(
     private var refreshedAtMs: Long? = null
 
     override val placements: Flow<AdPlacements?> =
-        store.placementsJson.map { json ->
-            val placements = json?.let(::parsePlacements) ?: return@map null
+        store.placements.map { stored ->
+            val placements = stored?.json?.let(::parsePlacements) ?: return@map null
             val now = clock.nowMs()
+            if (now - stored.receivedAtMs >= MAX_AGE_MS) return@map placements.withoutCampaigns()
             placements.copy(
                 home = placements.home?.takeIf { it.untilMs > now },
                 splash = placements.splash?.takeIf { it.untilMs > now },
@@ -51,6 +54,8 @@ class DefaultAdRepository(
                 refreshedAtMs = null
                 return
             }
-        if (parsePlacements(json) != null) store.savePlacements(json)
+        if (parsePlacements(json) != null) store.savePlacements(json, clock.nowMs())
     }
 }
+
+private fun AdPlacements.withoutCampaigns() = copy(home = null, splash = null)

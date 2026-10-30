@@ -89,7 +89,26 @@ class ServiceRepositoriesTest {
         val nextLaunch = DefaultAdRepository(store, service, clock)
         assertEquals(7, nextLaunch.placements.first()?.home?.id)
         nowMs = java.time.Instant.parse("2027-06-01T00:00:00Z").toEpochMilli()
+        nextLaunch.refresh()
         assertNull(nextLaunch.placements.first()?.home)
+    }
+
+    @Test
+    fun `a campaign stops showing after a day without an answer from the service`() = runTest {
+        val store = store()
+        service.placementsJson =
+            """{"version":1,"country":"NL","home":{"id":7,"position":3,""" +
+            """"image":"https://x/a.jpg","advertiser":"Blender",""" +
+            """"until":"2027-06-01T00:00:00Z"},"splash":null}"""
+        DefaultAdRepository(store, service, clock).refresh()
+
+        nowMs += 23 * 60 * 60_000
+        assertEquals(7, DefaultAdRepository(store, service, clock).placements.first()?.home?.id)
+        nowMs += 60 * 60_000
+        val offline = DefaultAdRepository(store, service, clock)
+        service.failNext = true
+        offline.refresh()
+        assertNull(offline.placements.first()?.home)
     }
 
     @Test
